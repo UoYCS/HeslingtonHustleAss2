@@ -43,6 +43,8 @@ public class PlayScreen implements Screen {
 
     private Core core;
 
+    // TODO: ADD ALL TO ARRAY
+
     // Define activity locations
     private final ActivityLocation study_location = new ActivityLocation(130 + (2*map_section_offset), 24, 20, "study"); // Bottom left building
     private final ActivityLocation recreation_location = new ActivityLocation(495 + (2*map_section_offset), 144, 20, "feed the ducks"); // Ducks at pond
@@ -259,6 +261,8 @@ public class PlayScreen implements Screen {
         final float playerX = this.player.getPlayerX();
         final float playerY = this.player.getPlayerY();
 
+        // TODO: CAN CHANGE TO LOOP
+
         // Check for interaction with each activity location
         if (isPlayerWithinInteractionArea(playerX, playerY, study_location)) {
             final ResourceExitConditions exit_value = this.core.interactedWith(ActivityType.Study);
@@ -295,6 +299,9 @@ public class PlayScreen implements Screen {
         // Get players current position
         final float playerX = this.player.getPlayerX();
         final float playerY = this.player.getPlayerY();
+
+
+        // TODO: CAN CHANGE TO LOOP
 
         // Check if the player is within range of an activity location
         if (isPlayerWithinInteractionArea(playerX, playerY, this.study_location)) {
