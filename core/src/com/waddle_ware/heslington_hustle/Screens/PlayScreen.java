@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -30,6 +31,9 @@ public class PlayScreen implements Screen {
     private TiledMap tile_map;
     private OrthogonalTiledMapRenderer map_renderer;
     private boolean is_fullscreen = false;  // Track fullscreen state
+    private int current_map_section = 1;
+    private int map_section_offset = 48*16;
+
 
     private Avatar player;
     private float world_width;
@@ -40,14 +44,17 @@ public class PlayScreen implements Screen {
     private Core core;
 
     // Define activity locations
-    private final ActivityLocation study_location = new ActivityLocation(130, 24, 20, "study"); // Bottom left building
-    private final ActivityLocation recreation_location = new ActivityLocation(495, 144, 20, "feed the ducks"); // Ducks at pond
-    private final ActivityLocation food_location = new ActivityLocation(570, 264, 20, "eat"); // Top right building
-    private final ActivityLocation sleep_location = new ActivityLocation(250, 264, 20, "sleep"); // Top left building
+    private final ActivityLocation study_location = new ActivityLocation(130 + (2*map_section_offset), 24, 20, "study"); // Bottom left building
+    private final ActivityLocation recreation_location = new ActivityLocation(495 + (2*map_section_offset), 144, 20, "feed the ducks"); // Ducks at pond
+    private final ActivityLocation food_location = new ActivityLocation(570 + (2*map_section_offset), 264, 20, "eat"); // Top right building
+    private final ActivityLocation sleep_location = new ActivityLocation(250 + (2*map_section_offset), 264, 20, "sleep"); // Top left building
 
     private InteractionPopup interaction_popup; // Add a field for the interaction pop-up
     private float popupX;
     private float popupY;
+
+    Texture markerTexture = new Texture(Gdx.files.internal("Marker.png"));
+
 
     /**
      * Constructs a new PlayScreen.
@@ -70,7 +77,7 @@ public class PlayScreen implements Screen {
 
         this.core = new Core();
         // Load tile Map
-        this.tile_map = new TmxMapLoader().load("map.tmx"); // load tile map
+        this.tile_map = new TmxMapLoader().load("MapToCode/map.tmx"); // load tile map
         this.map_renderer = new OrthogonalTiledMapRenderer(this.tile_map);
 
         // Set target aspect ratio for tile map
@@ -78,20 +85,29 @@ public class PlayScreen implements Screen {
 
         // Calculate world dimensions
         final int map_tile_width = this.tile_map.getProperties().get("width", Integer.class);
-        final int tile_width = this.tile_map.getProperties().get("tilewidth", Integer.class);
-        this.world_width = map_tile_width * tile_width;
-        this.world_height = this.world_width / target_aspect_ratio;
+        final int map_tile_height = this.tile_map.getProperties().get("height", Integer.class);
+
+        final int tile_size = this.tile_map.getProperties().get("tilewidth", Integer.class);
+
+        this.world_width = map_tile_width * tile_size;
+        this.world_height = map_tile_height * tile_size;
+
+
+
+
         System.out.printf("width: %f, height: %f", this.world_width, this.world_height);
 
         this.player = new Avatar(0, 0, this.world_height, this.world_width);
-        this.player.setPlayerLoc(260, 250);
+        this.player.setPlayerLoc(260+ (2*48*16), 250);
 
         // Set the viewport to use the whole screen with the desired aspect ratio
-        this.viewport = new FitViewport(this.world_width, this.world_height, this.camera);
+        this.viewport = new FitViewport(this.world_width/3, this.world_height, this.camera);
         this.hud = new HUD(this.core);
 
         // Center the camera on the tile map
-        this.camera.position.set(this.world_width / 2f, this.world_height / 2f, 0);
+
+
+        this.camera.position.set((this.world_width / 2f)+map_section_offset, this.world_height / 2f, 0);
         this.camera.update();
 
         // Adjust the viewport if needed to ensure the tile map fills the entire screen (for tile maps that are not 16:9)
@@ -103,6 +119,9 @@ public class PlayScreen implements Screen {
             this.camera.position.add(0, y_offset, 0);
             this.camera.update();
         }
+
+
+
     }
 
     /**
@@ -119,10 +138,13 @@ public class PlayScreen implements Screen {
         handleInput(); // Call method to handle inputs
         this.player.handleInput();
 
+        checkAreaChange();
+
+
         // Update camera and viewport
         this.camera.update();
         this.map_renderer.setView(this.camera);
-        this.hud.update(this.core);
+        this.hud.update(this.core, current_map_section);
         this.player.update(this.tile_map);
         this.core.update();
 
@@ -132,14 +154,24 @@ public class PlayScreen implements Screen {
 
         this.map_renderer.render(); // Render tile map
 
+
         // Render player sprite
         this.map_renderer.getBatch().begin();
         this.player.render(this.map_renderer);// Draw sprite in updated position with specified dimensions
 
         this.hud.render(this.map_renderer.getBatch());
+
+        this.map_renderer.getBatch().draw(markerTexture, 130 + (2*map_section_offset) ,24);
+        this.map_renderer.getBatch().draw(markerTexture, 495 + (2*map_section_offset) , 144);
+        this.map_renderer.getBatch().draw(markerTexture, 570 + (2*map_section_offset) , 264);
+        this.map_renderer.getBatch().draw(markerTexture, 250 + (2*map_section_offset) , 264);
+
         this.map_renderer.getBatch().end();
 
+
         checkInteractionProximity(); // Check for proximity and update interaction pop-ups
+
+
 
         // Render the pop-up message if it exists
         if (this.interaction_popup != null) {
@@ -157,6 +189,23 @@ public class PlayScreen implements Screen {
         // Update viewport when the window is resized
         this.viewport.update(width, height);
     }
+
+    public void checkAreaChange() {
+
+        if (this.player.getPlayerX() > 1523) {
+            current_map_section = 1;
+        } else if (this.player.getPlayerX() <= 1523 && this.player.getPlayerX() > 755) {
+            current_map_section = 0;
+        } else {
+            current_map_section = -1;
+        }
+
+
+        this.camera.position.set((this.world_width / 2f) + (current_map_section * map_section_offset), this.world_height / 2f, 0);
+
+    }
+
+
 
     /**
      * Handles user input to move the sprite with wasd keys.
@@ -191,6 +240,13 @@ public class PlayScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             handleInteraction();
         }
+
+        // TEMPORARY FOR TESTING
+        if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
+            System.out.println(this.player.getPlayerX());
+            System.out.println(this.player.getPlayerY());
+        }
+
     }
 
     /**
