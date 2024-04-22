@@ -331,7 +331,7 @@ public class PlayScreen implements Screen {
         if (this.is_fullscreen) {
             Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         } else {
-            Gdx.graphics.setWindowedMode((int) this.world_width, (int) this.world_height);
+            Gdx.graphics.setWindowedMode((int) this.world_width/3, (int) this.world_height);
         }
     }
 
