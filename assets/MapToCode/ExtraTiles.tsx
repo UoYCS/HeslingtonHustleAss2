@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.10.2" name="ExtraTiles" tilewidth="16" tileheight="16" tilecount="33" columns="3">
+<tileset version="1.10" tiledversion="1.10.2" name="ExtraTiles" tilewidth="16" tileheight="16" tilecount="43" columns="2">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="1">
   <image width="16" height="16" source="ExtraTiles/tile000.png"/>
@@ -120,6 +120,66 @@
  </tile>
  <tile id="41">
   <image width="16" height="16" source="ExtraTiles/arrow_tile_007.png"/>
+ </tile>
+ <tile id="43">
+  <properties>
+   <property name="Blocked" type="bool" value="true"/>
+  </properties>
+  <image width="16" height="16" source="ExtraTiles/stands_tile_000.png"/>
+ </tile>
+ <tile id="44">
+  <properties>
+   <property name="Blocked" type="bool" value="true"/>
+  </properties>
+  <image width="16" height="16" source="ExtraTiles/stands_tile_001.png"/>
+ </tile>
+ <tile id="45">
+  <properties>
+   <property name="Blocked" type="bool" value="true"/>
+  </properties>
+  <image width="16" height="16" source="ExtraTiles/stands_tile_002.png"/>
+ </tile>
+ <tile id="46">
+  <properties>
+   <property name="Blocked" type="bool" value="true"/>
+  </properties>
+  <image width="16" height="16" source="ExtraTiles/stands_tile_003.png"/>
+ </tile>
+ <tile id="47">
+  <properties>
+   <property name="Blocked" type="bool" value="true"/>
+  </properties>
+  <image width="16" height="16" source="ExtraTiles/stands_tile_004.png"/>
+ </tile>
+ <tile id="48">
+  <properties>
+   <property name="Blocked" type="bool" value="true"/>
+  </properties>
+  <image width="16" height="16" source="ExtraTiles/stands_tile_005.png"/>
+ </tile>
+ <tile id="49">
+  <properties>
+   <property name="Blocked" type="bool" value="true"/>
+  </properties>
+  <image width="16" height="16" source="ExtraTiles/stands_tile_006.png"/>
+ </tile>
+ <tile id="50">
+  <properties>
+   <property name="Blocked" type="bool" value="true"/>
+  </properties>
+  <image width="16" height="16" source="ExtraTiles/stands_tile_007.png"/>
+ </tile>
+ <tile id="51">
+  <properties>
+   <property name="Blocked" type="bool" value="true"/>
+  </properties>
+  <image width="16" height="16" source="ExtraTiles/stands_tile_008.png"/>
+ </tile>
+ <tile id="52">
+  <properties>
+   <property name="Blocked" type="bool" value="true"/>
+  </properties>
+  <image width="16" height="16" source="ExtraTiles/stands_tile_009.png"/>
  </tile>
  <tile id="42">
   <image width="16" height="16" source="ExtraTiles/arrow_tile_008.png"/>

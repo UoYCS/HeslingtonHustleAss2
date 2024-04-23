@@ -691,31 +691,6 @@
    <property name="Blocked" type="bool" value="true"/>
   </properties>
  </tile>
- <tile id="249">
-  <properties>
-   <property name="Blocked" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="324">
-  <properties>
-   <property name="Blocked" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="325">
-  <properties>
-   <property name="Blocked" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="351">
-  <properties>
-   <property name="Blocked" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="352">
-  <properties>
-   <property name="Blocked" type="bool" value="true"/>
-  </properties>
- </tile>
  <tile id="355">
   <properties>
    <property name="Blocked" type="bool" value="true"/>
@@ -732,16 +707,6 @@
   </properties>
  </tile>
  <tile id="358">
-  <properties>
-   <property name="Blocked" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="378">
-  <properties>
-   <property name="Blocked" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="379">
   <properties>
    <property name="Blocked" type="bool" value="true"/>
   </properties>

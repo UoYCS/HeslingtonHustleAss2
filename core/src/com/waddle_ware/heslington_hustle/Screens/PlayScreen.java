@@ -21,6 +21,8 @@ import com.waddle_ware.heslington_hustle.core.Core;
 import com.waddle_ware.heslington_hustle.core.ExitConditions;
 import com.waddle_ware.heslington_hustle.core.ResourceExitConditions;
 
+import java.util.Arrays;
+
 /**
  * The PlayScreen class represents the games screen where the gameplay is.
  * It implements the Screen interface and manages rendering and input handling.
@@ -32,7 +34,7 @@ public class PlayScreen implements Screen {
     private OrthogonalTiledMapRenderer map_renderer;
     private boolean is_fullscreen = false;  // Track fullscreen state
     private int current_map_section = 1;
-    private int map_section_offset = 48*16;
+    private final int map_section_offset = 48*16;
 
 
     private Avatar player;
@@ -43,13 +45,40 @@ public class PlayScreen implements Screen {
 
     private Core core;
 
-    // TODO: ADD ALL TO ARRAY
+
+    // CHANGELOG: ADDED ACTIVITIES TO ARRAY INSTEAD OF USING VARIABLES TO ALLOW FOR EXTRA ACTIVITIES
+
+    // Define activity locations array
+    private final ActivityLocation[] activityLocations = {
+
+            // SLEEPING at Goodricke
+            new ActivityLocation(1786, 264, 20, "sleep", ActivityType.Sleep),
+
+            // STUDYING at Library
+            new ActivityLocation(1138, 258, 20, "study", ActivityType.Study),
+
+            // STUDYING at CS building
+            new ActivityLocation(1666, 24, 20, "study", ActivityType.Study),
+
+            // RECREATION at Duck pond
+            new ActivityLocation(2031, 144, 20, "feed the ducks", ActivityType.Recreation),
+
+            // RECREATION at Sports Centre
+            new ActivityLocation(970, 125, 20, "play football", ActivityType.Recreation),
+
+            // EATING at Piazza
+            new ActivityLocation(2106, 264, 20, "eat", ActivityType.Food),
+
+            // EATING at Courtyard
+            new ActivityLocation(1290, 55, 20, "eat", ActivityType.Food)
+
+    };
 
     // Define activity locations
-    private final ActivityLocation study_location = new ActivityLocation(130 + (2*map_section_offset), 24, 20, "study"); // Bottom left building
-    private final ActivityLocation recreation_location = new ActivityLocation(495 + (2*map_section_offset), 144, 20, "feed the ducks"); // Ducks at pond
-    private final ActivityLocation food_location = new ActivityLocation(570 + (2*map_section_offset), 264, 20, "eat"); // Top right building
-    private final ActivityLocation sleep_location = new ActivityLocation(250 + (2*map_section_offset), 264, 20, "sleep"); // Top left building
+//    private final ActivityLocation study_location = new ActivityLocation(130 + (2*map_section_offset), 24, 20, "study", ActivityType.Study); // Bottom left building
+//    private final ActivityLocation recreation_location = new ActivityLocation(495 + (2*map_section_offset), 144, 20, "feed the ducks", ActivityType.Recreation); // Ducks at pond
+//    private final ActivityLocation food_location = new ActivityLocation(570 + (2*map_section_offset), 264, 20, "eat", ActivityType.Food); // Top right building
+//    private final ActivityLocation sleep_location = new ActivityLocation(250 + (2*map_section_offset), 264, 20, "sleep", ActivityType.Sleep); // Top left building
 
     private InteractionPopup interaction_popup; // Add a field for the interaction pop-up
     private float popupX;
@@ -163,16 +192,15 @@ public class PlayScreen implements Screen {
 
         this.hud.render(this.map_renderer.getBatch());
 
-        this.map_renderer.getBatch().draw(markerTexture, 130 + (2*map_section_offset) ,24);
-        this.map_renderer.getBatch().draw(markerTexture, 495 + (2*map_section_offset) , 144);
-        this.map_renderer.getBatch().draw(markerTexture, 570 + (2*map_section_offset) , 264);
-        this.map_renderer.getBatch().draw(markerTexture, 250 + (2*map_section_offset) , 264);
+        for (ActivityLocation activity : activityLocations) {
+            this.map_renderer.getBatch().draw(markerTexture, activity.getX() ,activity.getY());
+
+        }
 
         this.map_renderer.getBatch().end();
 
 
         checkInteractionProximity(); // Check for proximity and update interaction pop-ups
-
 
 
         // Render the pop-up message if it exists
@@ -192,6 +220,8 @@ public class PlayScreen implements Screen {
         this.viewport.update(width, height);
     }
 
+
+    // CHANGELOG: ADDED THIS FUNCTION TO SET THE CAMERA IN THE AREA ZONE THE PLAYER IS IN
     public void checkAreaChange() {
 
         if (this.player.getPlayerX() > 1523) {
@@ -261,33 +291,66 @@ public class PlayScreen implements Screen {
         final float playerX = this.player.getPlayerX();
         final float playerY = this.player.getPlayerY();
 
-        // TODO: CAN CHANGE TO LOOP
 
-        // Check for interaction with each activity location
-        if (isPlayerWithinInteractionArea(playerX, playerY, study_location)) {
-            final ResourceExitConditions exit_value = this.core.interactedWith(ActivityType.Study);
-            if(exit_value.getConditions() == ExitConditions.IsOk)
-                return;
-            //visually output why the interaction failed
-            //tmp:
-            System.out.printf("%s%s\n",exit_value.getTypes().toString(),exit_value.getConditions().toString());
-        }
-        if (isPlayerWithinInteractionArea(playerX, playerY, recreation_location)) {
-            final ResourceExitConditions exit_value = this.core.interactedWith(ActivityType.Recreation);
-            if(exit_value.getConditions() == ExitConditions.IsOk)
-                return;
-            System.out.printf("%s%s\n",exit_value.getTypes().toString(),exit_value.getConditions().toString());
-        }
-        if (isPlayerWithinInteractionArea(playerX, playerY, food_location)) { // Food and sleep should not be able to fail, so they can remain unchecked
-            this.core.interactedWith(ActivityType.Food);
-            return;
-        }
-        if (isPlayerWithinInteractionArea(playerX, playerY, sleep_location)) {
-            if(this.core.isLastDay()) {
-                game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore()));
+        // CHANGELOG: CHANGED THIS FUNCTION TO USE A LOOP TO ALLOW FOR EXTRA ACTIVITIES
+        for (ActivityLocation activity : activityLocations){
+            if (isPlayerWithinInteractionArea(playerX, playerY, activity)){
+
+                if (activity.getType() == ActivityType.Study || activity.getType() == ActivityType.Recreation){
+                    final ResourceExitConditions exit_value = this.core.interactedWith(activity.getType());
+                    if (exit_value.getConditions() == ExitConditions.IsOk)
+                        return;
+                    //visually output why the interaction failed
+                    //tmp:
+                    System.out.printf("%s%s\n", exit_value.getTypes().toString(), exit_value.getConditions().toString());
+                }
+
+                if (activity.getType() == ActivityType.Food) {
+                    this.core.interactedWith(ActivityType.Food);
+                    return;
+                }
+
+                if (activity.getType() == ActivityType.Sleep) {
+                    if(this.core.isLastDay()) {
+                        game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore()));
+                    }
+                    else this.core.interactedWith(ActivityType.Sleep);
+                }
+
             }
-            else this.core.interactedWith(ActivityType.Sleep);
         }
+
+
+//        // Check for interaction with each activity location
+//        if (isPlayerWithinInteractionArea(playerX, playerY, study_location)) {
+//            final ResourceExitConditions exit_value = this.core.interactedWith(ActivityType.Study);
+//            if(exit_value.getConditions() == ExitConditions.IsOk)
+//                return;
+//            System.out.printf("%s%s\n",exit_value.getTypes().toString(),exit_value.getConditions().toString());
+//        }
+//
+//        if (isPlayerWithinInteractionArea(playerX, playerY, recreation_location)) {
+//            final ResourceExitConditions exit_value = this.core.interactedWith(ActivityType.Recreation);
+//            if(exit_value.getConditions() == ExitConditions.IsOk)
+//                return;
+//            System.out.printf("%s%s\n",exit_value.getTypes().toString(),exit_value.getConditions().toString());
+//        }
+//
+
+//        if (isPlayerWithinInteractionArea(playerX, playerY, food_location)) { // Food and sleep should not be able to fail, so they can remain unchecked
+//            this.core.interactedWith(ActivityType.Food);
+//            return;
+//        }
+//
+//
+//        if (isPlayerWithinInteractionArea(playerX, playerY, sleep_location)) {
+//            if(this.core.isLastDay()) {
+//                game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore()));
+//            }
+//            else this.core.interactedWith(ActivityType.Sleep);
+//        }
+
+
     }
 
     /**
@@ -300,31 +363,50 @@ public class PlayScreen implements Screen {
         final float playerX = this.player.getPlayerX();
         final float playerY = this.player.getPlayerY();
 
+        boolean near_activity = false;
 
-        // TODO: CAN CHANGE TO LOOP
+        // set pop up above players location
+        this.popupX = playerX;
+        this.popupY = playerY + 50;
 
-        // Check if the player is within range of an activity location
-        if (isPlayerWithinInteractionArea(playerX, playerY, this.study_location)) {
-            this.interaction_popup = new InteractionPopup("Press E to "+ this.study_location.getName());
-            // set pop up above players location
-            this.popupX = playerX;
-            this.popupY = playerY + 50;
-        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.recreation_location)) {
-            this.interaction_popup = new InteractionPopup("Press E to "+ this.recreation_location.getName());
-            this.popupX = playerX;
-            this.popupY = playerY + 50;
-        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.food_location)) {
-            this.interaction_popup = new InteractionPopup("Press E to "+ this.food_location.getName());
-            this.popupX = playerX;
-            this.popupY = playerY + 50;
-        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.sleep_location)) {
-            this.interaction_popup = new InteractionPopup("Press E to "+ this.sleep_location.getName());
-            this.popupX = playerX;
-            this.popupY = playerY + 50;
-        } else {
-            // Hide message if the player is out of range
+
+        // CHANGELOG: CHANGED THIS FUNCTION TO USE A LOOP TO ALLOW FOR EXTRA ACTIVITIES
+        for (ActivityLocation activity : activityLocations){
+            if (isPlayerWithinInteractionArea(playerX, playerY, activity)){
+                this.interaction_popup = new InteractionPopup("Press E to "+ activity.getName());
+                near_activity = true;
+            }
+        }
+
+        if (!near_activity){
             this.interaction_popup = null;
         }
+
+
+
+
+//        // Check if the player is within range of an activity location
+//        if (isPlayerWithinInteractionArea(playerX, playerY, this.study_location)) {
+//            this.interaction_popup = new InteractionPopup("Press E to "+ this.study_location.getName());
+//            // set pop up above players location
+//            this.popupX = playerX;
+//            this.popupY = playerY + 50;
+//        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.recreation_location)) {
+//            this.interaction_popup = new InteractionPopup("Press E to "+ this.recreation_location.getName());
+//            this.popupX = playerX;
+//            this.popupY = playerY + 50;
+//        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.food_location)) {
+//            this.interaction_popup = new InteractionPopup("Press E to "+ this.food_location.getName());
+//            this.popupX = playerX;
+//            this.popupY = playerY + 50;
+//        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.sleep_location)) {
+//            this.interaction_popup = new InteractionPopup("Press E to "+ this.sleep_location.getName());
+//            this.popupX = playerX;
+//            this.popupY = playerY + 50;
+//        } else {
+//            // Hide message if the player is out of range
+//            this.interaction_popup = null;
+//        }
     }
 
     /**
