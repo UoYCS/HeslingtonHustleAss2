@@ -13,7 +13,10 @@ public class ActivityLocation {
     private final float y; // The y-coordinate of the activity location
     private final float radius; // The radius of the activity location
     private final String name; // The name of the activity location
-    private final ActivityType type; // The type of activity (Eat/Sleep/Study/Rec)
+    private final ActivityType type; // The type of activity (Eat/Sleep/Study/Recreation)
+
+    // CHANGELOG: ADDED THIS VARIABLE TO TRACK ACTVITIES ON A PER ACTIVITY BASIS
+    private int times_interacted = 0; // Number of times this activity was interacted with
 
     /**
      * Constructs an ActivityLocation object with the specified coordinates, radius, and name.
@@ -75,5 +78,14 @@ public class ActivityLocation {
     // CHANGELOG: ADDED GETTER METHOD FOR NEW CLASS VARIABLE
     public ActivityType getType() {
             return type;
+    }
+
+
+    // CHANGELOG: ADDED GETTER/SETTER METHODS FOR NEW VARIABLES
+    public int getTimes_interacted(){
+        return this.times_interacted;
+    }
+    public void incrementCounter(){
+        this.times_interacted ++;
     }
 }

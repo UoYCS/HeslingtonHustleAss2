@@ -66,11 +66,18 @@ public class PlayScreen implements Screen {
             // RECREATION at Sports Centre
             new ActivityLocation(970, 125, 20, "play football", ActivityType.Recreation),
 
+            // RECREATION in town
+            new ActivityLocation(174, 219, 20, "recreation", ActivityType.Recreation),
+
             // EATING at Piazza
             new ActivityLocation(2106, 264, 20, "eat", ActivityType.Food),
 
             // EATING at Courtyard
-            new ActivityLocation(1290, 55, 20, "eat", ActivityType.Food)
+            new ActivityLocation(1290, 55, 20, "eat", ActivityType.Food),
+
+            // EATING in town
+            new ActivityLocation(572, 270, 20, "eat", ActivityType.Food)
+
 
     };
 
@@ -279,6 +286,17 @@ public class PlayScreen implements Screen {
             System.out.println(this.player.getPlayerY());
         }
 
+        // TEMPORARY FOR TESTING
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+            System.out.println("----------");
+            for (ActivityLocation activity : activityLocations) {
+                System.out.println(activity.getTimes_interacted() + ", " + activity.getName());
+            }
+            System.out.println("----------");
+
+        }
+
+
     }
 
     /**
@@ -290,23 +308,33 @@ public class PlayScreen implements Screen {
         // Get players current position
         final float playerX = this.player.getPlayerX();
         final float playerY = this.player.getPlayerY();
+        ResourceExitConditions exit_value;
+
 
 
         // CHANGELOG: CHANGED THIS FUNCTION TO USE A LOOP TO ALLOW FOR EXTRA ACTIVITIES
+        // CHANGELOG: ADDED LINE TO INCREMENT COUNTER FOR SPECIFIC ACTIVITY
+        // TODO: Change int increment to array format
         for (ActivityLocation activity : activityLocations){
+
             if (isPlayerWithinInteractionArea(playerX, playerY, activity)){
 
                 if (activity.getType() == ActivityType.Study || activity.getType() == ActivityType.Recreation){
-                    final ResourceExitConditions exit_value = this.core.interactedWith(activity.getType());
-                    if (exit_value.getConditions() == ExitConditions.IsOk)
+                    exit_value = this.core.interactedWith(activity.getType());
+                    if (exit_value.getConditions() == ExitConditions.IsOk){
+                        activity.incrementCounter();
                         return;
+                    }
                     //visually output why the interaction failed
                     //tmp:
                     System.out.printf("%s%s\n", exit_value.getTypes().toString(), exit_value.getConditions().toString());
                 }
 
                 if (activity.getType() == ActivityType.Food) {
-                    this.core.interactedWith(ActivityType.Food);
+                    exit_value = this.core.interactedWith(ActivityType.Food);
+                    if (exit_value.getConditions() == ExitConditions.IsOk){
+                        activity.incrementCounter();
+                    }
                     return;
                 }
 
@@ -316,6 +344,8 @@ public class PlayScreen implements Screen {
                     }
                     else this.core.interactedWith(ActivityType.Sleep);
                 }
+
+
 
             }
         }
