@@ -176,8 +176,13 @@ public class PlayScreen implements Screen {
         handleInput(); // Call method to handle inputs
         this.player.handleInput();
 
-        checkAreaChange();
 
+        current_map_section = getGameArea(this.player.getPlayerX());
+
+        this.camera.position.set(
+                (this.world_width / 2f) + (getGameArea(this.player.getPlayerX()) * map_section_offset),
+                this.world_height / 2f,
+                0);
 
         // Update camera and viewport
         this.camera.update();
@@ -204,6 +209,9 @@ public class PlayScreen implements Screen {
 
         }
 
+        // ADDING FLOATING ICONS FOR ACTIVITIES
+        drawActivityIcons();
+
         this.map_renderer.getBatch().end();
 
 
@@ -228,20 +236,36 @@ public class PlayScreen implements Screen {
     }
 
 
-    // CHANGELOG: ADDED THIS FUNCTION TO SET THE CAMERA IN THE AREA ZONE THE PLAYER IS IN
-    public void checkAreaChange() {
-
-        if (this.player.getPlayerX() > 1523) {
-            current_map_section = 1;
-        } else if (this.player.getPlayerX() <= 1523 && this.player.getPlayerX() > 755) {
-            current_map_section = 0;
-        } else {
-            current_map_section = -1;
+    private void drawActivityIcons(){
+        for (ActivityLocation activity : activityLocations) {
+            if (getGameArea(activity.getX()) == current_map_section){
+                switch (activity.getType()){
+                    case Study:
+                        // Code
+                        break;
+                    case Sleep:
+                        // Code
+                        break;
+                    case Recreation:
+                        // Code
+                        break;
+                    case Food:
+                        // Code
+                        break;
+                }
+            }
         }
+    }
 
-
-        this.camera.position.set((this.world_width / 2f) + (current_map_section * map_section_offset), this.world_height / 2f, 0);
-
+    // CHANGELOG: ADDED THIS FUNCTION TO SET THE CAMERA IN THE AREA ZONE THE PLAYER IS IN
+    private int getGameArea(float xValue) {
+        if (xValue > 1523) {
+            return 1;
+        } else if (xValue <= 1523 && xValue > 755) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
 
