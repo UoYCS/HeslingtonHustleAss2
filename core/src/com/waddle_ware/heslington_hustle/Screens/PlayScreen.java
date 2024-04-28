@@ -6,6 +6,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -67,7 +69,7 @@ public class PlayScreen implements Screen {
             new ActivityLocation(970, 125, 20, "play football", ActivityType.Recreation),
 
             // RECREATION in town
-            new ActivityLocation(174, 219, 20, "recreation", ActivityType.Recreation),
+            new ActivityLocation(174, 219, 20, "have a drink", ActivityType.Recreation),
 
             // EATING at Piazza
             new ActivityLocation(2106, 264, 20, "eat", ActivityType.Food),
@@ -93,6 +95,16 @@ public class PlayScreen implements Screen {
 
     Texture markerTexture = new Texture(Gdx.files.internal("Marker.png"));
 
+    //  CHANGE LOG: variables for the activity icon animations
+    Animation<TextureRegion> sleepIcon;
+    Animation<TextureRegion> eatIcon;
+    Animation<TextureRegion> studyIcon;
+    Animation<TextureRegion> feedDucksIcon;
+    Animation<TextureRegion> playFootballIcon;
+    Animation<TextureRegion> drinkIcon;
+    Texture iconSpriteSheet = new Texture(Gdx.files.internal("iconAnimations.png"));
+    float stateTime;
+
 
     /**
      * Constructs a new PlayScreen.
@@ -102,6 +114,34 @@ public class PlayScreen implements Screen {
     public PlayScreen(HeslingtonHustle game)
     {
         this.game = game;
+
+        TextureRegion[][] tmp = TextureRegion.split(iconSpriteSheet, iconSpriteSheet.getWidth() / 6, iconSpriteSheet.getHeight()/6);
+
+        TextureRegion[] sleepFrames = new TextureRegion[6];
+        TextureRegion[] eatFrames = new TextureRegion[6];
+        TextureRegion[] studyFrames = new TextureRegion[6];
+        TextureRegion[] duckFrames = new TextureRegion[6];
+        TextureRegion[] footballFrames = new TextureRegion[6];
+        TextureRegion[] drinkFrames = new TextureRegion[6];
+
+        for (int i = 0; i < 6; i++) {
+            sleepFrames[i] = tmp[0][i];
+            eatFrames[i] = tmp[1][i];
+            studyFrames[i] = tmp[2][i];
+            duckFrames[i] = tmp[3][i];
+            footballFrames[i] = tmp[4][i];
+            drinkFrames[i] = tmp[5][i];
+        }
+        float frameRate = 0.08f;
+
+        sleepIcon = new Animation<TextureRegion>(frameRate, sleepFrames);
+        eatIcon = new Animation<TextureRegion>(frameRate, eatFrames);
+        studyIcon = new Animation<TextureRegion>(frameRate, studyFrames);
+        feedDucksIcon = new Animation<TextureRegion>(frameRate, duckFrames);
+        playFootballIcon = new Animation<TextureRegion>(frameRate, footballFrames);
+        drinkIcon = new Animation<TextureRegion>(frameRate, drinkFrames);
+
+        stateTime = 0f;
     }
 
     /**
@@ -204,11 +244,6 @@ public class PlayScreen implements Screen {
 
         this.hud.render(this.map_renderer.getBatch());
 
-        for (ActivityLocation activity : activityLocations) {
-            this.map_renderer.getBatch().draw(markerTexture, activity.getX() ,activity.getY());
-
-        }
-
         // ADDING FLOATING ICONS FOR ACTIVITIES
         drawActivityIcons();
 
@@ -237,24 +272,46 @@ public class PlayScreen implements Screen {
 
 
     private void drawActivityIcons(){
+        // Update the games state time
+        stateTime += Gdx.graphics.getDeltaTime();
+
         for (ActivityLocation activity : activityLocations) {
             if (getGameArea(activity.getX()) == current_map_section){
                 switch (activity.getType()){
                     case Study:
-                        // Code
+                        iconAnimate(studyIcon, activity.getX(), activity.getY());
                         break;
                     case Sleep:
-                        // Code
+                        iconAnimate(sleepIcon, activity.getX(), activity.getY());
                         break;
                     case Recreation:
-                        // Code
+                        if (activity.getName().equals("feed the ducks")){
+                            iconAnimate(feedDucksIcon, activity.getX(), activity.getY());
+                        }
+                        else if (activity.getName().equals("play football")){
+                            iconAnimate(playFootballIcon, activity.getX(), activity.getY());
+                        }
+                        else{
+                            iconAnimate(drinkIcon, activity.getX(), activity.getY());
+                        }
                         break;
                     case Food:
-                        // Code
+                        iconAnimate(eatIcon, activity.getX(), activity.getY());
                         break;
                 }
             }
         }
+    }
+
+    // CHANGELOG: FUNCTION FOR ANIMATING THE ACTIVITY ICONS
+
+    private void iconAnimate(Animation<TextureRegion> icon, float x, float y){
+
+        // Get the current frame of animation required
+        TextureRegion currentFrame = icon.getKeyFrame(stateTime, true);
+
+        // Draw this frame at the activities position
+        this.map_renderer.getBatch().draw(currentFrame, x ,y);
     }
 
     // CHANGELOG: ADDED THIS FUNCTION TO SET THE CAMERA IN THE AREA ZONE THE PLAYER IS IN
@@ -514,5 +571,6 @@ public class PlayScreen implements Screen {
         this.player.dispose();
         this.hud.dispose();
         this.interaction_popup.dispose();
+        this.iconSpriteSheet.dispose();
     }
 }
