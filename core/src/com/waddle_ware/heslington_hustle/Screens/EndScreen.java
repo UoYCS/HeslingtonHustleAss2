@@ -59,9 +59,12 @@ public class EndScreen implements Screen {
         this.streak_bookworm = streaks[1];
         this.streak_clubber = streaks[2];
 
-        if(has_won && score > 40) {
+        // CHANGELOG : If the player has won and the score > 40, set the status text accordingly
+        if(has_won && score >= 40) {
             this.status_text = "You Won!";}
         else {
+            // If the player lost, cap the score at 39 and set the status text
+            score = Math.min(39, score);
             this.status_text = "You Lose";}
 
 
@@ -76,7 +79,8 @@ public class EndScreen implements Screen {
         this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         this.big_font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-        this.player_score = score < 0 ? "0" : Integer.toString(score);
+        // CHANGELOG : SCORE IS NOW MAPPED FROM 0-100
+        this.player_score = Integer.toString(score) + " / 100";
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         Gdx.input.setInputProcessor(this.stage);
     }

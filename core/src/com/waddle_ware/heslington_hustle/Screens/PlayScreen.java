@@ -207,7 +207,7 @@ public class PlayScreen implements Screen {
     public void render(float delta) {
         if(this.core.hasEnded()) {
             // CHANGELOG : EndScreen now takes streakArray parameter
-            this.game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore(), this.core.checkStreaks(activityLocations)));
+            this.game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore(activityLocations), this.core.checkStreaks(activityLocations)));
         }
         handleInput(); // Call method to handle inputs
         this.player.handleInput();
@@ -297,7 +297,7 @@ public class PlayScreen implements Screen {
                             case "play football":
                                 iconAnimate(playFootballIcon, activity.getX(), activity.getY());
                                 break;
-                            case "have a drink":
+                            case "go clubbing":
                                 iconAnimate(drinkIcon, activity.getX(), activity.getY()+30);}
                         break;
 
@@ -441,7 +441,7 @@ public class PlayScreen implements Screen {
                 if (activity.getType() == ActivityType.Sleep) {
                     if(this.core.isLastDay()) {
                         // CHANGELOG : EndScreen now takes streakArray parameter
-                        game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore(), this.core.checkStreaks(activityLocations)));
+                        game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore(activityLocations), this.core.checkStreaks(activityLocations)));
                     }
                     else this.core.interactedWith(ActivityType.Sleep);
                 }
