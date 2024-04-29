@@ -109,8 +109,9 @@ public class PlayScreen implements Screen {
     {
         this.game = game;
 
-        TextureRegion[][] tmp = TextureRegion.split(iconSpriteSheet, iconSpriteSheet.getWidth() / 6, iconSpriteSheet.getHeight()/6);
 
+        // CHANGELOG: Initialise TextureRegions/Frames for the Activity Icons
+        TextureRegion[][] tmp = TextureRegion.split(iconSpriteSheet, iconSpriteSheet.getWidth() / 6, iconSpriteSheet.getHeight()/6);
         TextureRegion[] sleepFrames = new TextureRegion[6];
         TextureRegion[] eatFrames = new TextureRegion[6];
         TextureRegion[] studyFrames = new TextureRegion[6];
@@ -273,14 +274,20 @@ public class PlayScreen implements Screen {
         stateTime += Gdx.graphics.getDeltaTime();
 
         for (ActivityLocation activity : activityLocations) {
+            // For each activity, check if it is in the current map section
             if (getGameArea(activity.getX()) == current_map_section){
+
+                // If it is, animate its icon depending on the activity type/name
+
                 switch (activity.getType()){
                     case Study:
                         iconAnimate(studyIcon, activity.getX(), activity.getY()+50);
                         break;
+
                     case Sleep:
                         iconAnimate(sleepIcon, activity.getX(), activity.getY()+30);
                         break;
+
                     case Recreation:
                         switch (activity.getName()) {
                             case "feed the ducks":
@@ -292,6 +299,7 @@ public class PlayScreen implements Screen {
                             case "have a drink":
                                 iconAnimate(drinkIcon, activity.getX(), activity.getY()+30);}
                         break;
+                        
                     case Food:
                         iconAnimate(eatIcon, activity.getX(), activity.getY()+40);
                         break;
