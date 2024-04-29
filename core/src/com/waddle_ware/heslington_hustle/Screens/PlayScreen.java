@@ -299,7 +299,7 @@ public class PlayScreen implements Screen {
                             case "have a drink":
                                 iconAnimate(drinkIcon, activity.getX(), activity.getY()+30);}
                         break;
-                        
+
                     case Food:
                         iconAnimate(eatIcon, activity.getX(), activity.getY()+40);
                         break;
@@ -589,6 +589,8 @@ public class PlayScreen implements Screen {
         this.player.dispose();
         this.hud.dispose();
         this.interaction_popup.dispose();
+
+        // CHANGELOG: Need to Dispose of activity icon sprites.
         this.iconSpriteSheet.dispose();
     }
 }
