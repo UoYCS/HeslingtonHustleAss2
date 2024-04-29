@@ -57,10 +57,10 @@ public class PlayScreen implements Screen {
             new ActivityLocation(1786, 264, 20, "sleep", ActivityType.Sleep),
 
             // STUDYING at Library
-            new ActivityLocation(1138, 258, 20, "study", ActivityType.Study),
+            new ActivityLocation(1136, 258, 20, "study", ActivityType.Study),
 
             // STUDYING at CS building
-            new ActivityLocation(1666, 24, 20, "study", ActivityType.Study),
+            new ActivityLocation(1664, 24, 20, "study", ActivityType.Study),
 
             // RECREATION at Duck pond
             new ActivityLocation(2031, 144, 20, "feed the ducks", ActivityType.Recreation),
@@ -72,10 +72,10 @@ public class PlayScreen implements Screen {
             new ActivityLocation(174, 219, 20, "have a drink", ActivityType.Recreation),
 
             // EATING at Piazza
-            new ActivityLocation(2106, 264, 20, "eat", ActivityType.Food),
+            new ActivityLocation(2104, 264, 20, "eat", ActivityType.Food),
 
             // EATING at Courtyard
-            new ActivityLocation(1290, 55, 20, "eat", ActivityType.Food),
+            new ActivityLocation(1288, 55, 20, "eat", ActivityType.Food),
 
             // EATING in town
             new ActivityLocation(572, 270, 20, "eat", ActivityType.Food)
@@ -83,19 +83,13 @@ public class PlayScreen implements Screen {
 
     };
 
-    // Define activity locations
-//    private final ActivityLocation study_location = new ActivityLocation(130 + (2*map_section_offset), 24, 20, "study", ActivityType.Study); // Bottom left building
-//    private final ActivityLocation recreation_location = new ActivityLocation(495 + (2*map_section_offset), 144, 20, "feed the ducks", ActivityType.Recreation); // Ducks at pond
-//    private final ActivityLocation food_location = new ActivityLocation(570 + (2*map_section_offset), 264, 20, "eat", ActivityType.Food); // Top right building
-//    private final ActivityLocation sleep_location = new ActivityLocation(250 + (2*map_section_offset), 264, 20, "sleep", ActivityType.Sleep); // Top left building
 
     private InteractionPopup interaction_popup; // Add a field for the interaction pop-up
     private float popupX;
     private float popupY;
 
-    Texture markerTexture = new Texture(Gdx.files.internal("Marker.png"));
 
-    //  CHANGE LOG: variables for the activity icon animations
+    //  CHANGELOG: variables for the activity icon animations
     Animation<TextureRegion> sleepIcon;
     Animation<TextureRegion> eatIcon;
     Animation<TextureRegion> studyIcon;
@@ -270,7 +264,10 @@ public class PlayScreen implements Screen {
         this.viewport.update(width, height);
     }
 
-
+    /**
+     * CHANGELOG: ADDED NEW METHOD.
+     * Method used to draw floating activity icons to the map.
+     */
     private void drawActivityIcons(){
         // Update the games state time
         stateTime += Gdx.graphics.getDeltaTime();
@@ -279,32 +276,39 @@ public class PlayScreen implements Screen {
             if (getGameArea(activity.getX()) == current_map_section){
                 switch (activity.getType()){
                     case Study:
-                        iconAnimate(studyIcon, activity.getX(), activity.getY());
+                        iconAnimate(studyIcon, activity.getX(), activity.getY()+50);
                         break;
                     case Sleep:
-                        iconAnimate(sleepIcon, activity.getX(), activity.getY());
+                        iconAnimate(sleepIcon, activity.getX(), activity.getY()+30);
                         break;
                     case Recreation:
-                        if (activity.getName().equals("feed the ducks")){
-                            iconAnimate(feedDucksIcon, activity.getX(), activity.getY());
-                        }
-                        else if (activity.getName().equals("play football")){
-                            iconAnimate(playFootballIcon, activity.getX(), activity.getY());
-                        }
-                        else{
-                            iconAnimate(drinkIcon, activity.getX(), activity.getY());
-                        }
+                        switch (activity.getName()) {
+                            case "feed the ducks":
+                                iconAnimate(feedDucksIcon, activity.getX(), activity.getY());
+                                break;
+                            case "play football":
+                                iconAnimate(playFootballIcon, activity.getX(), activity.getY());
+                                break;
+                            case "have a drink":
+                                iconAnimate(drinkIcon, activity.getX(), activity.getY()+30);}
                         break;
                     case Food:
-                        iconAnimate(eatIcon, activity.getX(), activity.getY());
+                        iconAnimate(eatIcon, activity.getX(), activity.getY()+40);
                         break;
                 }
             }
         }
     }
 
-    // CHANGELOG: FUNCTION FOR ANIMATING THE ACTIVITY ICONS
 
+    /**
+     * CHANGELOG: ADDED NEW METHOD.
+     * Method used to animate activity icons.
+     *
+     * @param icon Icon to be animated.
+     * @param x x-coordinate of icon animation.
+     * @param y y-coordinate of icon animation.
+     */
     private void iconAnimate(Animation<TextureRegion> icon, float x, float y){
 
         // Get the current frame of animation required
@@ -314,7 +318,13 @@ public class PlayScreen implements Screen {
         this.map_renderer.getBatch().draw(currentFrame, x ,y);
     }
 
-    // CHANGELOG: ADDED THIS FUNCTION TO SET THE CAMERA IN THE AREA ZONE THE PLAYER IS IN
+    /**
+     * CHANGELOG: ADDED NEW METHOD
+     * This method takes an x coordinate and returns which location of the map it is in.
+     *
+     * @param xValue X Coordinate to check
+     * @return -1 for left map (town), 0 for centre map (west), 1 for right map (east)
+     */
     private int getGameArea(float xValue) {
         if (xValue > 1523) {
             return 1;
