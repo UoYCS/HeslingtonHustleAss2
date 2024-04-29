@@ -1,4 +1,8 @@
 package com.waddle_ware.heslington_hustle.core;
+// CHANGELOG: Added access to Activity Location to be used for streak calculation
+import com.waddle_ware.heslington_hustle.ActivityLocation;
+// CHANGELOG: Added library to help with array processing
+import java.util.Arrays;
 
 /**
  * The Core class represents the core functionality of the game, managing game state, interactions, and scoring.
@@ -181,6 +185,47 @@ public class Core {
         }
         return score;
     }
+
+    /**
+     * CHANGELOG: NEW METHOD
+     * This method checks if the user has completed the streak achievements:
+     * Athlete for playing football, Bookworm for library, and Clubber for clubbing
+     *
+     * @param activityLocations List of activity location objects
+     * @return Boolean array, True/False for each streak completed
+     */
+    public boolean[] checkStreaks(ActivityLocation[] activityLocations){
+        boolean[] streakArray = new boolean[3];
+
+        for (ActivityLocation activity : activityLocations) {
+            // For each activity, check if the streak condition has been met.
+            // If so, set the relevant array index to true
+            switch (activity.getName()){
+                case "play football":
+                    if (Arrays.stream(activity.getInteractions()).sum() >= 5){
+                        streakArray[0] = true;}
+                    break;
+
+                case "study at library":
+                    if (Arrays.stream(activity.getInteractions()).sum() >= 5){
+                        streakArray[1] = true;}
+                    break;
+
+                case "go clubbing":
+                    if (Arrays.stream(activity.getInteractions()).sum() >= 4){
+                        streakArray[2] = true;}
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        return streakArray;
+    }
+
+
+
 
     /**
      * Returns the day. NOT zero indexed
