@@ -57,7 +57,7 @@ public class PlayScreen implements Screen {
             new ActivityLocation(1786, 264, 20, "sleep", ActivityType.Sleep),
 
             // STUDYING at Library
-            new ActivityLocation(1136, 258, 20, "study", ActivityType.Study),
+            new ActivityLocation(1136, 258, 20, "study at library", ActivityType.Study),
 
             // STUDYING at CS building
             new ActivityLocation(1664, 24, 20, "study", ActivityType.Study),
@@ -69,7 +69,7 @@ public class PlayScreen implements Screen {
             new ActivityLocation(970, 125, 20, "play football", ActivityType.Recreation),
 
             // RECREATION in town
-            new ActivityLocation(174, 219, 20, "have a drink", ActivityType.Recreation),
+            new ActivityLocation(174, 219, 20, "go clubbing", ActivityType.Recreation),
 
             // EATING at Piazza
             new ActivityLocation(2104, 264, 20, "eat", ActivityType.Food),
@@ -206,7 +206,8 @@ public class PlayScreen implements Screen {
     @Override
     public void render(float delta) {
         if(this.core.hasEnded()) {
-            this.game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore()));
+            // CHANGELOG : EndScreen now takes streakArray parameter
+            this.game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore(), this.core.checkStreaks(activityLocations)));
         }
         handleInput(); // Call method to handle inputs
         this.player.handleInput();
@@ -389,7 +390,7 @@ public class PlayScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
             System.out.println("----------");
             for (ActivityLocation activity : activityLocations) {
-                System.out.println(activity.getTimes_interacted() + ", " + activity.getName());
+                System.out.println(Arrays.toString(activity.getInteractions()) + ", " + activity.getName());
             }
             System.out.println("----------");
 
@@ -421,7 +422,7 @@ public class PlayScreen implements Screen {
                 if (activity.getType() == ActivityType.Study || activity.getType() == ActivityType.Recreation){
                     exit_value = this.core.interactedWith(activity.getType());
                     if (exit_value.getConditions() == ExitConditions.IsOk){
-                        activity.incrementCounter();
+                        activity.incrementCounter(this.core.getCurrentDay() - 1);
                         return;
                     }
                     //visually output why the interaction failed
@@ -432,14 +433,15 @@ public class PlayScreen implements Screen {
                 if (activity.getType() == ActivityType.Food) {
                     exit_value = this.core.interactedWith(ActivityType.Food);
                     if (exit_value.getConditions() == ExitConditions.IsOk){
-                        activity.incrementCounter();
+                        activity.incrementCounter(this.core.getCurrentDay() - 1);
                     }
                     return;
                 }
 
                 if (activity.getType() == ActivityType.Sleep) {
                     if(this.core.isLastDay()) {
-                        game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore()));
+                        // CHANGELOG : EndScreen now takes streakArray parameter
+                        game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore(), this.core.checkStreaks(activityLocations)));
                     }
                     else this.core.interactedWith(ActivityType.Sleep);
                 }

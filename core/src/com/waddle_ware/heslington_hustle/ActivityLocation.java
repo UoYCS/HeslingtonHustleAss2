@@ -15,14 +15,14 @@ public class ActivityLocation {
     private final String name; // The name of the activity location
     private final ActivityType type; // The type of activity (Eat/Sleep/Study/Recreation)
 
-    // CHANGELOG: ADDED THIS VARIABLE TO TRACK ACTVITIES ON A PER ACTIVITY BASIS
-    private int times_interacted = 0; // Number of times this activity was interacted with
+    // CHANGELOG: ADDED THIS VARIABLE TO TRACK ACTIVITIES ON A PER ACTIVITY BASIS
+    private int[] interactions = new int[7]; // Number of times this activity was interacted with on each day
 
     /**
      * Constructs an ActivityLocation object with the specified coordinates, radius, and name.
      *
-     * @param x      The x-coordinate of the activities location.
-     * @param y      The y-coordinate of the activities location.
+     * @param x      The x-coordinate of the activities' location.
+     * @param y      The y-coordinate of the activities' location.
      * @param radius The interaction radius of the activity.
      * @param name   The name of the activity.
      */
@@ -82,10 +82,23 @@ public class ActivityLocation {
 
 
     // CHANGELOG: ADDED GETTER/SETTER METHODS FOR NEW VARIABLES
-    public int getTimes_interacted(){
-        return this.times_interacted;
+
+    /**
+     * CHANGELOG : ADDED METHOD
+     * Retrieves the array of activity interactions
+     *
+     * @return Array of activity interactions
+     */
+    public int[] getInteractions(){
+        return this.interactions;
     }
-    public void incrementCounter(){
-        this.times_interacted ++;
+
+    /**
+     * CHANGELOG : ADDED METHOD
+     * Increments the counter array for a specific day
+     * @param day Integer from 0-6 (representing days 1-7)
+     */
+    public void incrementCounter(int day){
+        this.interactions[day]++;
     }
 }
