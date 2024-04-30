@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -37,6 +38,9 @@ public class EndScreen implements Screen {
     private final boolean streak_athlete; // Boolean value of if Athlete streak was achieved
     private final boolean streak_bookworm; // Boolean value of if Bookworm streak was achieved
     private final boolean streak_clubber; // Boolean value of if Clubber streak was achieved
+    private final Texture achievementsPNG = new Texture(Gdx.files.internal("achievements.png"));
+
+    private final TextureRegion[][] achievements = TextureRegion.split(achievementsPNG, achievementsPNG.getWidth() / 2, achievementsPNG.getHeight()/3);
 
 
     /**
@@ -164,8 +168,20 @@ public class EndScreen implements Screen {
                     (float) ((height + athleteText.height) * 0.1));
 
             // DRAW OBTAINED ACHIEVEMENT ICON
+
+            this.stage.getBatch().draw(achievements[1][0],
+                    (float) ((width - achievements[1][0].getRegionWidth()*4) * 0.2),
+                    (float) ((height - achievements[1][0].getRegionHeight()*4) * 0.15),
+                    200,
+                    200);
         } else{
             // DRAW GREYED-OUT ACHIEVEMENT ICON
+
+            this.stage.getBatch().draw(achievements[1][1],
+                    (float) ((width - achievements[1][1].getRegionWidth()*4) * 0.2),
+                    (float) ((height - achievements[1][1].getRegionHeight()*4) * 0.15),
+                    200,
+                    200);
         }
 
         if (streak_bookworm){
@@ -175,8 +191,20 @@ public class EndScreen implements Screen {
                     (float) ((width - athleteText.width) * 0.5),
                     (float) ((height + athleteText.height) * 0.1));
             // DRAW OBTAINED ACHIEVEMENT ICON
+
+            this.stage.getBatch().draw(achievements[0][0],
+                    (float) ((width - achievements[0][0].getRegionWidth()*4) * 0.5),
+                    (float) ((height - achievements[0][0].getRegionHeight()*4) * 0.15),
+                    200,
+                    200);
         } else{
             // DRAW GREYED-OUT ACHIEVEMENT ICON
+
+            this.stage.getBatch().draw(achievements[0][1],
+                    (float) ((width - achievements[0][1].getRegionWidth()*4) * 0.5),
+                    (float) ((height - achievements[0][1].getRegionHeight()*4) * 0.15),
+                    200,
+                    200);
         }
 
         if (streak_clubber){
@@ -186,8 +214,20 @@ public class EndScreen implements Screen {
                     (float) ((width - athleteText.width) * 0.8),
                     (float) ((height + athleteText.height) * 0.1));
             // DRAW OBTAINED ACHIEVEMENT ICON
+
+            this.stage.getBatch().draw(achievements[2][0],
+                    (float) ((width - achievements[2][0].getRegionWidth()*4) * 0.8),
+                    (float) ((height - achievements[2][0].getRegionHeight()*4) * 0.15),
+                    200,
+                    200);
         } else{
             // DRAW GREYED-OUT ACHIEVEMENT ICON
+
+            this.stage.getBatch().draw(achievements[2][1],
+                    (float) ((width - achievements[2][1].getRegionWidth()*4) * 0.8),
+                    (float) ((height - achievements[2][1].getRegionHeight()*4) * 0.15),
+                    200,
+                    200);
         }
 
 
