@@ -33,7 +33,9 @@ public class TutorialScreen implements Screen {
     public TutorialScreen(HeslingtonHustle game, ScreenId previous_screen) {
         this.previous_screen = previous_screen;
         this.game = game;
-        this.tutorial_img = new Texture("TutorialScreen.png");
+
+        // CHANGELOG : UPDATED TUTORIAL SCREEN BACKGROUND
+        this.tutorial_img = new Texture("TutorialScreen_New.png");
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         Gdx.input.setInputProcessor(this.stage);
         initialiseMenu(); // Add menu elements
