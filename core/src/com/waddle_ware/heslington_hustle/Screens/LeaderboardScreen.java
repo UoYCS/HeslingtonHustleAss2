@@ -13,6 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
+import com.waddle_ware.heslington_hustle.Leaderboard;
+
+import java.util.TreeMap;
 
 /**
  * This class represents the games Leaderboard Screen.
@@ -24,6 +27,8 @@ public class LeaderboardScreen implements Screen {
     private final ScreenId previous_screen;
     private final Texture background_image;
 
+    private Leaderboard leaderboard = new Leaderboard();
+
     /**
      * Constructs a new LeaderboardScreen.
      *
@@ -31,13 +36,28 @@ public class LeaderboardScreen implements Screen {
      * @param previous_screen The screen to return to upon pressing the back button.
      */
     public LeaderboardScreen(HeslingtonHustle game, ScreenId previous_screen) {
+
+        leaderboard.addScore("AAA", 90);
+        leaderboard.addScore("BBB", 80);
+        leaderboard.addScore("CCC", 70);
+        leaderboard.addScore("DDD", 65);
+        leaderboard.addScore("EEE", 60);
+        leaderboard.addScore("FFF", 59);
+        leaderboard.addScore("GGG", 58);
+        leaderboard.addScore("HHH", 57);
+        leaderboard.addScore("III", 56);
+        leaderboard.addScore("JJJ", 55);
+
+
+        System.out.println(leaderboard.getHighScores());
+
+
         this.previous_screen = previous_screen;
         this.game = game;
         this.background_image = new Texture("Background_Blurred.png");
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         Gdx.input.setInputProcessor(this.stage);
         initialiseMenu(); // Add menu elements
-
     }
 
     private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
@@ -107,10 +127,14 @@ public class LeaderboardScreen implements Screen {
         this.stage.getBatch().draw(this.background_image, x, y, width, height);
 
 
-        this.stage.getBatch().end();
 
+
+        this.stage.getBatch().end();
         this.stage.draw();
     }
+
+
+
 
     /**
      * Called when the screen is resized.
