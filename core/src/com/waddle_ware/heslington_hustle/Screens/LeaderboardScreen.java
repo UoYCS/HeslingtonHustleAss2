@@ -15,8 +15,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
 
 /**
- * This class represents the games tutorial screen.
- * It displays controls and instructions on how to play the game.
+ * This class represents the games Leaderboard Screen.
+ * It displays the top 10 scores achieved in the game.
  */
 public class LeaderboardScreen implements Screen {
     private final HeslingtonHustle game;
@@ -49,7 +49,7 @@ public class LeaderboardScreen implements Screen {
     }
 
     /**
-     * Initialises the tutorial screen with associated UI elements.
+     * Initialises the Leaderboard screen with associated UI elements.
      */
     private void initialiseMenu() {
         VerticalGroup leader_group = new VerticalGroup();
@@ -105,6 +105,8 @@ public class LeaderboardScreen implements Screen {
         final float x = (this.stage.getViewport().getWorldWidth() - width) / 2;
         final float y = (this.stage.getViewport().getWorldHeight() - height) / 2;
         this.stage.getBatch().draw(this.background_image, x, y, width, height);
+
+
         this.stage.getBatch().end();
 
         this.stage.draw();
