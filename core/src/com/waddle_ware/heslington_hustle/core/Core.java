@@ -1,16 +1,20 @@
 package com.waddle_ware.heslington_hustle.core;
+// CHANGELOG: Added access to Activity Location to be used for streak calculation
+import com.waddle_ware.heslington_hustle.ActivityLocation;
+// CHANGELOG: Added library to help with array processing
+import java.util.Arrays;
 
 /**
  * The Core class represents the core functionality of the game, managing game state, interactions, and scoring.
  */
 public class Core {
     // The constants below define the values for the impact that the individual components will have on the score.
-    private static final int MEAL_SCORE_VALUE = 100;
-    private static final int RELAX_SCORE_VALUE = 100;
+    private static final int MEAL_SCORE_VALUE = 30;
+    private static final int RELAX_SCORE_VALUE = 50;
     private static final int STUDY_SCORE_VALUE = 100;
     private static final int MEAL_SCORE_PENALTY = -100;
     private static final int RELAX_SCORE_PENALTY = -100;
-    private static final int STUDY_TOO_MUCH_PENALTY = -100;
+    private static final int STUDY_TOO_MUCH_PENALTY = -50;
     private static final int TOO_MUCH_STUDY_THRESHOLD = 3;
 
     private static final int MAX_NUMBER_OF_DAYS = 7;
@@ -155,32 +159,277 @@ public class Core {
      * This should only be called once the game has ended.
      * It will throw an exception if called before.
      *
+     * CHANGELOG : Method now takes array of activityLocations
+     * CHANGELOG : Updated all scoring calculations and return score as a percentage from 0-100
+     *
      * @return The total score that the player has achieved
      */
-    public int generateScore() {
+    public int generateScore(ActivityLocation[] activityLocations) {
         if(!isLastDay())
             throw new RuntimeException("generateScore has been called before the game has ended");
+
+        /*
+         * Studying = 1500 pts
+         * Recreation = 1000 pts
+         * Eating = 1000 pts
+         */
+        int max_possible_score = 3500;
+
+        boolean [] streaks = checkStreaks(activityLocations);
+
         int score = 0;
-        for (int i = 0; i < 7; ++i) {
 
-            if(this.meal_count[i] == 0)
-                score += MEAL_SCORE_PENALTY;
-            else
-                score += this.meal_count[i]  * MEAL_SCORE_VALUE;
+        /*
+         * STUDYING POINTS
+         *
+         * Studying more than 10 times a week will remove points from the player
+         * Bonus for studying every day
+         * Bonus for studying across different locations
+         *
+         * Maximum points:
+         * 1000 pts : Studying (up to 10 times)
+         * 250 pts : Bonus for studying every day
+         * 250 pts : Bonus for studying in different locations
+         */
 
-            if(this.relax_count[i] == 0)
-                score += RELAX_SCORE_PENALTY;
-            else
-                score += this.relax_count[i]  * RELAX_SCORE_VALUE;
+        int times_studied = Arrays.stream(this.study_count).sum();
+        int locations_studied = getNumLocationsActivity(activityLocations, ActivityType.Study);
+        int days_studied = getNumDaysActivity(this.study_count);
 
-            if(this.study_count[i] >= TOO_MUCH_STUDY_THRESHOLD)
-                score += STUDY_TOO_MUCH_PENALTY;
-            else
-                score += this.study_count[i]  * STUDY_SCORE_VALUE;
-
+        // POINTS FOR STUDYING
+        if (times_studied <= 10){
+            score += times_studied * STUDY_SCORE_VALUE;
+        } else {
+            score += 10 * STUDY_SCORE_VALUE;
+            score -= (times_studied-10) * STUDY_SCORE_VALUE/2;
         }
-        return score;
+
+        // BONUS FOR STUDYING EVERYDAY
+        if (days_studied == 7){
+            score += 250;
+        } else if (days_studied == 6){
+            if (times_studied > 6){
+                score += 250;
+            }
+        }
+
+        // BONUS FOR STUDYING IN DIFFERENT PLACES
+        if (locations_studied > 1){
+            score += 250;
+        }
+
+
+
+        /*
+         * RECREATIONAL POINTS.
+         *
+         * Points rewarded everytime up to 14 times
+         * Bonus for doing recreation every day
+         * Bonus for doing recreation across different locations
+         *
+         * Maximum points:
+         * 700 pts : Studying (up to 14 times)
+         * 150 pts : Bonus for doing recreation every day
+         * 150 pts : Bonus for doing recreation in different locations
+         */
+
+
+        int times_rec = Arrays.stream(this.relax_count).sum();
+        int days_rec = getNumDaysActivity(this.relax_count);
+        int locations_rec = getNumLocationsActivity(activityLocations, ActivityType.Recreation);
+
+        // Points for studying
+        score += Math.min(times_rec, 14) * RELAX_SCORE_VALUE;
+
+        // Bonus for everyday
+        if (days_rec == 7){
+            score += RELAX_SCORE_VALUE * 3;
+        }
+
+        // No bonus if recreation at 1 place
+        // Bonus of 100 if done at 2 places
+        // Bonus of 150 if done at 3 places
+        if (locations_rec == 2){
+            score += (RELAX_SCORE_VALUE * 2);
+        } else if (locations_rec == 3) {
+            score += (RELAX_SCORE_VALUE * 3);
+        }
+
+
+        /*
+         * EATING POINTS.
+         *
+         * Points awarded for eating food
+         * Bonus for eating 3 times a day
+         *
+         * Maximum points:
+         * 840 pts : Eating 3 times a day = 3*30 + bonus 30
+         * 90 pts : Bonus for eating in different locations
+         * 70 pts : Bonus for eating everyday
+         */
+
+
+        int times_eaten = Arrays.stream(this.meal_count).sum();
+        int locations_eaten = getNumLocationsActivity(activityLocations, ActivityType.Food);
+        int days_eaten = getNumDaysActivity(this.meal_count);
+
+        for (int num : this.meal_count){
+            switch (num) {
+                case 1:
+                    score += MEAL_SCORE_VALUE;
+                    break;
+
+                case 2:
+                    score += MEAL_SCORE_VALUE * 2;
+                    break;
+
+                case 3:
+                    score += MEAL_SCORE_VALUE * 4;
+                    break;
+
+            }
+        }
+
+        // No bonus if recreation at 1 place
+        // Bonus of 30 if done at 2 places
+        // Bonus of 90 if done at 3 places
+        if (locations_eaten == 2){
+            score += (MEAL_SCORE_VALUE);
+        } else if (locations_eaten == 3) {
+            score += (MEAL_SCORE_VALUE * 3);
+        }
+
+        if (days_eaten == 7){
+            score += 70;
+        }
+
+
+//        for (int i = 0; i < 7; ++i) {
+//
+//            if(this.meal_count[i] == 0)
+//                score += MEAL_SCORE_PENALTY;
+//            else
+//                score += this.meal_count[i]  * MEAL_SCORE_VALUE;
+//
+//            if(this.relax_count[i] == 0)
+//                score += RELAX_SCORE_PENALTY;
+//            else
+//                score += this.relax_count[i]  * RELAX_SCORE_VALUE;
+//
+//            if(this.study_count[i] >= TOO_MUCH_STUDY_THRESHOLD)
+//                score += STUDY_TOO_MUCH_PENALTY;
+//            else
+//                score += this.study_count[i]  * STUDY_SCORE_VALUE;
+//
+//        }
+
+        // CHANGELOG : PREVENT NEGATIVE SCORE
+        if (score < 0){
+            score = 0;
+        }
+
+        // CHANGELOG : MAP SCORE TO A PERCENT OUT OF 100
+        int percent_score = (int)(((double)score / max_possible_score) * 100);
+
+        // CHANGELOG : ADD STREAK BONUSES AS EXTRA 10%
+        for (boolean streak : streaks){
+            if (streak){
+                percent_score += 10;
+            }
+        }
+
+        // CHANGELOG : CAP PERCENTAGE SCORE AT 100
+        if (percent_score > 100){
+            percent_score = 100;
+        }
+
+        return percent_score;
     }
+
+    /**
+     * CHANGELOG : NEW METHOD
+     *
+     * Takes in an array of activities and an Acitivty type and returns then number of different
+     * locations that type of activity was done in
+     *
+     * @param activities Array of ActivityLocations
+     * @param type Type of activity to check
+     * @return Number of different locations the player did that type of activity
+     */
+    private int getNumLocationsActivity(ActivityLocation[] activities, ActivityType type){
+        int locations = 0;
+
+        for (ActivityLocation activity : activities) {
+            if (activity.getType() == type){
+                if (Arrays.stream(activity.getInteractions()).sum() > 0){
+                    locations ++;}
+            }
+        }
+
+        return locations;
+    }
+
+
+    /**
+     * CHANGELOG : NEW METHOD
+     *
+     * Takes in the activity counter arrays and returns the number of days it was done on
+     *
+     * @param list Array of ActivityLocations
+     * @return Number of different days the player did that type of activity
+     */
+    private int getNumDaysActivity(int[] list){
+        int days_done = 0;
+
+        for (int num : list){
+            if (num > 0){
+                days_done ++;}
+        }
+
+        return days_done;
+    }
+
+
+    /**
+     * CHANGELOG: NEW METHOD
+     * This method checks if the user has completed the streak achievements:
+     * Athlete for playing football, Bookworm for library, and Clubber for clubbing
+     *
+     * @param activityLocations List of activity location objects
+     * @return Boolean array, True/False for each streak completed
+     */
+    public boolean[] checkStreaks(ActivityLocation[] activityLocations){
+        boolean[] streakArray = new boolean[3];
+
+        for (ActivityLocation activity : activityLocations) {
+            // For each activity, check if the streak condition has been met.
+            // If so, set the relevant array index to true
+            switch (activity.getName()){
+                case "play football":
+                    if (Arrays.stream(activity.getInteractions()).sum() >= 4){
+                        streakArray[0] = true;}
+                    break;
+
+                case "study at library":
+                    if (Arrays.stream(activity.getInteractions()).sum() >= 4){
+                        streakArray[1] = true;}
+                    break;
+
+                case "go clubbing":
+                    if (Arrays.stream(activity.getInteractions()).sum() >= 4){
+                        streakArray[2] = true;}
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        return streakArray;
+    }
+
+
+
 
     /**
      * Returns the day. NOT zero indexed
