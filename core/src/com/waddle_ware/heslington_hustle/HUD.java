@@ -24,6 +24,7 @@ public class HUD {
     CharSequence eaten;
     CharSequence current_day;
     FreeTypeFontGenerator font_gen;
+    private int current_map_section;
 
     /**
      * Constructs a HUD object.
@@ -62,11 +63,14 @@ public class HUD {
      * @param batch The Batch object used for rendering.
      */
     public void render(Batch batch) {
-        this.font.draw(batch, this.energy,       580, 400);
-        this.font.draw(batch, this.time,         580, 380);
-        this.font.draw(batch, this.studied,      580, 360);
-        this.font.draw(batch, this.eaten,        580, 340);
-        this.font.draw(batch, this.current_day,  580, 320);
+
+        int x_location = 580 + ((current_map_section+1)*(768));
+
+        this.font.draw(batch, this.energy,       x_location, 400);
+        this.font.draw(batch, this.time,         x_location, 380);
+        this.font.draw(batch, this.studied,      x_location, 360);
+        this.font.draw(batch, this.eaten,        x_location, 340);
+        this.font.draw(batch, this.current_day,  x_location, 320);
     }
 
     /**
@@ -74,7 +78,8 @@ public class HUD {
      *
      * @param c The Core object providing updated game data.
      */
-    public void update(Core c) {
+    public void update(Core c, int map_section) {
+        this.current_map_section = map_section;
         this.energy = String.format("Energy: %d / %d", c.getCurrentEnergy(), c.getEnergyLimit());
         this.time   = String.format("Time: %d mins / %d mins", c.getTimeRemaining(), c.getTimeLimit());
         this.studied = String.format("Studied: %d", c.getTimesStudiedToday());

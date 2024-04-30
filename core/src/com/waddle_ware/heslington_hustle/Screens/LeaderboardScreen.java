@@ -13,29 +13,48 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
+import com.waddle_ware.heslington_hustle.Leaderboard;
+
+import java.util.TreeMap;
 
 /**
- * This class represents the games tutorial screen.
- * It displays controls and instructions on how to play the game.
+ * This class represents the games Leaderboard Screen.
+ * It displays the top 10 scores achieved in the game.
  */
-public class TutorialScreen implements Screen {
+public class LeaderboardScreen implements Screen {
     private final HeslingtonHustle game;
     private final Stage stage;
     private final ScreenId previous_screen;
-    private final Texture tutorial_img;
+    private final Texture background_image;
+
+    private Leaderboard leaderboard = new Leaderboard();
 
     /**
-     * Constructs a new TutorialScreen.
+     * Constructs a new LeaderboardScreen.
      *
      * @param game             The game instance.
      * @param previous_screen The screen to return to upon pressing the back button.
      */
-    public TutorialScreen(HeslingtonHustle game, ScreenId previous_screen) {
+    public LeaderboardScreen(HeslingtonHustle game, ScreenId previous_screen) {
+
+        leaderboard.addScore("AAA", 90);
+        leaderboard.addScore("BBB", 80);
+        leaderboard.addScore("CCC", 70);
+        leaderboard.addScore("DDD", 65);
+        leaderboard.addScore("EEE", 60);
+        leaderboard.addScore("FFF", 59);
+        leaderboard.addScore("GGG", 58);
+        leaderboard.addScore("HHH", 57);
+        leaderboard.addScore("III", 56);
+        leaderboard.addScore("JJJ", 55);
+
+
+        System.out.println(leaderboard.getHighScores());
+
+
         this.previous_screen = previous_screen;
         this.game = game;
-
-        // CHANGELOG : UPDATED TUTORIAL SCREEN BACKGROUND
-        this.tutorial_img = new Texture("TutorialScreen_New.png");
+        this.background_image = new Texture("Background_Blurred.png");
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         Gdx.input.setInputProcessor(this.stage);
         initialiseMenu(); // Add menu elements
@@ -50,13 +69,13 @@ public class TutorialScreen implements Screen {
     }
 
     /**
-     * Initialises the tutorial screen with associated UI elements.
+     * Initialises the Leaderboard screen with associated UI elements.
      */
     private void initialiseMenu() {
-        VerticalGroup tutorial_group = new VerticalGroup();
-        tutorial_group.setFillParent(true);
-        tutorial_group.left().top().padTop(7);
-        this.stage.addActor(tutorial_group);
+        VerticalGroup leader_group = new VerticalGroup();
+        leader_group.setFillParent(true);
+        leader_group.left().top().padTop(7);
+        this.stage.addActor(leader_group);
 
         // Back button
         ImageButton back_button = new ImageButton(createTexRegDraw("BackButton.png"));
@@ -73,7 +92,7 @@ public class TutorialScreen implements Screen {
                 }
             }
         });
-        tutorial_group.addActor(back_button);
+        leader_group.addActor(back_button);
     }
 
     /**
@@ -98,18 +117,24 @@ public class TutorialScreen implements Screen {
         this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 
         this.stage.getBatch().begin();
-        final float scaleX = this.stage.getViewport().getWorldWidth() / this.tutorial_img.getWidth();
-        final float scaleY = this.stage.getViewport().getWorldHeight() / this.tutorial_img.getHeight();
+        final float scaleX = this.stage.getViewport().getWorldWidth() / this.background_image.getWidth();
+        final float scaleY = this.stage.getViewport().getWorldHeight() / this.background_image.getHeight();
         final float scale = Math.min(scaleX, scaleY);
-        final float width = this.tutorial_img.getWidth() * scale;
-        final float height = this.tutorial_img.getHeight() * scale;
+        final float width = this.background_image.getWidth() * scale;
+        final float height = this.background_image.getHeight() * scale;
         final float x = (this.stage.getViewport().getWorldWidth() - width) / 2;
         final float y = (this.stage.getViewport().getWorldHeight() - height) / 2;
-        this.stage.getBatch().draw(this.tutorial_img, x, y, width, height);
-        this.stage.getBatch().end();
+        this.stage.getBatch().draw(this.background_image, x, y, width, height);
 
+
+
+
+        this.stage.getBatch().end();
         this.stage.draw();
     }
+
+
+
 
     /**
      * Called when the screen is resized.
@@ -145,7 +170,5 @@ public class TutorialScreen implements Screen {
      */
     @Override
     public void dispose() {
-        this.stage.dispose();
-        this.tutorial_img.dispose();
     }
 }
