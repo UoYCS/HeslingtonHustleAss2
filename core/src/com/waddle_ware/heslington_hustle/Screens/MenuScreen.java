@@ -33,7 +33,9 @@ public class MenuScreen implements Screen {
         this.game = game;
         this.stage = new Stage(new FitViewport(1920, 1080));
         Gdx.input.setInputProcessor(this.stage);
-        this.background  = new Texture("MenuScreen.png");
+
+        // CHANGELOG : UPDATED MAIN MENU BACKGROUND
+        this.background  = new Texture("MenuScreen_New.png");
         initialiseMenu(); // Add menu elements
     }
 
@@ -79,6 +81,15 @@ public class MenuScreen implements Screen {
             }
         });
 
+        // CHANGELOG : ADDED LEADERBOARD BUTTON TO MAIN MENU
+        ImageButton leader_button = new ImageButton(createTexRegDraw("LeaderButton.png"));
+        leader_button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new LeaderboardScreen(game, ScreenId.MenuScreen));
+            }
+        });
+
         // Exit button
         ImageButton exit_button = new ImageButton(createTexRegDraw("ExitButton.png"));
         exit_button.addListener(new ClickListener() {
@@ -90,6 +101,7 @@ public class MenuScreen implements Screen {
 
         menu_group.addActor(play_button);
         menu_group.addActor(tutorial_button);
+        menu_group.addActor(leader_button);
         menu_group.addActor(exit_button);
     }
 
