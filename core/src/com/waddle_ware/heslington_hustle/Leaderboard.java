@@ -1,32 +1,45 @@
 package com.waddle_ware.heslington_hustle;
 import java.io.*;
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Map;
-import java.util.TreeMap;
-
 
 public class Leaderboard {
     private final String PATH = "leaderboard.txt";
     private final int NUM_SCORES = 10;
-    private TreeMap<String, Integer> highscores;
+    private UserScore[] highscores;
 
 
     public Leaderboard() {
-        highscores = new TreeMap<>(Comparator.reverseOrder());
-        getScoresFromFile();
+        highscores = new UserScore[NUM_SCORES];
+        readScores();
     }
 
-    private void getScoresFromFile(){
+    private void readScores(){
 
     }
 
     public void addScore(String userName, int score){
-        highscores.put(userName, score);
-        if (highscores.size() > NUM_SCORES){
-            highscores.remove(highscores.lastKey());}
+        UserScore newScore = new UserScore(userName, score);
+
+        if (highscores[NUM_SCORES - 1] == null || score > highscores[NUM_SCORES - 1].getScore()) {
+
+            highscores[NUM_SCORES - 1] = newScore;
+            Arrays.sort(highscores, Comparator.comparingInt(us -> {
+                if (us == null) {
+                    return Integer.MIN_VALUE;
+                } else {
+                    return ((UserScore) us).getScore();
+                }
+            }).reversed());
+
+            writeScores();
+        }
     }
 
-    public TreeMap<String, Integer> getHighScores() {
+    public void writeScores(){
+
+    }
+    public UserScore[] getHighScores() {
         return highscores;
     }
 }

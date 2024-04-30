@@ -2,9 +2,13 @@ package com.waddle_ware.heslington_hustle.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -14,8 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
 import com.waddle_ware.heslington_hustle.Leaderboard;
-
-import java.util.TreeMap;
+import com.waddle_ware.heslington_hustle.UserScore;
 
 /**
  * This class represents the games Leaderboard Screen.
@@ -26,6 +29,9 @@ public class LeaderboardScreen implements Screen {
     private final Stage stage;
     private final ScreenId previous_screen;
     private final Texture background_image;
+    private final FreeTypeFontGenerator font_gen;
+    private final BitmapFont font;
+    private String displayText;
 
     private Leaderboard leaderboard = new Leaderboard();
 
@@ -37,19 +43,17 @@ public class LeaderboardScreen implements Screen {
      */
     public LeaderboardScreen(HeslingtonHustle game, ScreenId previous_screen) {
 
-        leaderboard.addScore("AAA", 90);
+        leaderboard.addScore("AAA", 100);
         leaderboard.addScore("BBB", 80);
+        leaderboard.addScore("AAA", 90);
+        leaderboard.addScore("AAA", 90);
+        leaderboard.addScore("AAA", 90);
+        leaderboard.addScore("AAA", 90);
+        leaderboard.addScore("AAA", 90);
         leaderboard.addScore("CCC", 70);
         leaderboard.addScore("DDD", 65);
-        leaderboard.addScore("EEE", 60);
-        leaderboard.addScore("FFF", 59);
-        leaderboard.addScore("GGG", 58);
-        leaderboard.addScore("HHH", 57);
-        leaderboard.addScore("III", 56);
-        leaderboard.addScore("JJJ", 55);
+        leaderboard.addScore("EEE", 9);
 
-
-        System.out.println(leaderboard.getHighScores());
 
 
         this.previous_screen = previous_screen;
@@ -58,6 +62,28 @@ public class LeaderboardScreen implements Screen {
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         Gdx.input.setInputProcessor(this.stage);
         initialiseMenu(); // Add menu elements
+
+
+        this.font_gen = new FreeTypeFontGenerator(Gdx.files.internal("OETZTYP_.TTF"));
+        this.font = genFont();
+
+        this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+
+    }
+
+    /**
+     * Generates a custom font for displaying the player's score on the end screen.
+     *
+     * @return The generated BitmapFont object with custom font settings.
+     */
+    private BitmapFont genFont() {
+        FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        param.size = 50;
+        param.borderColor = Color.BLACK;
+        param.borderWidth = (float) 6.0;
+        param.borderStraight = false;
+        return font_gen.generateFont(param);
     }
 
     private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
@@ -102,6 +128,26 @@ public class LeaderboardScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(this.stage);
+
+        int i = 1;
+        String result = "";
+        for (UserScore score : this.leaderboard.getHighScores()){
+            int dots = (8 - (Integer.toString(score.getScore())).length());
+
+            if (i != 10){
+                result += " ";
+            }
+
+            result += i + ". " + score.getPlayerName() + ".".repeat(dots) + score.getScore() + "\n";
+            i++;
+
+        }
+        this.displayText = result;
+
+
+
+
+
     }
 
     /**
@@ -127,6 +173,22 @@ public class LeaderboardScreen implements Screen {
         this.stage.getBatch().draw(this.background_image, x, y, width, height);
 
 
+        // Drawing Title to screen
+        GlyphLayout endText = new GlyphLayout(this.font, this.displayText);
+        this.font.draw(this.stage.getBatch(),
+                this.displayText,
+                (float) ((width - endText.width) / 2),
+                (float) ((height + endText.height) / 2));
+
+
+        String temp = " 1.\n 2.\n 3.\n 4.\n 5.\n 6.\n 7.\n 8.\n 9.\n10.";
+
+        // Drawing Title to screen
+        GlyphLayout numListText = new GlyphLayout(this.font, temp);
+        this.font.draw(this.stage.getBatch(),
+                temp,
+                (float) ((width - endText.width) / 3),
+                (float) ((height + endText.height) / 2));
 
 
         this.stage.getBatch().end();
