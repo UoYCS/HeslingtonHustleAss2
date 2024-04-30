@@ -20,13 +20,13 @@ public class Leaderboard {
 
     }
 
-    private void addScore(String userName, int score){
+    public void addScore(String userName, int score){
         highscores.put(userName, score);
         if (highscores.size() > NUM_SCORES){
             highscores.remove(highscores.lastKey());}
     }
 
-    public TreeMap<String, Integer> getHighscores() {
+    public TreeMap<String, Integer> getHighScores() {
         return highscores;
     }
 }
