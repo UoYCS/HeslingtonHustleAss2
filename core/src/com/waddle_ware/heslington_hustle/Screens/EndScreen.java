@@ -57,7 +57,7 @@ public class EndScreen implements Screen {
      */
     public EndScreen(HeslingtonHustle game, boolean has_won, int score, boolean[] streaks) {
         this.game = game;
-        this.score = score;
+
 
         // CHANGELOG : ADDED UPDATED MAP BACKGROUND FOR END SCREEN
         this.to_render = new Texture("Background_Blurred.png");
@@ -68,10 +68,12 @@ public class EndScreen implements Screen {
 
         // CHANGELOG : If the player has won and the score > 40, set the status text accordingly
         if(has_won && score >= 40) {
-            this.status_text = "You Won!";}
+            this.status_text = "You Won!";
+            this.score = score;
+        }
         else {
-            // If the player lost, cap the score at 39 and set the status text
-            score = Math.min(39, score);
+            // CHANGELOG : If the player lost, cap the score at 39 and set the status text
+            this.score = Math.min(39, score);
             this.status_text = "You Lose";}
 
 
