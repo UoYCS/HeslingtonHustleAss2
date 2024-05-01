@@ -26,7 +26,13 @@ import com.waddle_ware.heslington_hustle.Leaderboard;
 
 import java.util.Arrays;
 
-
+/**
+ * CHANGELOG : NEW CLASS
+ *
+ * This class handles the screen in which the
+ * user enters their name upon game completion
+ *
+ */
 public class NameScreen implements Screen, InputProcessor {
     private final HeslingtonHustle game;
     private final Stage stage;
@@ -34,11 +40,20 @@ public class NameScreen implements Screen, InputProcessor {
     private final Texture to_render;
 
     private final FreeTypeFontGenerator font_gen;
+    private final BitmapFont small_font;
     private final BitmapFont font;
 
+    // Initialise the players name and length
     private char[] current_name = {' ', ' ', ' '};
     private int current_name_length;
+    private String msg = null;
 
+    /**
+     * Constructs a new NameScreen.
+     *
+     * @param game      The game instance.
+     * @param score     The player's score at the end of the game.
+     */
     public NameScreen(HeslingtonHustle game, int score) {
         this.game = game;
         this.score = score;
@@ -46,7 +61,10 @@ public class NameScreen implements Screen, InputProcessor {
         this.to_render = new Texture("Background_Blurred.png");
 
 
+        // Generating fonts for screen
         this.font_gen = new FreeTypeFontGenerator(Gdx.files.internal("OETZTYP_.TTF"));
+        this.small_font = genFont(this.font_gen, 50, 3f);
+        this.small_font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         this.font = genFont(this.font_gen, 150, 6f);
         this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
@@ -63,6 +81,9 @@ public class NameScreen implements Screen, InputProcessor {
         return style;
     }
 
+    /**
+     * Initialises menu elements, such as buttons and their listeners.
+     */
     private void initialiseMenu(){
         VerticalGroup name_screen_group = new VerticalGroup();
         name_screen_group.setFillParent(true);
@@ -75,19 +96,31 @@ public class NameScreen implements Screen, InputProcessor {
         continue_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println(current_name);
+                String name = new String(current_name);
+                System.out.println(name);
                 System.out.println(score);
 
-                Leaderboard l = new Leaderboard();
-                l.addScore(Arrays.toString(current_name), score);
-                game.setScreen(new MenuScreen(game));
-
+                if (current_name_length == 3) {
+                    Leaderboard l = new Leaderboard();
+                    l.addScore(name, score);
+                    game.setScreen(new MenuScreen(game));
+                } else {
+                    msg = "Name must be 3 digits";
+                }
             }
         });
 
         name_screen_group.addActor(continue_button);
     }
 
+
+    /**
+     * Generates a custom font for displaying the player's score on the end screen.
+     *
+     * @return The generated BitmapFont object with custom font settings.
+     * @param size Font size of generated font
+     * @param borderWidth Border width of generated font
+     */
     private BitmapFont genFont(FreeTypeFontGenerator gen, int size, float borderWidth) {
         FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
         param.size = size;
@@ -97,6 +130,11 @@ public class NameScreen implements Screen, InputProcessor {
         return gen.generateFont(param);
     }
 
+    /**
+     * Called when this screen becomes the current screen of the game.
+     * Sets the input processor to a InputMultiplexer,
+     * allowing it to receive input events from the keyboard and buttons.
+     */
     @Override
     public void show() {
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -139,12 +177,12 @@ public class NameScreen implements Screen, InputProcessor {
                 (float) ((height + titleText.height) / 1.3));
 
 
+        // DRAW CURRENT INPUTTED NAME TO SCREEN
         String name = "";
         for (char c : this.current_name){
             if (c != ' '){
                 name += Character.toString(c);}
         }
-
         GlyphLayout nameText = new GlyphLayout(this.font, name);
         this.font.draw(this.stage.getBatch(),
                 name,
@@ -152,11 +190,28 @@ public class NameScreen implements Screen, InputProcessor {
                 (float) ((height + nameText.height) / 2.0));
 
 
+        // SHOW MESSAGE POPUP IF THE USER TRIES TO CONTINUE WITH A NOT FULL NAME
+        if (this.msg != null) {
+            GlyphLayout msgText = new GlyphLayout(this.small_font, this.msg);
+            this.small_font.draw(this.stage.getBatch(),
+                    this.msg,
+                    (float) ((width - msgText.width) / 2.0),
+                    (float) (msgText.height + 30));
+        }
+
+
         this.stage.getBatch().end();
         this.stage.draw();
     }
 
 
+    /**
+     * Called when a key is pressed down
+     * Used to implement backspace functionality to
+     * remove a letter from the inputted name
+     * @param keycode
+     * @return
+     */
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.BACKSPACE) {
