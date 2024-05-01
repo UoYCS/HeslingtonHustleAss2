@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -17,6 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.waddle_ware.heslington_hustle.Button;
+import com.waddle_ware.heslington_hustle.Font;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
 import com.badlogic.gdx.InputMultiplexer;
 
@@ -39,7 +40,6 @@ public class NameScreen implements Screen, InputProcessor {
     private final int score;
     private final Texture to_render;
 
-    private final FreeTypeFontGenerator font_gen;
     private final BitmapFont small_font;
     private final BitmapFont font;
 
@@ -61,25 +61,14 @@ public class NameScreen implements Screen, InputProcessor {
         this.to_render = new Texture("Background_Blurred.png");
 
 
-        // Generating fonts for screen
-        this.font_gen = new FreeTypeFontGenerator(Gdx.files.internal("OETZTYP_.TTF"));
-        this.small_font = genFont(this.font_gen, 50, 3f);
-        this.small_font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        this.font = genFont(this.font_gen, 150, 6f);
-        this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        this.small_font = Font.getGameFont(50, 3f);
+        this.font = Font.getGameFont(150, 6f);
 
 
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         initialiseMenu();
     }
 
-    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
-        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
-        style.imageUp.setMinWidth(475);
-        style.imageUp.setMinHeight(125);
-        return style;
-    }
 
     /**
      * Initialises menu elements, such as buttons and their listeners.
@@ -91,7 +80,7 @@ public class NameScreen implements Screen, InputProcessor {
         this.stage.addActor(name_screen_group);
 
         // Continue Button
-        ImageButton continue_button = new ImageButton(createTexRegDraw("ContinueButton.png"));
+        ImageButton continue_button = new ImageButton(Button.createTexRegDraw("ContinueButton.png"));
 
         continue_button.addListener(new ClickListener() {
             @Override
@@ -114,21 +103,6 @@ public class NameScreen implements Screen, InputProcessor {
     }
 
 
-    /**
-     * Generates a custom font for displaying the player's score on the end screen.
-     *
-     * @return The generated BitmapFont object with custom font settings.
-     * @param size Font size of generated font
-     * @param borderWidth Border width of generated font
-     */
-    private BitmapFont genFont(FreeTypeFontGenerator gen, int size, float borderWidth) {
-        FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        param.size = size;
-        param.borderColor = Color.BLACK;
-        param.borderWidth = borderWidth;
-        param.borderStraight = false;
-        return gen.generateFont(param);
-    }
 
     /**
      * Called when this screen becomes the current screen of the game.
