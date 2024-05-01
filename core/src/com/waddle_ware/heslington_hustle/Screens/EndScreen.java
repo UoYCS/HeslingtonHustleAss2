@@ -10,9 +10,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
 
@@ -26,7 +28,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 public class EndScreen implements Screen {
     private final HeslingtonHustle game;
     private final Stage stage;
-    private final CharSequence player_score;
+    private final int score;
     private final Texture to_render;
     private final FreeTypeFontGenerator font_gen;
     private final BitmapFont font;
@@ -56,6 +58,7 @@ public class EndScreen implements Screen {
     public EndScreen(HeslingtonHustle game, boolean has_won, int score, boolean[] streaks) {
         this.game = game;
 
+
         // CHANGELOG : ADDED UPDATED MAP BACKGROUND FOR END SCREEN
         this.to_render = new Texture("Background_Blurred.png");
 
@@ -65,10 +68,12 @@ public class EndScreen implements Screen {
 
         // CHANGELOG : If the player has won and the score > 40, set the status text accordingly
         if(has_won && score >= 40) {
-            this.status_text = "You Won!";}
+            this.status_text = "You Won!";
+            this.score = score;
+        }
         else {
-            // If the player lost, cap the score at 39 and set the status text
-            score = Math.min(39, score);
+            // CHANGELOG : If the player lost, cap the score at 39 and set the status text
+            this.score = Math.min(39, score);
             this.status_text = "You Lose";}
 
 
@@ -83,11 +88,38 @@ public class EndScreen implements Screen {
         this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         this.big_font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-        // CHANGELOG : SCORE IS NOW MAPPED FROM 0-100
-        this.player_score = Integer.toString(score) + " / 100";
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         Gdx.input.setInputProcessor(this.stage);
+        initialiseMenu();
     }
+
+    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
+        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
+        style.imageUp.setMinWidth(475);
+        style.imageUp.setMinHeight(125);
+        return style;
+    }
+
+    private void initialiseMenu(){
+        VerticalGroup end_screen_group = new VerticalGroup();
+        end_screen_group.setFillParent(true);
+        end_screen_group.right().bottom().padBottom(7);
+        this.stage.addActor(end_screen_group);
+
+        // Continue Button
+        ImageButton continue_button = new ImageButton(createTexRegDraw("ContinueButton.png"));
+        continue_button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // NameEntryScreen
+                game.setScreen(new NameScreen(game, score ));
+            }
+        });
+        end_screen_group.addActor(continue_button);
+
+    }
+
 
     /**
      * Generates a custom font for displaying the player's score on the end screen.
@@ -151,11 +183,12 @@ public class EndScreen implements Screen {
                 "Your Score",
                 (float) ((width - scoreText.width) / 2.0),
                 (float) ((height + scoreText.height) / 1.8));
-        GlyphLayout scoreNum = new GlyphLayout(this.font, this.player_score);
+        GlyphLayout scoreNum = new GlyphLayout(this.font, Integer.toString(this.score) + " / 100");
         this.font.draw(this.stage.getBatch(),
-                this.player_score,
+                Integer.toString(this.score) + " / 100",
                 (float) ((width - scoreNum.width) / 2.0),
                 (float) ((height + scoreNum.height) / 2.4));
+
 
 
         // DRAW TEXT/ICONS FOR WHICH STREAKS WERE OBTAINED
@@ -164,13 +197,13 @@ public class EndScreen implements Screen {
             GlyphLayout athleteText = new GlyphLayout(this.small_font, "Athlete +10");
             this.small_font.draw(this.stage.getBatch(),
                     "Athlete +10",
-                    (float) ((width - athleteText.width) * 0.2),
+                    (float) ((width - athleteText.width) * 0.3),
                     (float) ((height + athleteText.height) * 0.1));
 
             // DRAW OBTAINED ACHIEVEMENT ICON
 
             this.stage.getBatch().draw(achievements[1][0],
-                    (float) ((width - achievements[1][0].getRegionWidth()*4) * 0.2),
+                    (float) ((width - achievements[1][0].getRegionWidth()*4) * 0.3),
                     (float) ((height - achievements[1][0].getRegionHeight()*4) * 0.15),
                     200,
                     200);
@@ -178,18 +211,18 @@ public class EndScreen implements Screen {
             // DRAW GREYED-OUT ACHIEVEMENT ICON
 
             this.stage.getBatch().draw(achievements[1][1],
-                    (float) ((width - achievements[1][1].getRegionWidth()*4) * 0.2),
+                    (float) ((width - achievements[1][1].getRegionWidth()*4) * 0.3),
                     (float) ((height - achievements[1][1].getRegionHeight()*4) * 0.15),
                     200,
                     200);
         }
 
         if (streak_bookworm){
-            GlyphLayout athleteText = new GlyphLayout(this.small_font, "Bookworm +10");
+            GlyphLayout bookwormText = new GlyphLayout(this.small_font, "Bookworm +10");
             this.small_font.draw(this.stage.getBatch(),
                     "Bookworm +10",
-                    (float) ((width - athleteText.width) * 0.5),
-                    (float) ((height + athleteText.height) * 0.1));
+                    (float) ((width - bookwormText.width) * 0.5),
+                    (float) ((height + bookwormText.height) * 0.1));
             // DRAW OBTAINED ACHIEVEMENT ICON
 
             this.stage.getBatch().draw(achievements[0][0],
@@ -207,16 +240,18 @@ public class EndScreen implements Screen {
                     200);
         }
 
+
+
         if (streak_clubber){
-            GlyphLayout athleteText = new GlyphLayout(this.small_font, "Clubber +10");
+            GlyphLayout clubberText = new GlyphLayout(this.small_font, "Clubber +10");
             this.small_font.draw(this.stage.getBatch(),
                     "Clubber +10",
-                    (float) ((width - athleteText.width) * 0.8),
-                    (float) ((height + athleteText.height) * 0.1));
+                    (float) ((width - clubberText.width) * 0.7),
+                    (float) ((height + clubberText.height) * 0.1));
             // DRAW OBTAINED ACHIEVEMENT ICON
 
             this.stage.getBatch().draw(achievements[2][0],
-                    (float) ((width - achievements[2][0].getRegionWidth()*4) * 0.8),
+                    (float) ((width - achievements[2][0].getRegionWidth()*4) * 0.7),
                     (float) ((height - achievements[2][0].getRegionHeight()*4) * 0.15),
                     200,
                     200);
@@ -224,7 +259,7 @@ public class EndScreen implements Screen {
             // DRAW GREYED-OUT ACHIEVEMENT ICON
 
             this.stage.getBatch().draw(achievements[2][1],
-                    (float) ((width - achievements[2][1].getRegionWidth()*4) * 0.8),
+                    (float) ((width - achievements[2][1].getRegionWidth()*4) * 0.7),
                     (float) ((height - achievements[2][1].getRegionHeight()*4) * 0.15),
                     200,
                     200);

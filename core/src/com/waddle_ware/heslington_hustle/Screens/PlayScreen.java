@@ -166,10 +166,7 @@ public class PlayScreen implements Screen {
         this.world_height = map_tile_height * tile_size;
 
 
-
-
-        System.out.printf("width: %f, height: %f", this.world_width, this.world_height);
-
+        
         this.player = new Avatar(0, 0, this.world_height, this.world_width);
         this.player.setPlayerLoc(260+ (2*48*16), 250);
 
