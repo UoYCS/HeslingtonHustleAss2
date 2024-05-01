@@ -42,20 +42,6 @@ public class LeaderboardScreen implements Screen {
      * @param previous_screen The screen to return to upon pressing the back button.
      */
     public LeaderboardScreen(HeslingtonHustle game, ScreenId previous_screen) {
-
-        leaderboard.addScore("AAA", 100);
-        leaderboard.addScore("BBB", 80);
-        leaderboard.addScore("AAA", 90);
-        leaderboard.addScore("AAA", 90);
-        leaderboard.addScore("AAA", 90);
-        leaderboard.addScore("AAA", 90);
-        leaderboard.addScore("AAA", 90);
-        leaderboard.addScore("CCC", 70);
-        leaderboard.addScore("DDD", 65);
-        leaderboard.addScore("EEE", 9);
-
-
-
         this.previous_screen = previous_screen;
         this.game = game;
         this.background_image = new Texture("Background_Blurred.png");
@@ -132,7 +118,10 @@ public class LeaderboardScreen implements Screen {
         int i = 1;
         String result = "";
         for (UserScore score : this.leaderboard.getHighScores()){
-            int dots = (8 - (Integer.toString(score.getScore())).length());
+            if (score == null){
+                break;
+            }
+            int dots = (20 - (Integer.toString(score.getScore())).length());
 
             if (i != 10){
                 result += " ";
@@ -173,22 +162,12 @@ public class LeaderboardScreen implements Screen {
         this.stage.getBatch().draw(this.background_image, x, y, width, height);
 
 
-        // Drawing Title to screen
         GlyphLayout endText = new GlyphLayout(this.font, this.displayText);
         this.font.draw(this.stage.getBatch(),
                 this.displayText,
                 (float) ((width - endText.width) / 2),
-                (float) ((height + endText.height) / 2));
+                (float) ((height) / 1.3));
 
-
-        String temp = " 1.\n 2.\n 3.\n 4.\n 5.\n 6.\n 7.\n 8.\n 9.\n10.";
-
-        // Drawing Title to screen
-        GlyphLayout numListText = new GlyphLayout(this.font, temp);
-        this.font.draw(this.stage.getBatch(),
-                temp,
-                (float) ((width - endText.width) / 3),
-                (float) ((height + endText.height) / 2));
 
 
         this.stage.getBatch().end();
