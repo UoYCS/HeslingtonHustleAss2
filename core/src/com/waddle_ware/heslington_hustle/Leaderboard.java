@@ -39,13 +39,11 @@ public class Leaderboard {
         } catch (IOException e){
             e.printStackTrace();
         }
-        tempP();
     }
 
     public void addScore(String userName, int score){
         UserScore newScore = new UserScore(userName, score);
 
-        tempP();
 
         if (highscores[NUM_SCORES - 1] == null || score > highscores[NUM_SCORES - 1].getScore()) {
 
@@ -58,20 +56,11 @@ public class Leaderboard {
                 }
             }).reversed());
 
-            tempP();
             writeScores();
         }
     }
 
-    private void tempP(){
-        System.out.println("------");
-        for (UserScore s : highscores){
-            if (s!=null){
-                System.out.println(s.getPlayerName() + s.getScore());
-            }
-        }
-        System.out.println("------");
-    }
+
 
 
 
