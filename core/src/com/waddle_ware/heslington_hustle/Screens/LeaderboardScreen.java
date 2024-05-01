@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -16,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.waddle_ware.heslington_hustle.Button;
+import com.waddle_ware.heslington_hustle.Font;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
 import com.waddle_ware.heslington_hustle.Leaderboard;
 import com.waddle_ware.heslington_hustle.UserScore;
@@ -29,7 +30,6 @@ public class LeaderboardScreen implements Screen {
     private final Stage stage;
     private final ScreenId previous_screen;
     private final Texture background_image;
-    private final FreeTypeFontGenerator font_gen;
     private final BitmapFont font;
     private String displayText;
 
@@ -50,35 +50,13 @@ public class LeaderboardScreen implements Screen {
         initialiseMenu(); // Add menu elements
 
 
-        this.font_gen = new FreeTypeFontGenerator(Gdx.files.internal("OETZTYP_.TTF"));
-        this.font = genFont();
 
-        this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-
+        this.font = Font.getGameFont(50, 4f);
 
     }
 
-    /**
-     * Generates a custom font for displaying the player's score on the end screen.
-     *
-     * @return The generated BitmapFont object with custom font settings.
-     */
-    private BitmapFont genFont() {
-        FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        param.size = 50;
-        param.borderColor = Color.BLACK;
-        param.borderWidth = (float) 6.0;
-        param.borderStraight = false;
-        return font_gen.generateFont(param);
-    }
 
-    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
-        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
-        style.imageUp.setMinWidth(475);
-        style.imageUp.setMinHeight(125);
-        return style;
-    }
+
 
     /**
      * Initialises the Leaderboard screen with associated UI elements.
@@ -90,7 +68,7 @@ public class LeaderboardScreen implements Screen {
         this.stage.addActor(leader_group);
 
         // Back button
-        ImageButton back_button = new ImageButton(createTexRegDraw("BackButton.png"));
+        ImageButton back_button = new ImageButton(Button.createTexRegDraw("BackButton.png"));
         back_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

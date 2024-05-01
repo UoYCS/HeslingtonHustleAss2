@@ -2,20 +2,19 @@ package com.waddle_ware.heslington_hustle.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.waddle_ware.heslington_hustle.Font;
+import com.waddle_ware.heslington_hustle.Button;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
 
 // CHANGELOG : Added Library to calculate sizes of text for centering purposes
@@ -30,7 +29,6 @@ public class EndScreen implements Screen {
     private final Stage stage;
     private final int score;
     private final Texture to_render;
-    private final FreeTypeFontGenerator font_gen;
     private final BitmapFont font;
 
     // CHANGELOG : ADDED MORE PRIVATE VARIABLES
@@ -77,29 +75,20 @@ public class EndScreen implements Screen {
             this.status_text = "You Lose";}
 
 
-        this.font_gen = new FreeTypeFontGenerator(Gdx.files.internal("OETZTYP_.TTF"));
+        // CHANGELOG : REMOVED IN-FILE FONT-GENERATION
+        // this.font_gen = new FreeTypeFontGenerator(Gdx.files.internal("OETZTYP_.TTF"));
+        // this.font = genFont(150, 6f);
+        // this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-        // CHANGELOG : UPDATED FONT TYPES
-        this.small_font = genFont(30, 2f);
-        this.font = genFont(150, 6f);
-        this.big_font = genFont(300, 10f);
-
-        this.small_font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        this.big_font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        this.small_font = Font.getGameFont(30, 2f);
+        this.font = Font.getGameFont(150, 6f);
+        this.big_font = Font.getGameFont(300, 10f);
 
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         Gdx.input.setInputProcessor(this.stage);
         initialiseMenu();
     }
 
-    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
-        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
-        style.imageUp.setMinWidth(475);
-        style.imageUp.setMinHeight(125);
-        return style;
-    }
 
     private void initialiseMenu(){
         VerticalGroup end_screen_group = new VerticalGroup();
@@ -108,7 +97,7 @@ public class EndScreen implements Screen {
         this.stage.addActor(end_screen_group);
 
         // Continue Button
-        ImageButton continue_button = new ImageButton(createTexRegDraw("ContinueButton.png"));
+        ImageButton continue_button = new ImageButton(Button.createTexRegDraw("ContinueButton.png"));
         continue_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -121,23 +110,23 @@ public class EndScreen implements Screen {
     }
 
 
-    /**
-     * Generates a custom font for displaying the player's score on the end screen.
-     *
-     * CHANGELOG : ADDED SIZE AND BORDER WIDTH PARAMATERS
-     *
-     * @return The generated BitmapFont object with custom font settings.
-     * @param size Font size of generated font
-     * @param borderWidth Border width of generated font
-     */
-    private BitmapFont genFont(int size, float borderWidth) {
-        FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        param.size = size;
-        param.borderColor = Color.BLACK;
-        param.borderWidth = borderWidth;
-        param.borderStraight = false;
-        return font_gen.generateFont(param);
-    }
+      // CHANGELOG : REMOVED IN-FILE FONT GENERATION
+
+//    /**
+//     * Generates a custom font for displaying the player's score on the end screen.
+//     *
+//     * @return The generated BitmapFont object with custom font settings.
+//     * @param size Font size of generated font
+//     * @param borderWidth Border width of generated font
+//     */
+//    private BitmapFont genFont(int size, float borderWidth) {
+//        FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
+//        param.size = size;
+//        param.borderColor = Color.BLACK;
+//        param.borderWidth = borderWidth;
+//        param.borderStraight = false;
+//        return font_gen.generateFont(param);
+//    }
 
     @Override
     public void show() {

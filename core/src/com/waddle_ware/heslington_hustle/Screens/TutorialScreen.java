@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.waddle_ware.heslington_hustle.Button;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
 
 /**
@@ -41,13 +42,15 @@ public class TutorialScreen implements Screen {
         initialiseMenu(); // Add menu elements
     }
 
-    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
-        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
-        style.imageUp.setMinWidth(475);
-        style.imageUp.setMinHeight(125);
-        return style;
-    }
+
+    // CHANGELOG : REMOVED IN-FILE BUTTON STYLE GENERATION
+//    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
+//        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+//        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
+//        style.imageUp.setMinWidth(475);
+//        style.imageUp.setMinHeight(125);
+//        return style;
+//    }
 
     /**
      * Initialises the tutorial screen with associated UI elements.
@@ -59,7 +62,7 @@ public class TutorialScreen implements Screen {
         this.stage.addActor(tutorial_group);
 
         // Back button
-        ImageButton back_button = new ImageButton(createTexRegDraw("BackButton.png"));
+        ImageButton back_button = new ImageButton(Button.createTexRegDraw("BackButton.png"));
         back_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
