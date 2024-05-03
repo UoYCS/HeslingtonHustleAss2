@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class EnergyTests {
-  
+
   // tests to check the class is initialised correctly
 
   @Test
