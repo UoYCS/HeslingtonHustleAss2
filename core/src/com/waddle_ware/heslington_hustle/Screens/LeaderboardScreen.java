@@ -2,8 +2,11 @@ package com.waddle_ware.heslington_hustle.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -12,10 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.waddle_ware.heslington_hustle.Button;
+import com.waddle_ware.heslington_hustle.Font;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
 import com.waddle_ware.heslington_hustle.Leaderboard;
-
-import java.util.TreeMap;
+import com.waddle_ware.heslington_hustle.UserScore;
 
 /**
  * This class represents the games Leaderboard Screen.
@@ -26,6 +30,8 @@ public class LeaderboardScreen implements Screen {
     private final Stage stage;
     private final ScreenId previous_screen;
     private final Texture background_image;
+    private final BitmapFont font;
+    private String displayText;
 
     private Leaderboard leaderboard = new Leaderboard();
 
@@ -36,37 +42,21 @@ public class LeaderboardScreen implements Screen {
      * @param previous_screen The screen to return to upon pressing the back button.
      */
     public LeaderboardScreen(HeslingtonHustle game, ScreenId previous_screen) {
-
-        leaderboard.addScore("AAA", 90);
-        leaderboard.addScore("BBB", 80);
-        leaderboard.addScore("CCC", 70);
-        leaderboard.addScore("DDD", 65);
-        leaderboard.addScore("EEE", 60);
-        leaderboard.addScore("FFF", 59);
-        leaderboard.addScore("GGG", 58);
-        leaderboard.addScore("HHH", 57);
-        leaderboard.addScore("III", 56);
-        leaderboard.addScore("JJJ", 55);
-
-
-        System.out.println(leaderboard.getHighScores());
-
-
         this.previous_screen = previous_screen;
         this.game = game;
         this.background_image = new Texture("Background_Blurred.png");
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         Gdx.input.setInputProcessor(this.stage);
         initialiseMenu(); // Add menu elements
+
+
+
+        this.font = Font.getGameFont(50, 4f);
+
     }
 
-    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
-        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
-        style.imageUp.setMinWidth(475);
-        style.imageUp.setMinHeight(125);
-        return style;
-    }
+
+
 
     /**
      * Initialises the Leaderboard screen with associated UI elements.
@@ -78,7 +68,7 @@ public class LeaderboardScreen implements Screen {
         this.stage.addActor(leader_group);
 
         // Back button
-        ImageButton back_button = new ImageButton(createTexRegDraw("BackButton.png"));
+        ImageButton back_button = new ImageButton(Button.createTexRegDraw("BackButton.png"));
         back_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -102,6 +92,29 @@ public class LeaderboardScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(this.stage);
+
+        int i = 1;
+        String result = "";
+        for (UserScore score : this.leaderboard.getHighScores()){
+            if (score == null){
+                break;
+            }
+            int dots = (20 - (Integer.toString(score.getScore())).length());
+
+            if (i != 10){
+                result += " ";
+            }
+
+            result += i + ". " + score.getPlayerName() + ".".repeat(dots) + score.getScore() + "\n";
+            i++;
+
+        }
+        this.displayText = result;
+
+
+
+
+
     }
 
     /**
@@ -126,6 +139,12 @@ public class LeaderboardScreen implements Screen {
         final float y = (this.stage.getViewport().getWorldHeight() - height) / 2;
         this.stage.getBatch().draw(this.background_image, x, y, width, height);
 
+
+        GlyphLayout endText = new GlyphLayout(this.font, this.displayText);
+        this.font.draw(this.stage.getBatch(),
+                this.displayText,
+                (float) ((width - endText.width) / 2),
+                (float) ((height) / 1.3));
 
 
 

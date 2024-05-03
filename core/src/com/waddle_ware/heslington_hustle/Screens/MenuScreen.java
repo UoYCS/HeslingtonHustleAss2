@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
+import com.waddle_ware.heslington_hustle.Button;
 /**
  * The MenuScreen class represents the screen where the game menu is displayed.
  * It implements the Screen interface and handles user input for menu navigation.
@@ -39,19 +39,21 @@ public class MenuScreen implements Screen {
         initialiseMenu(); // Add menu elements
     }
 
-    /**
-     * Creates an ImageButtonStyle with a provided image path.
-     *
-     * @param path The path to the image file.
-     * @return The ImageButtonStyle created with the specified image.
-     */
-    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
-        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
-        style.imageUp.setMinWidth(475);
-        style.imageUp.setMinHeight(125);
-        return style;
-    }
+
+    // CHANGELOG : REMOVED IN-FILE BUTTON STYLE GENERATION
+//    /**
+//     * Creates an ImageButtonStyle with a provided image path.
+//     *
+//     * @param path The path to the image file.
+//     * @return The ImageButtonStyle created with the specified image.
+//     */
+//    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
+//        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+//        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
+//        style.imageUp.setMinWidth(475);
+//        style.imageUp.setMinHeight(125);
+//        return style;
+//    }
 
     /**
      * Initialises menu elements, such as buttons and their listeners.
@@ -64,7 +66,7 @@ public class MenuScreen implements Screen {
         this.stage.addActor(menu_group);
 
         // Play button
-        ImageButton play_button = new ImageButton(createTexRegDraw("PlayButton.png"));
+        ImageButton play_button = new ImageButton(Button.createTexRegDraw("PlayButton.png"));
         play_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -73,7 +75,7 @@ public class MenuScreen implements Screen {
         });
 
         // Tutorial button
-        ImageButton tutorial_button = new ImageButton(createTexRegDraw("TutorialButton.png"));
+        ImageButton tutorial_button = new ImageButton(Button.createTexRegDraw("TutorialButton.png"));
         tutorial_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -82,7 +84,7 @@ public class MenuScreen implements Screen {
         });
 
         // CHANGELOG : ADDED LEADERBOARD BUTTON TO MAIN MENU
-        ImageButton leader_button = new ImageButton(createTexRegDraw("LeaderButton.png"));
+        ImageButton leader_button = new ImageButton(Button.createTexRegDraw("LeaderButton.png"));
         leader_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -91,7 +93,7 @@ public class MenuScreen implements Screen {
         });
 
         // Exit button
-        ImageButton exit_button = new ImageButton(createTexRegDraw("ExitButton.png"));
+        ImageButton exit_button = new ImageButton(Button.createTexRegDraw("ExitButton.png"));
         exit_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

@@ -69,7 +69,7 @@ public class PlayScreen implements Screen {
             new ActivityLocation(970, 125, 20, "play football", ActivityType.Recreation),
 
             // RECREATION in town
-            new ActivityLocation(174, 219, 20, "go clubbing", ActivityType.Recreation),
+            new ActivityLocation(136, 280, 20, "go clubbing", ActivityType.Recreation),
 
             // EATING at Piazza
             new ActivityLocation(2104, 264, 20, "eat", ActivityType.Food),
@@ -78,7 +78,7 @@ public class PlayScreen implements Screen {
             new ActivityLocation(1288, 55, 20, "eat", ActivityType.Food),
 
             // EATING in town
-            new ActivityLocation(572, 270, 20, "eat", ActivityType.Food)
+            new ActivityLocation(633, 260, 20, "eat", ActivityType.Food)
 
 
     };
@@ -166,10 +166,7 @@ public class PlayScreen implements Screen {
         this.world_height = map_tile_height * tile_size;
 
 
-
-
-        System.out.printf("width: %f, height: %f", this.world_width, this.world_height);
-
+        
         this.player = new Avatar(0, 0, this.world_height, this.world_width);
         this.player.setPlayerLoc(260+ (2*48*16), 250);
 
@@ -298,7 +295,7 @@ public class PlayScreen implements Screen {
                                 iconAnimate(playFootballIcon, activity.getX(), activity.getY());
                                 break;
                             case "go clubbing":
-                                iconAnimate(drinkIcon, activity.getX(), activity.getY()+30);}
+                                iconAnimate(drinkIcon, activity.getX(), activity.getY()+50);}
                         break;
 
                     case Food:
