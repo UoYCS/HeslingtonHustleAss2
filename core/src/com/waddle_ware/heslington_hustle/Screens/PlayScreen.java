@@ -3,6 +3,7 @@ package com.waddle_ware.heslington_hustle.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -87,6 +88,8 @@ public class PlayScreen implements Screen {
     private InteractionPopup interaction_popup; // Add a field for the interaction pop-up
     private float popupX;
     private float popupY;
+    private int interacted;
+    private String reason;
 
 
     //  CHANGELOG: variables for the activity icon animations
@@ -235,10 +238,10 @@ public class PlayScreen implements Screen {
         this.map_renderer.getBatch().begin();
         this.player.render(this.map_renderer);// Draw sprite in updated position with specified dimensions
 
-        this.hud.render(this.map_renderer.getBatch());
-
         // ADDING FLOATING ICONS FOR ACTIVITIES
         drawActivityIcons();
+
+        this.hud.render(this.map_renderer.getBatch());
 
         this.map_renderer.getBatch().end();
 
@@ -420,27 +423,33 @@ public class PlayScreen implements Screen {
                     exit_value = this.core.interactedWith(activity.getType());
                     if (exit_value.getConditions() == ExitConditions.IsOk){
                         activity.incrementCounter(this.core.getCurrentDay() - 1);
+                        interacted = 1;
                         return;
                     }
-                    //visually output why the interaction failed
-                    //tmp:
-                    System.out.printf("%s%s\n", exit_value.getTypes().toString(), exit_value.getConditions().toString());
+                    interacted = -1;
+                    reason = String.format("%s %s\n", exit_value.getTypes().toString(), exit_value.getConditions().toString().substring(4));
                 }
 
                 if (activity.getType() == ActivityType.Food) {
                     exit_value = this.core.interactedWith(ActivityType.Food);
                     if (exit_value.getConditions() == ExitConditions.IsOk){
                         activity.incrementCounter(this.core.getCurrentDay() - 1);
+                        interacted = 1;
+                    }
+                    else{
+                        interacted = -1;
+                        reason = String.format("%s %s\n", exit_value.getTypes().toString(), exit_value.getConditions().toString().substring(4));
                     }
                     return;
                 }
 
-                if (activity.getType() == ActivityType.Sleep) {
+                if (activity.getType() == ActivityType.Sleep && interacted == 0) {
                     if(this.core.isLastDay()) {
                         // CHANGELOG : EndScreen now takes streakArray parameter
                         game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore(activityLocations), this.core.checkStreaks(activityLocations)));
                     }
                     else this.core.interactedWith(ActivityType.Sleep);
+                    interacted = 1;
                 }
 
 
@@ -501,13 +510,29 @@ public class PlayScreen implements Screen {
         // CHANGELOG: CHANGED THIS FUNCTION TO USE A LOOP TO ALLOW FOR EXTRA ACTIVITIES
         for (ActivityLocation activity : activityLocations){
             if (isPlayerWithinInteractionArea(playerX, playerY, activity)){
-                this.interaction_popup = new InteractionPopup("Press E to "+ activity.getName());
+                String colour = "white";
+                String message = "Press E to "+ activity.getName();
+                if(interacted == 1){
+                    colour = "green";
+                }
+                else if (interacted == -1){
+                    colour = "red";
+                    if (reason.equals("Time too low\n")){
+                        message = "Not enough time";
+                    }
+                    else {
+                        message = reason;
+                    }
+                }
+
+                this.interaction_popup = new InteractionPopup(message, colour);
                 near_activity = true;
             }
         }
 
         if (!near_activity){
             this.interaction_popup = null;
+            interacted = 0;
         }
 
 

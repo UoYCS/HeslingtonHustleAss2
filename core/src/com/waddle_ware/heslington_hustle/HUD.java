@@ -23,8 +23,10 @@ public class HUD {
     CharSequence studied;
     CharSequence eaten;
     CharSequence current_day;
+    CharSequence recreation;
     FreeTypeFontGenerator font_gen;
     private int current_map_section;
+    private Texture hudBackground = new Texture("hudBackground.png");
 
     /**
      * Constructs a HUD object.
@@ -36,10 +38,11 @@ public class HUD {
         this.font   = genFont();
         this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-        this.energy = String.format("Energy: %d / %d", c.getCurrentEnergy(), c.getEnergyLimit());
-        this.time   = String.format("Time: %d mins / %d mins", c.getTimeRemaining(), c.getTimeLimit());
+        this.energy = String.format("Energy: %d", (int) (100*c.getCurrentEnergy()/c.getEnergyLimit()));
+        this.time   = String.format("Time: %02d:%02d",((1440 - c.getTimeRemaining())/60), (1440 - c.getTimeRemaining())%60);
         this.studied = String.format("Studied: %d", c.getTimesStudiedToday());
         this.eaten = String.format("Eaten: %d", c.getTimesEatenToday());
+        this.recreation = String.format("Relaxed: %d", c.getTimesRelaxedToday());
         this.current_day = String.format("Day %d", c.getCurrentDay());
     }
 
@@ -64,13 +67,15 @@ public class HUD {
      */
     public void render(Batch batch) {
 
-        int x_location = 580 + ((current_map_section+1)*(768));
+        int x_location = 665 + ((current_map_section+1)*(768));
 
-        this.font.draw(batch, this.energy,       x_location, 400);
-        this.font.draw(batch, this.time,         x_location, 380);
-        this.font.draw(batch, this.studied,      x_location, 360);
-        this.font.draw(batch, this.eaten,        x_location, 340);
-        this.font.draw(batch, this.current_day,  x_location, 320);
+        batch.draw(hudBackground, x_location - 33, 10, 140, 140);
+        this.font.draw(batch, this.energy,       x_location, 123);
+        this.font.draw(batch, this.time,         x_location, 108);
+        this.font.draw(batch, this.studied,      x_location, 93);
+        this.font.draw(batch, this.eaten,        x_location, 78);
+        this.font.draw(batch, this.recreation,   x_location, 63);
+        this.font.draw(batch, this.current_day,  x_location, 48);
     }
 
     /**
@@ -80,10 +85,11 @@ public class HUD {
      */
     public void update(Core c, int map_section) {
         this.current_map_section = map_section;
-        this.energy = String.format("Energy: %d / %d", c.getCurrentEnergy(), c.getEnergyLimit());
-        this.time   = String.format("Time: %d mins / %d mins", c.getTimeRemaining(), c.getTimeLimit());
+        this.energy = String.format("Energy: %d", (int) (100*c.getCurrentEnergy()/c.getEnergyLimit()));
+        this.time   = String.format("Time: %02d:%02d",((1440 - c.getTimeRemaining())/60), (1440 - c.getTimeRemaining())%60);
         this.studied = String.format("Studied: %d", c.getTimesStudiedToday());
         this.eaten = String.format("Eaten: %d", c.getTimesEatenToday());
+        this.recreation = String.format("Relaxed: %d", c.getTimesRelaxedToday());
         this.current_day = String.format("Day %d", c.getCurrentDay());
     }
 

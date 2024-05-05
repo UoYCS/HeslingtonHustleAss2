@@ -493,4 +493,13 @@ public class Core {
     public int getTimesEatenToday() {
         return meal_count[this.day];
     }
+
+    /**
+     * Returns the number of recreational activities done today.
+     *
+     * @return The number of recreational activities done today.
+     */
+    public int getTimesRelaxedToday() {
+        return relax_count[this.day];
+    }
 }
