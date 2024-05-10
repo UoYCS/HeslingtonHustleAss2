@@ -39,6 +39,8 @@ public class PlayScreen implements Screen {
     private int current_map_section = 1;
     private final int map_section_offset = 48*16;
 
+    private int frames_since_int = 0;
+
 
     private Avatar player;
     private float world_width;
@@ -418,7 +420,7 @@ public class PlayScreen implements Screen {
         for (ActivityLocation activity : activityLocations){
 
             if (isPlayerWithinInteractionArea(playerX, playerY, activity)){
-
+                frames_since_int = 0;
                 if (activity.getType() == ActivityType.Study || activity.getType() == ActivityType.Recreation){
                     exit_value = this.core.interactedWith(activity.getType());
                     if (exit_value.getConditions() == ExitConditions.IsOk){
@@ -505,17 +507,17 @@ public class PlayScreen implements Screen {
         // set pop up above players location
         this.popupX = playerX;
         this.popupY = playerY + 50;
-
+        frames_since_int += 1;
 
         // CHANGELOG: CHANGED THIS FUNCTION TO USE A LOOP TO ALLOW FOR EXTRA ACTIVITIES
         for (ActivityLocation activity : activityLocations){
             if (isPlayerWithinInteractionArea(playerX, playerY, activity)){
                 String colour = "white";
                 String message = "Press E to "+ activity.getName();
-                if(interacted == 1){
+                if(interacted == 1 && frames_since_int < 60){
                     colour = "green";
                 }
-                else if (interacted == -1){
+                else if (interacted == -1 && frames_since_int < 60){
                     colour = "red";
                     if (reason.equals("Time too low\n")){
                         message = "Not enough time";
@@ -523,6 +525,9 @@ public class PlayScreen implements Screen {
                     else {
                         message = reason;
                     }
+                }
+                else{
+                    interacted = 0;
                 }
 
                 this.interaction_popup = new InteractionPopup(message, colour);
