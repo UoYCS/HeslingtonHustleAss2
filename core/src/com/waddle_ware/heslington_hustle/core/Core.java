@@ -9,24 +9,24 @@ import java.util.Arrays;
  */
 public class Core {
     // The constants below define the values for the impact that the individual components will have on the score.
-    private static final int MEAL_SCORE_VALUE = 30;
-    private static final int RELAX_SCORE_VALUE = 50;
-    private static final int STUDY_SCORE_VALUE = 100;
-    private static final int MEAL_SCORE_PENALTY = -100;
-    private static final int RELAX_SCORE_PENALTY = -100;
-    private static final int STUDY_TOO_MUCH_PENALTY = -50;
-    private static final int TOO_MUCH_STUDY_THRESHOLD = 3;
+    public static final int MEAL_SCORE_VALUE = 30;
+    public static final int RELAX_SCORE_VALUE = 50;
+    public static final int STUDY_SCORE_VALUE = 100;
+    public static final int MEAL_SCORE_PENALTY = -100;
+    public static final int RELAX_SCORE_PENALTY = -100;
+    public static final int STUDY_TOO_MUCH_PENALTY = -50;
+    public static final int TOO_MUCH_STUDY_THRESHOLD = 3;
 
-    private static final int MAX_NUMBER_OF_DAYS = 7;
+    public static final int MAX_NUMBER_OF_DAYS = 7;
 
     // Member variables
     private final Energy energy;
     private int day;
     private final Time time;
 
-    private final int[] study_count;
-    private final int[] relax_count;
-    private final int[] meal_count;
+    public int[] study_count;
+    public int[] relax_count;
+    public int[] meal_count;
 
     /**
      * Constructs a new Core instance.
@@ -356,7 +356,7 @@ public class Core {
      * @param type Type of activity to check
      * @return Number of different locations the player did that type of activity
      */
-    private int getNumLocationsActivity(ActivityLocation[] activities, ActivityType type){
+    public int getNumLocationsActivity(ActivityLocation[] activities, ActivityType type){
         int locations = 0;
 
         for (ActivityLocation activity : activities) {
@@ -378,7 +378,7 @@ public class Core {
      * @param list Array of ActivityLocations
      * @return Number of different days the player did that type of activity
      */
-    private int getNumDaysActivity(int[] list){
+    public int getNumDaysActivity(int[] list){
         int days_done = 0;
 
         for (int num : list){
@@ -492,5 +492,58 @@ public class Core {
      */
     public int getTimesEatenToday() {
         return meal_count[this.day];
+    }
+
+    /**
+     * sets meal count. This is only used for testing
+     *
+     * @Param meals
+     *
+     */
+
+    public void setMeal_count(int[] meals){
+        if(meals.length == 7) {
+
+            this.meal_count = meals;
+        }
+        else{
+
+            throw new RuntimeException("meal count must have a length of seven denoting seven days");
+        }
+
+    }
+
+    /**
+     * sets study count. This is only used for testing
+     *
+     * @param studied
+     */
+    public void setStudy_count(int[] studied){
+        if(studied.length == 7) {
+
+            this.study_count = studied;
+        }
+        else{
+
+            throw new RuntimeException("study count must have a length of seven denoting seven days");
+        }
+
+    }
+
+    /**
+     * sets relax count. This is only used for testing
+     *
+     * @param relax
+     */
+    public void setRelax_count(int[] relax){
+        if(relax.length == 7) {
+
+            this.relax_count = relax;
+        }
+        else{
+
+            throw new RuntimeException("relax count must have a length of seven denoting seven days");
+        }
+
     }
 }
