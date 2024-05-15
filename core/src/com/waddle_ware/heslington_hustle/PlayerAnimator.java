@@ -17,6 +17,12 @@ public class PlayerAnimator {
     static Texture walk_down_sheet;
     static float state_time = 0f; // Tracks elapsed time of animation
 
+    public static final String PLAYER_STILL_SPRITE_SHEET_ASSET = "player.png";
+    public static final String PLAYER_LEFT_SPRITE_SHEET_ASSET = "move_left_sprite_sheet.png";
+    public static final String PLAYER_RIGHT_SPRITE_SHEET_ASSET = "move_right_sprite_sheet.png";
+    public static final String PLAYER_UP_SPRITE_SHEET_ASSET = "move_up_sprite_sheet.png";
+    public static final String PLAYER_DOWN_SPRITE_SHEET_ASSET = "move_down_sprite_sheet.png";
+
     /**
      * Creates an animation based on the players movement velocity.
      *
@@ -29,7 +35,7 @@ public class PlayerAnimator {
         int frame_rows;
         int frame_cols = 1;
 
-        if (sprite_sheet.equals("player.png")) {
+        if (sprite_sheet.equals(PLAYER_STILL_SPRITE_SHEET_ASSET)) {
             frame_rows = 1;
         }
         else {
@@ -71,22 +77,22 @@ public class PlayerAnimator {
 
         if (Math.round(velocity.x) == 0 && Math.round(velocity.y) == 0) {
             // Check if player is standing still
-            return "player.png";
+            return PLAYER_STILL_SPRITE_SHEET_ASSET;
         }
         else if (Math.abs(velocity.x) > Math.abs(velocity.y)) {
             if (velocity.x < 0) {
-                return "move_left_sprite_sheet.png";
+                return PLAYER_LEFT_SPRITE_SHEET_ASSET;
             }
             else {
-                return "move_right_sprite_sheet.png";
+                return PLAYER_RIGHT_SPRITE_SHEET_ASSET;
             }
         }
         else if (Math.abs(velocity.x) < Math.abs(velocity.y)) {
             if (velocity.y < 0) {
-                return "move_down_sprite_sheet.png";
+                return PLAYER_DOWN_SPRITE_SHEET_ASSET;
             }
             else {
-                return "move_up_sprite_sheet.png";
+                return PLAYER_UP_SPRITE_SHEET_ASSET;
             }
         }
         return "player.png";

@@ -38,7 +38,11 @@ public class EndScreen implements Screen {
     private final boolean streak_athlete; // Boolean value of if Athlete streak was achieved
     private final boolean streak_bookworm; // Boolean value of if Bookworm streak was achieved
     private final boolean streak_clubber; // Boolean value of if Clubber streak was achieved
-    private final Texture achievementsPNG = new Texture(Gdx.files.internal("achievements.png"));
+
+    public static final String ACHIEVEMENTS_ASSET = "achievements.png";
+    private final Texture achievementsPNG = new Texture(Gdx.files.internal(ACHIEVEMENTS_ASSET));
+
+    public static final String BLURRED_BACKGROUND_ASSET = "Background_Blurred.png";
 
     private final TextureRegion[][] achievements = TextureRegion.split(achievementsPNG, achievementsPNG.getWidth() / 2, achievementsPNG.getHeight()/3);
 
@@ -58,7 +62,7 @@ public class EndScreen implements Screen {
 
 
         // CHANGELOG : ADDED UPDATED MAP BACKGROUND FOR END SCREEN
-        this.to_render = new Texture("Background_Blurred.png");
+        this.to_render = new Texture(BLURRED_BACKGROUND_ASSET);
 
         this.streak_athlete = streaks[0];
         this.streak_bookworm = streaks[1];

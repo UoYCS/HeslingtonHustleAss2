@@ -45,6 +45,9 @@ public class PlayScreen implements Screen {
     private HUD hud;
     private final HeslingtonHustle game;
 
+    public static final String ICON_ANIMATION_ASSET = "iconAnimations.png";
+    public static final String TILEMAP_ASSET = "MapToCode/map.tmx";
+
     private Core core;
 
 
@@ -96,7 +99,7 @@ public class PlayScreen implements Screen {
     Animation<TextureRegion> feedDucksIcon;
     Animation<TextureRegion> playFootballIcon;
     Animation<TextureRegion> drinkIcon;
-    Texture iconSpriteSheet = new Texture(Gdx.files.internal("iconAnimations.png"));
+    Texture iconSpriteSheet = new Texture(Gdx.files.internal(ICON_ANIMATION_ASSET));
     float stateTime;
 
 
@@ -150,7 +153,7 @@ public class PlayScreen implements Screen {
 
         this.core = new Core();
         // Load tile Map
-        this.tile_map = new TmxMapLoader().load("MapToCode/map.tmx"); // load tile map
+        this.tile_map = new TmxMapLoader().load(TILEMAP_ASSET); // load tile map
         this.map_renderer = new OrthogonalTiledMapRenderer(this.tile_map);
 
         // Set target aspect ratio for tile map
