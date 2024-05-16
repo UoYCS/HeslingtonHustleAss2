@@ -92,14 +92,5 @@ public class AssetTests {
                     Gdx.files.internal(PlayerAnimator.PLAYER_STILL_SPRITE_SHEET_ASSET).exists());
 
   }
-
-  // tests for remaining screen assets
-
-  // tests for all the button assets
-
-  // tests for icon assets
-
-  // tests for sprite sheet assets
-
-  // tests for any other used assets
+  
 }
