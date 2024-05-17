@@ -120,6 +120,22 @@ public class EnergyTests {
             output.getConditions(),ExitConditions.TooHigh);
   }
 
+  /**
+   * tests that sleep does not output IsOk
+   *
+   * ActivityType.Sleep should not be passed in but if it is then it should fail.
+   *
+   */
+  @Test
+  public void testSleepPassedIntoActivityType(){
+    int limit = 4;
+    Energy energy = new Energy(limit);
+    ResourceExitConditions output = energy.tryActivityType(ActivityType.Sleep);
+    assertNotSame("If sleep is passed into tryactivity method, it should not output valid.",
+            output.getConditions(),ExitConditions.IsOk);
+
+  }
+
   // dont need a test for too little energy as that would mean energy is below 0
   // which should be caught by other tests
 
