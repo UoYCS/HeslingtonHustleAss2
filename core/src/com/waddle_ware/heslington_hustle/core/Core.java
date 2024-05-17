@@ -495,12 +495,21 @@ public class Core {
     }
 
     /**
+     * Returns the number of recreational activities done today.
+     *
+     * @return The number of recreational activities done today.
+     */
+    public int getTimesRelaxedToday() {
+        return relax_count[this.day];
+    }
+  
+
+    /**
      * sets meal count. This is only used for testing
      *
      * @Param meals
      *
      */
-
     public void setMeal_count(int[] meals){
         if(meals.length == 7) {
 
@@ -544,6 +553,5 @@ public class Core {
 
             throw new RuntimeException("relax count must have a length of seven denoting seven days");
         }
-
     }
 }

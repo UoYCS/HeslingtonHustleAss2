@@ -21,12 +21,23 @@ public class InteractionPopup {
      *
      * @param message The message to be displayed in the pop-up.
      */
-    public InteractionPopup(String message) {
+    public InteractionPopup(String message, String colour) {
         // Generate font
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_GEN_ASSET));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 10;
         parameter.borderColor = Color.BLACK;
+
+        if (colour.equals("white")){
+            parameter.color = Color.WHITE;
+        }
+        else if (colour.equals("green")){
+            parameter.color = Color.GREEN;
+        }
+        else{
+            parameter.color = Color.RED;
+        }
+
         parameter.borderWidth = 1.5f;
         parameter.borderStraight = false;
 
