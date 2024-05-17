@@ -2,6 +2,7 @@ package com.thewafflers.tests;
 
 import com.waddle_ware.heslington_hustle.ActivityLocation;
 import com.waddle_ware.heslington_hustle.core.*;
+import com.waddle_ware.heslington_hustle.UserScore;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class ScoringTests {
      * for each activity location instance in the list.
      *
      *
-     * Still to do: testing numlocations and numdaysactivity
+     * Still to do: testing numlocations and numdaysactivity and streaks
      */
 
     ActivityLocation[] test_activityLocations = {};
@@ -406,6 +407,24 @@ public class ScoringTests {
                         " 1 location: %s , 2 locations: %s , 3 locations: %s", test_relax_one_loc, test_relax_2_loc, test_relax_3_loc),
                 test_relax_3_loc > test_relax_2_loc & test_relax_2_loc > test_relax_one_loc);
 
+
+    }
+
+    @Test
+    public void testGetUsername(){
+        String username = "testname";
+        UserScore userScore = new UserScore(username,100);
+
+        assertSame(username, userScore.getPlayerName());
+
+    }
+
+    @Test
+    public void testGetUserscore(){
+        String username = "testname";
+        UserScore userScore = new UserScore(username,100);
+
+        assertSame(100, userScore.getScore());
 
     }
 
