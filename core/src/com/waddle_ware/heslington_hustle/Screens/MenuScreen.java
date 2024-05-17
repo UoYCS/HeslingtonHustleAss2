@@ -24,6 +24,12 @@ public class MenuScreen implements Screen {
     private final Stage stage;
     private final Texture background;
 
+    public static final String BACKGROUND_ASSET = "MenuScreen_New.png";
+    public static final String PLAYBUTTON_ASSET = "PlayButton.png";
+    public static final String TUTORIALBUTTON_ASSET = "TutorialButton.png";
+    public static final String LEADERBOARDBUTTON_ASSET = "LeaderButton.png";
+    public static final String EXITBUTTON_ASSET = "ExitButton.png";
+
     /**
      * Constructs a new MenuScreen.
      *
@@ -35,7 +41,7 @@ public class MenuScreen implements Screen {
         Gdx.input.setInputProcessor(this.stage);
 
         // CHANGELOG : UPDATED MAIN MENU BACKGROUND
-        this.background  = new Texture("MenuScreen_New.png");
+        this.background  = new Texture(BACKGROUND_ASSET);
         initialiseMenu(); // Add menu elements
     }
 
@@ -66,7 +72,7 @@ public class MenuScreen implements Screen {
         this.stage.addActor(menu_group);
 
         // Play button
-        ImageButton play_button = new ImageButton(Button.createTexRegDraw("PlayButton.png"));
+        ImageButton play_button = new ImageButton(Button.createTexRegDraw(PLAYBUTTON_ASSET));
         play_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -75,7 +81,7 @@ public class MenuScreen implements Screen {
         });
 
         // Tutorial button
-        ImageButton tutorial_button = new ImageButton(Button.createTexRegDraw("TutorialButton.png"));
+        ImageButton tutorial_button = new ImageButton(Button.createTexRegDraw(TUTORIALBUTTON_ASSET));
         tutorial_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -84,7 +90,7 @@ public class MenuScreen implements Screen {
         });
 
         // CHANGELOG : ADDED LEADERBOARD BUTTON TO MAIN MENU
-        ImageButton leader_button = new ImageButton(Button.createTexRegDraw("LeaderButton.png"));
+        ImageButton leader_button = new ImageButton(Button.createTexRegDraw(LEADERBOARDBUTTON_ASSET));
         leader_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -93,7 +99,7 @@ public class MenuScreen implements Screen {
         });
 
         // Exit button
-        ImageButton exit_button = new ImageButton(Button.createTexRegDraw("ExitButton.png"));
+        ImageButton exit_button = new ImageButton(Button.createTexRegDraw(EXITBUTTON_ASSET));
         exit_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

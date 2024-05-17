@@ -42,19 +42,22 @@ public class PlayScreen implements Screen {
     private int frames_since_int = 0;
 
 
-    private Avatar player;
+    public Avatar player;
     private float world_width;
     private float world_height;
     private HUD hud;
     private final HeslingtonHustle game;
 
-    private Core core;
+    public static final String ICON_ANIMATION_ASSET = "iconAnimations.png";
+    public static final String TILEMAP_ASSET = "MapToCode/map.tmx";
+
+    public Core core;
 
 
     // CHANGELOG: ADDED ACTIVITIES TO ARRAY INSTEAD OF USING VARIABLES TO ALLOW FOR EXTRA ACTIVITIES
 
     // Define activity locations array
-    private final ActivityLocation[] activityLocations = {
+    public final ActivityLocation[] activityLocations = {
 
             // SLEEPING at Goodricke
             new ActivityLocation(1786, 264, 20, "sleep", ActivityType.Sleep),
@@ -101,7 +104,7 @@ public class PlayScreen implements Screen {
     Animation<TextureRegion> feedDucksIcon;
     Animation<TextureRegion> playFootballIcon;
     Animation<TextureRegion> drinkIcon;
-    Texture iconSpriteSheet = new Texture(Gdx.files.internal("iconAnimations.png"));
+    Texture iconSpriteSheet = new Texture(Gdx.files.internal(ICON_ANIMATION_ASSET));
     float stateTime;
 
 
@@ -155,7 +158,7 @@ public class PlayScreen implements Screen {
 
         this.core = new Core();
         // Load tile Map
-        this.tile_map = new TmxMapLoader().load("MapToCode/map.tmx"); // load tile map
+        this.tile_map = new TmxMapLoader().load(TILEMAP_ASSET); // load tile map
         this.map_renderer = new OrthogonalTiledMapRenderer(this.tile_map);
 
         // Set target aspect ratio for tile map
@@ -336,7 +339,7 @@ public class PlayScreen implements Screen {
      * @param xValue X Coordinate to check
      * @return -1 for left map (town), 0 for centre map (west), 1 for right map (east)
      */
-    private int getGameArea(float xValue) {
+    public int getGameArea(float xValue) {
         if (xValue > 1523) {
             return 1;
         } else if (xValue <= 1523 && xValue > 755) {
@@ -590,7 +593,7 @@ public class PlayScreen implements Screen {
      * @param location  The activity location to check for interaction area.
      * @return True if the player is within the interaction area of the activity location, false otherwise.
      */
-    private boolean isPlayerWithinInteractionArea(float playerX, float playerY, ActivityLocation location) {
+    public boolean isPlayerWithinInteractionArea(float playerX, float playerY, ActivityLocation location) {
         // Calculate the squared distance between the player and the activity location
         float distance_squared = (playerX - location.getX()) * (playerX - location.getX())
                 + (playerY - location.getY()) * (playerY - location.getY());
@@ -622,4 +625,7 @@ public class PlayScreen implements Screen {
         // CHANGELOG: Need to Dispose of activity icon sprites.
         this.iconSpriteSheet.dispose();
     }
+
+    public float getWorldHeight(){return this.world_height;}
+    public float getWorldWidth(){return this.world_width;}
 }

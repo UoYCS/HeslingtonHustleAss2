@@ -25,6 +25,9 @@ public class TutorialScreen implements Screen {
     private final ScreenId previous_screen;
     private final Texture tutorial_img;
 
+    public static final String TUTORIAL_SCREEN_ASSET = "TutorialScreen_New.png";
+    public static final String BACK_BUTTON_ASSET = "BackButton.png";
+
     /**
      * Constructs a new TutorialScreen.
      *
@@ -36,7 +39,7 @@ public class TutorialScreen implements Screen {
         this.game = game;
 
         // CHANGELOG : UPDATED TUTORIAL SCREEN BACKGROUND
-        this.tutorial_img = new Texture("TutorialScreen_New.png");
+        this.tutorial_img = new Texture(TUTORIAL_SCREEN_ASSET);
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         Gdx.input.setInputProcessor(this.stage);
         initialiseMenu(); // Add menu elements
@@ -62,7 +65,7 @@ public class TutorialScreen implements Screen {
         this.stage.addActor(tutorial_group);
 
         // Back button
-        ImageButton back_button = new ImageButton(Button.createTexRegDraw("BackButton.png"));
+        ImageButton back_button = new ImageButton(Button.createTexRegDraw(BACK_BUTTON_ASSET));
         back_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

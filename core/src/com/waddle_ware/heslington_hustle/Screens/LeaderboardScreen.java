@@ -33,6 +33,9 @@ public class LeaderboardScreen implements Screen {
     private final BitmapFont font;
     private String displayText;
 
+    public static final String BLURRED_BACKGROUND_ASSET = "Background_Blurred.png";
+    public static final String BACK_BUTTON_ASSET = "BackButton.png";
+
     private Leaderboard leaderboard = new Leaderboard();
 
     /**
@@ -44,7 +47,7 @@ public class LeaderboardScreen implements Screen {
     public LeaderboardScreen(HeslingtonHustle game, ScreenId previous_screen) {
         this.previous_screen = previous_screen;
         this.game = game;
-        this.background_image = new Texture("Background_Blurred.png");
+        this.background_image = new Texture(BLURRED_BACKGROUND_ASSET);
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         Gdx.input.setInputProcessor(this.stage);
         initialiseMenu(); // Add menu elements
@@ -68,7 +71,7 @@ public class LeaderboardScreen implements Screen {
         this.stage.addActor(leader_group);
 
         // Back button
-        ImageButton back_button = new ImageButton(Button.createTexRegDraw("BackButton.png"));
+        ImageButton back_button = new ImageButton(Button.createTexRegDraw(BACK_BUTTON_ASSET));
         back_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

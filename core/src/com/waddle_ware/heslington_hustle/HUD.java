@@ -26,15 +26,18 @@ public class HUD {
     CharSequence recreation;
     FreeTypeFontGenerator font_gen;
     private int current_map_section;
-    private Texture hudBackground = new Texture("hudBackground.png");
 
+    private Texture hudBackground = new Texture("hudBackground.png");
+    public static final String FONT_GEN_ASSET = "BebasNeue-Regular.ttf";
+
+  
     /**
      * Constructs a HUD object.
      *
      * @param c The Core object providing necessary game data.
      */
     public HUD(Core c) {
-        this.font_gen = new FreeTypeFontGenerator(Gdx.files.internal("BebasNeue-Regular.ttf"));
+        this.font_gen = new FreeTypeFontGenerator(Gdx.files.internal(FONT_GEN_ASSET));
         this.font   = genFont();
         this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 

@@ -122,4 +122,9 @@ public class Time implements ResourceBase {
                 this.minutes_remaining += TIME_PER_FOOD;
         }
     }
+
+    public void set_minutes_remaining(int minutes){
+        this.minutes_remaining = minutes;
+
+    }
 }

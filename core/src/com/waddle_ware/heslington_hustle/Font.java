@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class Font {
-    private static final FreeTypeFontGenerator font_gen = new FreeTypeFontGenerator(Gdx.files.internal("OETZTYP_.TTF"));
+
+    public static final String FONT_GEN_ASSET = "OETZTYP_.TTF";
+    private static final FreeTypeFontGenerator font_gen = new FreeTypeFontGenerator(Gdx.files.internal(FONT_GEN_ASSET));
 
     public static BitmapFont getGameFont(int size, float border){
         BitmapFont font = genFont(size, border);

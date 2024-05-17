@@ -14,6 +14,8 @@ public class InteractionPopup {
     private final BitmapFont font;
     private final String message;
 
+    public static final String FONT_GEN_ASSET = "BebasNeue-Regular.ttf";
+
     /**
      * Constructs a new InteractionPopup object with specified message.
      *
@@ -21,7 +23,7 @@ public class InteractionPopup {
      */
     public InteractionPopup(String message, String colour) {
         // Generate font
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("BebasNeue-Regular.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_GEN_ASSET));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 10;
         parameter.borderColor = Color.BLACK;

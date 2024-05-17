@@ -40,6 +40,9 @@ public class NameScreen implements Screen, InputProcessor {
     private final int score;
     private final Texture to_render;
 
+    public static final String BLURRED_BACKGROUND_ASSET = "Background_Blurred.png";
+    public static final String CONTINUE_BUTTON_ASSET = "ContinueButton.png";
+
     private final BitmapFont small_font;
     private final BitmapFont font;
 
@@ -58,7 +61,7 @@ public class NameScreen implements Screen, InputProcessor {
         this.game = game;
         this.score = score;
 
-        this.to_render = new Texture("Background_Blurred.png");
+        this.to_render = new Texture(BLURRED_BACKGROUND_ASSET);
 
 
         this.small_font = Font.getGameFont(50, 3f);
@@ -80,7 +83,7 @@ public class NameScreen implements Screen, InputProcessor {
         this.stage.addActor(name_screen_group);
 
         // Continue Button
-        ImageButton continue_button = new ImageButton(Button.createTexRegDraw("ContinueButton.png"));
+        ImageButton continue_button = new ImageButton(Button.createTexRegDraw(CONTINUE_BUTTON_ASSET));
 
         continue_button.addListener(new ClickListener() {
             @Override
