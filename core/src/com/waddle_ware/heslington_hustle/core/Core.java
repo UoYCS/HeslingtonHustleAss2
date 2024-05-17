@@ -20,9 +20,9 @@ public class Core {
     public static final int MAX_NUMBER_OF_DAYS = 7;
 
     // Member variables
-    private final Energy energy;
+    public Energy energy;
     private int day;
-    private final Time time;
+    public Time time;
 
     public int[] study_count;
     public int[] relax_count;
