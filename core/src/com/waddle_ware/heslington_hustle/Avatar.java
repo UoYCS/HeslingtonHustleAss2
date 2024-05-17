@@ -21,7 +21,7 @@ import static com.waddle_ware.heslington_hustle.PlayerAnimator.state_time;
 public class Avatar {
     private final float player_size;
     private float player_x, player_y;
-    private final Vector2 velocity;
+    public final Vector2 velocity;
 
     private final float world_height;
     private final float world_width;

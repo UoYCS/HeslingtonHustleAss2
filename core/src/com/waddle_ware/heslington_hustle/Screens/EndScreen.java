@@ -27,7 +27,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 public class EndScreen implements Screen {
     private final HeslingtonHustle game;
     private final Stage stage;
-    private final int score;
+    public final int score;
     private final Texture to_render;
     private final BitmapFont font;
 
