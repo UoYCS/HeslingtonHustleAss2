@@ -61,12 +61,7 @@ public class CoreTests {
     @Test(expected = RuntimeException.class)
     public void testIncrementOver7Days(){
         Core core = new Core();
-        for (int i = 0;i < 7;i++){core.incrementDay();}
-        //increments to final day which will always be after 6th increment, as requirements specify game lasts 7 days
-        core.incrementDay(); // increment one day over
-
-        // it maybe? should fail after 7th increment but only fails after 7th as its > not >=
-
+        for (int i = 0;i < 8;i++){core.incrementDay();}
     }
 
 
