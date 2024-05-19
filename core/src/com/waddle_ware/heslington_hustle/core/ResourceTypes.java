@@ -13,14 +13,14 @@ public enum ResourceTypes {
      *
      * @return A string representing the resource type.
      */
-    @Override
-    public String toString() {
-        switch (this) {
-            case Time:
-                return "Time";
-            case Energy:
-                return "Energy";
-        }
-        return "FAILED";
-    }
+//    @Override
+//    public String toString() {
+//        switch (this) {
+//            case Time:
+//                return "Time";
+//            case Energy:
+//                return "Energy";
+//        }
+//        return "FAILED";
+//    }
 }
