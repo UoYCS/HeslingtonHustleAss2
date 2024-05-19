@@ -195,6 +195,12 @@ public class EnergyTests {
             current_energy + Energy.ENERGY_PER_RECREATIONAL, energy.getCurrentEnergy());
     assertTrue("energy is reduced when recreating",
             energy.getCurrentEnergy() < current_energy);
+
+    current_energy = energy.getCurrentEnergy();
+    energy.doActivity(ActivityType.Sleep);
+
+
+      assertEquals("Sleep should not be passed into the doactivity method, if so it should not affect amount of energy", energy.getCurrentEnergy(), current_energy);
   }
 
 }

@@ -66,6 +66,9 @@ public class TimeTests {
         time.set_minutes_remaining(100);
         assert (time.getMinutesRemaining() == 100);
 
+        time.set_minutes_remaining(-1);
+        assert(time.getMinutesRemaining() == 0);
+
     }
 
 
@@ -146,6 +149,11 @@ public class TimeTests {
         time.doActivity(ActivityType.Food);
         assertEquals(100, time.getMinutesRemaining());
         assertTrue("Study should reduce time",Time.TIME_PER_FOOD < 0);
+
+        time.set_minutes_remaining(100);
+        time.doActivity(ActivityType.Sleep);
+        assertEquals("Sleep shouldnt be called to this method, if so nothing should happen",100, time.getMinutesRemaining());
+
 
 
     }
