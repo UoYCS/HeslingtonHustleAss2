@@ -41,8 +41,6 @@ public class CoreTests {
     public void testIsLastDay(){
         Core core = new Core();
         for (int i = 0;i < 6;i++){core.incrementDay();}
-        // the last day should be after incrementing day 6 times as set out by requirements
-        // which specify that game should last 7 days
         assertTrue(core.isLastDay());
 
         core = new Core();
@@ -72,7 +70,7 @@ public class CoreTests {
     }
 
 
-    
+
 
     /**
      * Tests returns string representation of ActivityType
