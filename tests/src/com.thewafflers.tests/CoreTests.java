@@ -28,27 +28,6 @@ public class CoreTests {
      */
 
 
-    /**
-     test core.interactedwith()
-
-     this method is called when a player interacts with a building
-
-     We can assume resourceexistconditions and the other objects work from their own unit tests
-     We can also do integration tests which check they both work together (assuming i understand integation tests
-     correectly)
-
-     unit tests for this:
-
-        check invalid energy or time results in correct return and no change in counters
-        when valid input:
-        check counters are correct
-        check the return resourceexitcondition is correct? Need to check how this links up
-
-
-     */
-    public void testInteractedWith(){
-
-    }
 
     /**
     test core.islastday()
@@ -72,20 +51,6 @@ public class CoreTests {
 
     }
 
-    /*
-    test core.hasended() ... test whether or not the game ends if player doesnt sleep by midnight on last day...
-
-
-     */
-
-
-    /*
-    test core.incrementday()
-
-    unit test:
-        check throws exception if tries to increment when at end
-        can check whether time and energy are reset
-     */
 
     @Test
     public void testValidIncrementDay(){
@@ -107,8 +72,7 @@ public class CoreTests {
     }
 
 
-
-    // to do: hasplayefailed, generatescore(all of scoring), getNumLocationsActivity
+    
 
     /**
      * Tests returns string representation of ActivityType
