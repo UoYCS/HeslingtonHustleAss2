@@ -3,6 +3,7 @@ package com.thewafflers.tests;
 import com.badlogic.gdx.Gdx;
 import com.waddle_ware.heslington_hustle.ActivityLocation;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
+import com.waddle_ware.heslington_hustle.Screens.PlayScreen;
 import com.waddle_ware.heslington_hustle.core.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -266,9 +267,71 @@ public class CoreTests {
     }
 
     @Test
-    public void testGetNumLocationsActivity(){
+    public void testGetEnergyLimit(){
+        Core core = new Core();
+        int test_limit = 5;
+        core.energy = new Energy(test_limit);
+        assertSame(test_limit,core.getEnergyLimit());
+
+    }
+
+    @Test
+    public void testGetCurrentEnergy(){
+        Core core = new Core();
+        int test_limit = 5;
+        core.energy = new Energy(test_limit);
+        assertSame(test_limit,core.getCurrentEnergy());
+    }
+
+    @Test
+    public void testGetTimeLimit(){
+        Core core = new Core();
+        assertEquals(Time.MINUTES_PER_DAY,core.getTimeLimit());
+    }
+
+    @Test
+    public void testGetTimeRemaining(){
 
         Core core = new Core();
+        assertEquals(core.time.getMinutesRemaining(),core.getTimeRemaining());
+
+    }
+
+    @Test
+    public void testSetCounts(){
+        Core core = new Core();
+        int[] test_count_1= {1,1,1,1,1,1,1};
+        int[] test_count_2= {1,1,1,1,1,1,2};
+        int[] test_count_3= {1,1,1,1,1,1,3};
+        core.setMeal_count(test_count_1);
+        core.setStudy_count(test_count_2);
+        core.setRelax_count(test_count_3);
+        assertEquals(test_count_1,core.getMealCount());
+        assertEquals(test_count_2,core.getStudyCount());
+        assertEquals(test_count_3,core.getRelaxCount());
+
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testSetBadMealCount(){
+        Core core = new Core();
+        int[] bad_count = {1,1};
+        core.setMeal_count(bad_count);
+
+    }
+    @Test(expected = RuntimeException.class)
+    public void testSetBadRelaxCount(){
+        Core core = new Core();
+        int[] bad_count = {1,1};
+        core.setRelax_count(bad_count);
+
+    }
+    @Test(expected = RuntimeException.class)
+    public void testSetBadStudyCount(){
+        Core core = new Core();
+        int[] bad_count = {1,1};
+        core.setStudy_count(bad_count);
+
     }
 
 

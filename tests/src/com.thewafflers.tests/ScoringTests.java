@@ -10,8 +10,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 public class ScoringTests {
 
@@ -52,37 +51,39 @@ public class ScoringTests {
         test_activityLocations = new ActivityLocation[]{
 
 
-                // SLEEPING at Goodricke
+                // SLEEPING at Goodricke // Array 0
                 new ActivityLocation(1786, 264, 20, "sleep", ActivityType.Sleep),
 
-                // STUDYING at Library
+                // STUDYING at Library // Array 1
                 new ActivityLocation(1136, 258, 20, "study at library", ActivityType.Study),
 
-                // STUDYING at CS building
+                // STUDYING at CS building // Array 2
                 new ActivityLocation(1664, 24, 20, "study", ActivityType.Study),
 
-                // RECREATION at Duck pond
+                // RECREATION at Duck pond // Array 3
                 new ActivityLocation(2031, 144, 20, "feed the ducks", ActivityType.Recreation),
 
-                // RECREATION at Sports Centre
+                // RECREATION at Sports Centre // Array 4
                 new ActivityLocation(970, 125, 20, "play football", ActivityType.Recreation),
 
-                // RECREATION in town
+                // RECREATION in town // Array 5
                 new ActivityLocation(136, 280, 20, "go clubbing", ActivityType.Recreation),
 
-                // EATING at Piazza
+                // EATING at Piazza // Array 6
                 new ActivityLocation(2104, 264, 20, "eat", ActivityType.Food),
 
-                // EATING at Courtyard
+                // EATING at Courtyard // Array 7
                 new ActivityLocation(1288, 55, 20, "eat", ActivityType.Food),
 
-                // EATING in town
+                // EATING in town // Array 8
                 new ActivityLocation(633, 260, 20, "eat", ActivityType.Food)
 
 
         };
 
     }
+
+
 
     @Test
     public void testStudiedEveryday(){
@@ -384,9 +385,7 @@ public class ScoringTests {
         // use a spy to make a partial mock, to fake the output from the getnumlocations method
         // this means that building the test isn't reliant on using the functionality of activitylocation class
 
-        for (int i = 0; i < 7; i++) {
-            spy_core.incrementDay();
-        } // make day final day
+        for (int i = 0; i < 7; i++) {spy_core.incrementDay();} // make day final day
         spy_core.setMeal_count(test_meals);
         spy_core.setStudy_count(test_study);
         spy_core.setRelax_count(test_relax); // set count parameter
@@ -410,6 +409,18 @@ public class ScoringTests {
 
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testScoringCalledBeforeLastDay(){
+        Core core = new Core();
+        core.generateScore(test_activityLocations);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testPassFailCalledBeforeLastDay(){
+        Core core = new Core();
+        core.hasPlayerFailed();
+    }
+
     @Test
     public void testGetUsername(){
         String username = "testname";
@@ -427,6 +438,161 @@ public class ScoringTests {
         assertSame(100, userScore.getScore());
 
     }
+
+    /**
+     * Tests that checkStreaks correctly identifies which achievements have been done
+     * and that score is increased by doing streaks
+     *
+     * output = boolean array size 3,
+     *
+     * Index 0: football achievement (4 times)
+     * Index 1: library achievement (4 times)
+     * Index 2 : clubbing achievement (4 times)
+     *
+     * Also check that having achievements increase score
+     */
+    @Test
+    public void testStreaks(){
+
+        int[] test_meals = {3, 3, 3, 3, 3, 3, 3};
+        int[] test_relax = {1, 1, 1, 1, 1, 1, 1};
+        int[] test_study = {1, 1, 1, 1, 1, 1, 1};
+
+        Core core = new Core();
+        core.setRelax_count(test_relax);
+        core.setStudy_count(test_study);
+        core.setMeal_count(test_meals);
+
+        for (int i = 0; i < 7; i++) {
+            core.incrementDay();
+        } // make day final day
+
+        int initial_score = core.generateScore(test_activityLocations);
+
+        for(int i=0;i < 4;i++){test_activityLocations[4].incrementCounter(2);}
+
+        assertArrayEquals(new boolean[]{true, false, false}, core.checkStreaks(test_activityLocations));
+
+        for(int i=0;i < 4;i++){test_activityLocations[1].incrementCounter(4);}
+
+        assertArrayEquals(new boolean[]{true, true, false},core.checkStreaks(test_activityLocations));
+
+        for(int i=0;i < 4;i++){test_activityLocations[5].incrementCounter(3);}
+
+        assertArrayEquals(new boolean[]{true, true, true},core.checkStreaks(test_activityLocations));
+
+        int final_score = core.generateScore(test_activityLocations);
+
+        assertTrue(final_score > initial_score);
+
+    }
+
+    /**
+     * This tests the utility method that outputs the number of locations of an activity type is used
+     *
+     * Input = array of activity location instances and type of activity
+     *
+     * output = integer of how many locations of that type are used
+     *
+     * This is used when generating score so that using a mix of locations increases score
+     *
+     * Input space partititions:
+     *
+     * Ensure that it only counts locations of that activity type, therefore some tests will include
+     * irelevent actions used to check they arent counted towards the total
+     *
+     * Also ensure as determined that the amount of times differing locations are used does not effect output
+     * We decided simply that using different locations should increase score, not the spread of that use
+     * i.e. using a location once has the same effect as using it multiple times for the purposes
+     * of increased scores due to a mix of locations used.
+     *
+     * Lastly ensure the correct output is determined for each study type, and that we test outputs from 0-3
+     */
+
+
+    @Test
+    public void testGetNumLocationsActivity(){
+
+
+        ActivityLocation mock_sleep = mock(ActivityLocation.class);
+        ActivityLocation mock_study_1 = mock(ActivityLocation.class);
+        ActivityLocation mock_study_2 = mock(ActivityLocation.class);
+        ActivityLocation mock_eat_1 = mock(ActivityLocation.class);
+        ActivityLocation mock_eat_2 = mock(ActivityLocation.class);
+        ActivityLocation mock_eat_3 = mock(ActivityLocation.class);
+        ActivityLocation mock_rec_1 = mock(ActivityLocation.class);
+        ActivityLocation mock_rec_2 = mock(ActivityLocation.class);
+        ActivityLocation mock_rec_3 = mock(ActivityLocation.class);
+
+        doReturn(ActivityType.Sleep).when(mock_sleep).getType();
+        doReturn(ActivityType.Study).when(mock_study_1).getType();
+        doReturn(ActivityType.Study).when(mock_study_2).getType();
+        doReturn(ActivityType.Food).when(mock_eat_1).getType();
+        doReturn(ActivityType.Food).when(mock_eat_2).getType();
+        doReturn(ActivityType.Food).when(mock_eat_3).getType();
+        doReturn(ActivityType.Recreation).when(mock_rec_1).getType();
+        doReturn(ActivityType.Recreation).when(mock_rec_2).getType();
+        doReturn(ActivityType.Recreation).when(mock_rec_3).getType();
+
+        int[] once_every_day = {1,1,1,1,1,1,1};
+        int[] not_at_all = {0,0,0,0,0,0,0};
+        int[] used_once = {0,0,0,1,0,0,0};
+
+        ActivityLocation[] test_locations_array = {mock_sleep,mock_study_1,mock_study_2,
+        mock_eat_1,mock_eat_2,mock_eat_3,mock_rec_1,mock_rec_2,mock_rec_3};
+
+        // sets that returns are only 1 activity used for each type, each method call should return 1
+        doReturn(once_every_day).when(mock_sleep).getInteractions();
+        doReturn(once_every_day).when(mock_rec_1).getInteractions();
+        doReturn(not_at_all).when(mock_rec_2).getInteractions();
+        doReturn(not_at_all).when(mock_rec_3).getInteractions();
+        doReturn(once_every_day).when(mock_study_1).getInteractions();
+        doReturn(not_at_all).when(mock_study_2).getInteractions();
+        doReturn(once_every_day).when(mock_eat_1).getInteractions();
+        doReturn(not_at_all).when(mock_eat_2).getInteractions();
+        doReturn(not_at_all).when(mock_eat_3).getInteractions();
+
+
+        Core core = new Core();
+        assertSame(1,core.getNumLocationsActivity(test_locations_array,ActivityType.Sleep));
+        assertSame(1,core.getNumLocationsActivity(test_locations_array,ActivityType.Study));
+        assertSame(1,core.getNumLocationsActivity(test_locations_array,ActivityType.Recreation));
+        assertSame(1,core.getNumLocationsActivity(test_locations_array,ActivityType.Food));
+
+        // sets that study uses 2 locations, with second only used once everything else still using 1
+        doReturn(used_once).when(mock_study_2).getInteractions();
+
+
+        // assert outputs as expected, 2 for study, 1 for everything else
+        assertSame(1,core.getNumLocationsActivity(test_locations_array,ActivityType.Sleep));
+        assertSame(2,core.getNumLocationsActivity(test_locations_array,ActivityType.Study));
+        assertSame(1,core.getNumLocationsActivity(test_locations_array,ActivityType.Recreation));
+        assertSame(1,core.getNumLocationsActivity(test_locations_array,ActivityType.Food));
+
+        // sets that rec uses 3 locations
+        doReturn(used_once).when(mock_rec_2).getInteractions();
+        doReturn(used_once).when(mock_rec_3).getInteractions();
+
+        //asserts as expected, 2 for study, 3 for rec and 1 for everything else
+        assertSame(1,core.getNumLocationsActivity(test_locations_array,ActivityType.Sleep));
+        assertSame(2,core.getNumLocationsActivity(test_locations_array,ActivityType.Study));
+        assertSame(3,core.getNumLocationsActivity(test_locations_array,ActivityType.Recreation));
+        assertSame(1,core.getNumLocationsActivity(test_locations_array,ActivityType.Food));
+
+        // sets that eat used no locations
+        // boundary test. Unlikely for any activity type to not be used at all but is possible.
+        // check that it asserts 0 and doesnt count any other activity type.
+        doReturn(not_at_all).when(mock_eat_1).getInteractions();
+
+        //assert as expected, 2 for study, 3 for rec, 1 for sleep, and 0 for eat
+        assertSame(1,core.getNumLocationsActivity(test_locations_array,ActivityType.Sleep));
+        assertSame(2,core.getNumLocationsActivity(test_locations_array,ActivityType.Study));
+        assertSame(3,core.getNumLocationsActivity(test_locations_array,ActivityType.Recreation));
+        assertSame(0,core.getNumLocationsActivity(test_locations_array,ActivityType.Food));
+
+    }
+
+
 
 }
 
