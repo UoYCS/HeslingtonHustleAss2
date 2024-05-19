@@ -523,6 +523,13 @@ public class Core {
     }
 
     /**
+     * gets meal count
+     *
+     * @return meal count array
+     */
+    public int[] getMealCount(){return meal_count;}
+
+    /**
      * sets study count. This is only used for testing
      *
      * @param studied
@@ -538,6 +545,7 @@ public class Core {
         }
 
     }
+    public int[] getStudyCount(){return study_count;}
 
     /**
      * sets relax count. This is only used for testing
@@ -554,4 +562,5 @@ public class Core {
             throw new RuntimeException("relax count must have a length of seven denoting seven days");
         }
     }
+    public int[] getRelaxCount(){return relax_count;}
 }
