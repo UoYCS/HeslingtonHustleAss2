@@ -207,10 +207,6 @@ public class Core {
         // BONUS FOR STUDYING EVERYDAY
         if (days_studied == 7){
             score += 250;
-        } else if (days_studied == 6){
-            if (times_studied > 6){
-                score += 250;
-            }
         }
 
         // BONUS FOR STUDYING IN DIFFERENT PLACES
