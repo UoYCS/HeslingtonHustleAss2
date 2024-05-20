@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ResourceExitConditions.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle.core</a> &gt; <span class="el_source">ResourceExitConditions.java</span></div><h1>ResourceExitConditions.java</h1><pre class="source lang-java linenums">/*
+ * CHANGELOG:
+ * NO CHANGES REQUIRED FOR THIS FILE
+ */
+
+package com.waddle_ware.heslington_hustle.core;
+
+/**
+ * Represents the combination of exit conditions and resource types
+ * returned from the core to the GUI, providing visual cues for
+ * why an attempted interaction failed, if applicable.
+ */
+public class ResourceExitConditions {
+    private final ResourceTypes types;
+    private final ExitConditions conditions;
+
+    /**
+     * Constructs a ResourceExitConditions object with the specified resource type and exit condition.
+     *
+     * @param types      The type of resource involved in the interaction.
+     * @param conditions The exit condition indicating the outcome of the interaction.
+     */
+<span class="fc" id="L23">    public ResourceExitConditions(ResourceTypes types, ExitConditions conditions) {</span>
+<span class="fc" id="L24">        this.types = types;</span>
+<span class="fc" id="L25">        this.conditions = conditions;</span>
+<span class="fc" id="L26">    }</span>
+
+    /**
+     * Gets the type of resource involved in the interaction.
+     *
+     * @return The type of resource.
+     */
+<span class="fc" id="L33">    public ResourceTypes getTypes() { return this.types;}</span>
+
+    /**
+     * Gets the exit condition indicating the outcome of the interaction.
+     *
+     * @return The exit condition.
+     */
+<span class="fc" id="L40">    public ExitConditions getConditions() { return this.conditions;}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ActivityLocation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle</a> &gt; <span class="el_source">ActivityLocation.java</span></div><h1>ActivityLocation.java</h1><pre class="source lang-java linenums">/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      - Improved functionality to store interactions within activity object
+ *      - Added ActivityType attribute into class
+ */
+
+package com.waddle_ware.heslington_hustle;
+
+import com.waddle_ware.heslington_hustle.core.ActivityType;
+
+/**
+ * The ActivityLocation class represents a location within the game where activities are.
+ * It stores the coordinates of the location, interaction radius, and a name to identify it.
+ */
+public class ActivityLocation {
+    private final float x; // The x-coordinate of the activity location
+    private final float y; // The y-coordinate of the activity location
+    private final float radius; // The radius of the activity location
+    private final String name; // The name of the activity location
+
+    // CHANGELOG: ADDED AN ACTIVITY TYPE VARIABLE FOR USE IN OTHER AREAS TO EASILY ADD MORE ACTIVITIES
+    private final ActivityType type; // The type of activity (Eat/Sleep/Study/Recreation)
+
+    // CHANGELOG: ADDED THIS VARIABLE TO TRACK ACTIVITIES ON A PER ACTIVITY BASIS
+<span class="fc" id="L26">    private int[] interactions = new int[7]; // Number of times this activity was interacted with on each day</span>
+
+    /**
+     * CHANGELOG: UPDATED METHOD
+     *            ADDED ACTIVITY TYPE INITIALISATION
+     *
+     * Constructs an ActivityLocation object with the specified coordinates, radius, and name.
+     *
+     * @param x      The x-coordinate of the activities' location.
+     * @param y      The y-coordinate of the activities' location.
+     * @param radius The interaction radius of the activity.
+     * @param name   The name of the activity.
+     * @param type   The type of the activity
+     */
+<span class="fc" id="L40">    public ActivityLocation(float x, float y, float radius, String name, ActivityType type) {</span>
+<span class="fc" id="L41">        this.x = x;</span>
+<span class="fc" id="L42">        this.y = y;</span>
+<span class="fc" id="L43">        this.radius = radius;</span>
+<span class="fc" id="L44">        this.name = name;</span>
+<span class="fc" id="L45">        this.type = type;</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Retrieves the y-coordinate of the activity location.
+     *
+     * @return The y-coordinate of the activity location.
+     */
+    public float getX() {
+<span class="fc" id="L54">        return this.x;</span>
+    }
+
+    /**
+     * Retrieves the y-coordinate of the activity location.
+     *
+     * @return The y-coordinate of the activity location.
+     */
+    public float getY() {
+<span class="fc" id="L63">        return this.y;</span>
+    }
+
+    /**
+     * Retrieves the radius of the activity location.
+     *
+     * @return The radius of the activity location.
+     */
+    public float getRadius() {
+<span class="fc" id="L72">        return this.radius;</span>
+    }
+
+    /**
+     * Retrieves the name of the activity location.
+     *
+     * @return The name of the activity location.
+     */
+    public String getName() {
+<span class="fc" id="L81">        return this.name;</span>
+    }
+
+    /**
+     * CHANGELOG : ADDED METHOD
+     *             ADDED GETTER FOR NEW CLASS ATTRIBUTE
+     *
+     * Retrieves the type of the activity locations
+     * @return The type of the activity location.
+     */
+    public ActivityType getType() {
+<span class="fc" id="L92">            return type;</span>
+    }
+
+
+    /**
+     * CHANGELOG : ADDED METHOD
+     *             ADDED GETTER FOR NEW CLASS ATTRIBUTE
+     *
+     * Retrieves the array of activity interactions
+     * @return Array of activity interactions
+     */
+    public int[] getInteractions(){
+<span class="fc" id="L104">        return this.interactions;</span>
+    }
+
+    /**
+     * CHANGELOG : ADDED METHOD
+     * Increments the counter array for a specific day
+     * @param day Integer from 0-6 (representing days 1-7)
+     */
+    public void incrementCounter(int day){
+<span class="fc" id="L113">        this.interactions[day]++;</span>
+<span class="fc" id="L114">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Energy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle.core</a> &gt; <span class="el_source">Energy.java</span></div><h1>Energy.java</h1><pre class="source lang-java linenums">/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Testing
+ *          - Updated code and added new method to assist in unit testing
+ */
+
+package com.waddle_ware.heslington_hustle.core;
+
+/**
+ * Represents the energy resource in the game.
+ * This class implements the ResourceBase interface for managing energy related operations.
+ */
+public class Energy implements ResourceBase {
+    // Static constants
+    // CHANGELOG: Updated variable accessibility for testing
+    static final public int ENERGY_PER_STUDY = -2;
+    static final public int ENERGY_PER_RECREATIONAL = -1;
+    static final public int ENERGY_PER_FOOD = 1;
+
+    // Member variables.
+    final private int limit;
+    private int current;
+
+    /**
+     * Initialises the energy class with the energy limit specified
+     *
+     * @param limit The upper limit of the energy that the player can have at any given time
+     */
+<span class="fc" id="L30">    public Energy(int limit) {</span>
+<span class="fc" id="L31">        this.limit = limit;</span>
+<span class="fc" id="L32">        this.current = limit;</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * Gets the current amount of energy.
+     *
+     * @return The current amount of energy.
+     */
+    public int getCurrentEnergy() {
+<span class="fc" id="L41">        return this.current;</span>
+    }
+
+    /**
+     * Resets the energy to its initial state, setting it to the limit.
+     */
+    @Override
+    public void reset() {
+<span class="fc" id="L49">        this.current = this.limit;</span>
+<span class="fc" id="L50">    }</span>
+
+    /**
+     * Checks if the specified amount of energy is valid.
+     *
+     * @param amount The amount of energy to check.
+     * @return An ExitConditions value indicating whether the energy level is too low, too high, or ok.
+     */
+    @Override
+    public ExitConditions isOk(int amount) {
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if(amount &lt; 0) return ExitConditions.TooLow;</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if(amount &gt; this.limit) return ExitConditions.TooHigh;</span>
+<span class="fc" id="L62">        return ExitConditions.IsOk;</span>
+    }
+
+    /**
+     * Attempts to perform the specified type of activity with the energy resource.
+     *
+     * @param type The type of activity to attempt.
+     * @return A ResourceExitConditions object indicating whether it is possible to perform the activity.
+     */
+    @Override
+    public ResourceExitConditions tryActivityType(ActivityType type) {
+        int cost_of_resource;
+<span class="fc bfc" id="L74" title="All 4 branches covered.">        switch(type) {</span>
+            case Study:
+<span class="fc" id="L76">                cost_of_resource = ENERGY_PER_STUDY;</span>
+<span class="fc" id="L77">                break;</span>
+            case Recreation:
+<span class="fc" id="L79">                cost_of_resource = ENERGY_PER_RECREATIONAL;</span>
+<span class="fc" id="L80">                break;</span>
+            case Food:
+<span class="fc" id="L82">                cost_of_resource = ENERGY_PER_FOOD;</span>
+<span class="fc" id="L83">                break;</span>
+                //This should never happen
+            default:
+<span class="fc" id="L86">                cost_of_resource = -99999999;</span>
+                break;
+        }
+
+<span class="fc" id="L90">        final int potential_state = this.current + cost_of_resource; // future energy amount</span>
+<span class="fc" id="L91">        final ExitConditions condition = isOk(potential_state); // checks if enough energy</span>
+<span class="fc" id="L92">        return new ResourceExitConditions(ResourceTypes.Energy, condition);</span>
+        // ResourceExitConditions has an attribute Resource type,
+        // type is either Time or Energy
+        // this says whether it's referring to time or energy, this refers to energy as set out in parameter 1
+        // condition is exitcondition class
+        // exitconditions says if the attempt at doing activity is valid or not
+        // i.e. yes (isOK), or too low / too high
+
+        // so basically this returns that an activity uses energy? and whether there is enough energy to do a task
+        // the resourcetype attribute isn't actually used in core
+        // only bit used by core class is whether it's a valid activity use
+    }
+
+    /**
+     * Performs the specified type of activity with the energy resource.
+     *
+     * @param type The type of activity to perform.
+     */
+    @Override
+    public void doActivity(ActivityType type) {
+<span class="fc bfc" id="L112" title="All 4 branches covered.">        switch(type) {</span>
+            case Study:
+<span class="fc" id="L114">                this.current += ENERGY_PER_STUDY;</span>
+<span class="fc" id="L115">                return;</span>
+            case Recreation:
+<span class="fc" id="L117">                this.current += ENERGY_PER_RECREATIONAL;</span>
+<span class="fc" id="L118">                return;</span>
+            case Food:
+<span class="fc" id="L120">                this.current += ENERGY_PER_FOOD;</span>
+        }
+<span class="fc" id="L122">    }</span>
+
+    /**
+     * Gets the upper limit of energy that the player can have at any given time.
+     *
+     * @return The upper limit of energy.
+     */
+    public int getLimit() {
+<span class="fc" id="L130">        return this.limit;</span>
+    }
+
+    /**
+     * CHANGELOG: NEW METHOD
+     * Added setter method for energy for testing purposes
+     * @param newcurrent New testing energy value.
+     */
+<span class="fc" id="L138">    public void setcurrent(int newcurrent){this.current = newcurrent;}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

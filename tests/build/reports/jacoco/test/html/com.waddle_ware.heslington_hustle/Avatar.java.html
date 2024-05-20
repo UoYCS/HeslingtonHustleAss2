@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Avatar.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle</a> &gt; <span class="el_source">Avatar.java</span></div><h1>Avatar.java</h1><pre class="source lang-java linenums">/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Testing
+ *          - Updated code to assist in unit testing
+ */
+
+package com.waddle_ware.heslington_hustle;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapLayers;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+
+import static com.waddle_ware.heslington_hustle.PlayerAnimator.state_time;
+
+/**
+ * The Avatar class represents the player's character in the game.
+ * It manages the player's movement, collision detection, and rendering.
+ */
+public class Avatar {
+    private final float player_size;
+    private float player_x, player_y;
+
+    // CHANGELOG: Updated variable accessibility for testing
+    public final Vector2 velocity;
+
+    private final float world_height;
+    private final float world_width;
+    private final static float ACCELERATION = 10f;
+    //the player's speed will be multiplied by this so
+    //the player's current velocity will be reduced by
+    //1 - friction every frame/update cycle
+    private final static float FRICTION = 0.8f;
+
+    private final static float MAX_VELOCITY = 200f;
+
+    /**
+     * Constructs an Avatar object.
+     *
+     * @param plyr_x       The initial x-coordinate of the player.
+     * @param plyr_y       The initial y-coordinate of the player.
+     * @param world_height The height of the game world.
+     * @param world_width  The width of the game world.
+     */
+<span class="fc" id="L53">    public Avatar(float plyr_x, float plyr_y, float world_height, float world_width) {</span>
+<span class="fc" id="L54">        this.player_x = plyr_x;</span>
+<span class="fc" id="L55">        this.player_y = plyr_y;</span>
+<span class="fc" id="L56">        this.velocity = new Vector2(0,0);</span>
+<span class="fc" id="L57">        this.player_size = 24f;</span>
+<span class="fc" id="L58">        this.world_height = world_height;</span>
+<span class="fc" id="L59">        this.world_width = world_width;</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Updates player position and checks for collisions with tiles on the game map.
+     *
+     * @param tile_map The TiledMap representing the game map.
+     */
+    public void update(TiledMap tile_map) {
+<span class="nc" id="L68">        final float oldX = this.player_x;</span>
+<span class="nc" id="L69">        final float oldY = this.player_y;</span>
+
+<span class="nc" id="L71">        this.velocity.clamp(0, MAX_VELOCITY);</span>
+<span class="nc" id="L72">        movePlayer(this.velocity.x * Gdx.graphics.getDeltaTime(), this.velocity.y * Gdx.graphics.getDeltaTime());</span>
+
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if(isTilesBlocked(tile_map, this.player_x, this.player_y, this.player_size)) {</span>
+<span class="nc" id="L75">            onCollision(tile_map, oldX, oldY);</span>
+        }
+<span class="nc" id="L77">    }</span>
+
+    /**
+     * Handles collisions between the player and the game map.
+     *
+     * @param tile_map The TiledMap representing the game map.
+     * @param oldX     The previous x-coordinate of the player.
+     * @param oldY     The previous y-coordinate of the player.
+     */
+    public void onCollision(TiledMap tile_map, final float oldX, final float oldY) {
+<span class="nc" id="L87">        float newX = this.player_x;</span>
+<span class="nc" id="L88">        float newY = this.player_y;</span>
+
+        // Check if the player is stuck horizontally
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (isTilesBlocked(tile_map, newX, oldY, this.player_size)) {</span>
+<span class="nc" id="L92">            newX = oldX;</span>
+<span class="nc" id="L93">            this.velocity.x = 0; // Reset horizontal velocity</span>
+        }
+
+        // Check if the player is stuck vertically
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (isTilesBlocked(tile_map, oldX, newY, this.player_size)) {</span>
+<span class="nc" id="L98">            newY = oldY;</span>
+<span class="nc" id="L99">            this.velocity.y = 0; // Reset vertical velocity</span>
+        }
+
+        // Update player position
+<span class="nc" id="L103">        this.player_x = newX;</span>
+<span class="nc" id="L104">        this.player_y = newY;</span>
+<span class="nc" id="L105">    }</span>
+
+    /**
+     * Checks if the player collides with any blocked tiles in the game map.
+     *
+     * @param tile_map The TiledMap representing the game map.
+     * @param x        The x-coordinate of the player.
+     * @param y        The y-coordinate of the player.
+     * @param size     The size of the player.
+     * @return True if the player collides with any blocked tile, false otherwise.
+     */
+    private boolean isTilesBlocked(TiledMap tile_map, float x, float y, float size) {
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        return isTileBlocked(tile_map, x, y) ||</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">                isTileBlocked(tile_map, x + size, y) ||</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                isTileBlocked(tile_map, x, y + size) ||</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">                isTileBlocked(tile_map, x + size, y + size);</span>
+    }
+
+    /**
+     * Checks if a specific tile is blocked in the game map.
+     *
+     * @param tile_map The TiledMap representing the game map.
+     * @param x        The x-coordinate of the tile.
+     * @param y        The y-coordinate of the tile.
+     * @return True if the tile is blocked, false otherwise.
+     */
+    private boolean isTileBlocked(TiledMap tile_map, float x, float y) {
+<span class="nc" id="L132">        MapLayers layers = tile_map.getLayers();</span>
+
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        for (MapLayer layer : layers) {</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">            if (layer instanceof TiledMapTileLayer) {</span>
+<span class="nc" id="L136">                TiledMapTileLayer tile_layer = (TiledMapTileLayer) layer;</span>
+
+<span class="nc" id="L138">                int cellX = (int) (x / tile_layer.getTileWidth());</span>
+<span class="nc" id="L139">                int cellY = (int) (y / tile_layer.getTileHeight());</span>
+
+
+<span class="nc" id="L142">                TiledMapTileLayer.Cell cell = tile_layer.getCell(cellX, cellY);</span>
+<span class="nc bnc" id="L143" title="All 6 branches missed.">                if (cell != null &amp;&amp; cell.getTile() != null &amp;&amp; cell.getTile().getProperties().containsKey(&quot;Blocked&quot;)</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">                        &amp;&amp; cell.getTile().getProperties().get(&quot;Blocked&quot;, Boolean.class)) {</span>
+<span class="nc" id="L145">                    return true; // Blocked tile found in any layer</span>
+                }
+            }
+<span class="nc" id="L148">        }</span>
+<span class="nc" id="L149">        return false; // No blocked tile found in any layer</span>
+    }
+
+    /**
+     * Moves the player by a specified amount.
+     *
+     * @param delta_x The change in x-coordinate.
+     * @param delta_y The change in y-coordinate.
+     */
+    private void movePlayer(float delta_x, float delta_y) {
+<span class="nc" id="L159">        this.player_x += delta_x;</span>
+<span class="nc" id="L160">        this.player_y += delta_y;</span>
+<span class="nc" id="L161">        this.player_x = MathUtils.clamp(this.player_x, 0, this.world_width - this.player_size);</span>
+<span class="nc" id="L162">        this.player_y = MathUtils.clamp(this.player_y, 0, this.world_height - this.player_size);</span>
+<span class="nc" id="L163">    }</span>
+
+    /**
+     * Renders the player character on the game screen.
+     *
+     * @param renderer The OrthogonalTiledMapRenderer used for rendering.
+     */
+    public void render(OrthogonalTiledMapRenderer renderer) {
+<span class="nc" id="L171">        Animation&lt;TextureRegion&gt; animation = PlayerAnimator.createAnimation(this.velocity);</span>
+<span class="nc" id="L172">        state_time += Gdx.graphics.getDeltaTime();</span>
+<span class="nc" id="L173">        TextureRegion current_frame = animation.getKeyFrame(state_time, true);</span>
+
+<span class="nc" id="L175">        renderer.getBatch().draw(current_frame, this.player_x, this.player_y, this.player_size, this.player_size);</span>
+<span class="nc" id="L176">    }</span>
+
+    /**
+     * Handles user input to control the player movement.
+     * Accelerates player's velocity in the appropriate direction when movement keys are pressed.
+     * Friction is applied independently in x,y directions based on whether movement keys are pressed.
+     * The player's velocity is clamped to prevent it from exceeding the maximum velocity.
+     */
+    public void handleInput() {
+<span class="fc" id="L185">        boolean x_keys_pressed = false, y_keys_pressed = false;</span>
+        // Move player sprite based on key input
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        if (Gdx.input.isKeyPressed(Input.Keys.W)) { this.velocity.y += ACCELERATION; y_keys_pressed = true;}</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        if (Gdx.input.isKeyPressed(Input.Keys.S)) { this.velocity.y -= ACCELERATION; y_keys_pressed = true;}</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (Gdx.input.isKeyPressed(Input.Keys.D)) { this.velocity.x += ACCELERATION; x_keys_pressed = true;}</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        if (Gdx.input.isKeyPressed(Input.Keys.A)) { this.velocity.x -= ACCELERATION; x_keys_pressed = true;}</span>
+
+        // Apply friction if no movement keys are pressed
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        if(!x_keys_pressed) this.velocity.x *= FRICTION;</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        if(!y_keys_pressed) this.velocity.y *= FRICTION;</span>
+
+        // Cap the player's velocity to ensure it stays within the max velocity
+<span class="fc" id="L197">        this.velocity.x = MathUtils.clamp(this.velocity.x, -MAX_VELOCITY, MAX_VELOCITY);</span>
+<span class="fc" id="L198">        this.velocity.y = MathUtils.clamp(this.velocity.y, -MAX_VELOCITY, MAX_VELOCITY);</span>
+<span class="fc" id="L199">    }</span>
+
+    /**
+     * Retrieves the current x-coordinate of the player.
+     *
+     * @return The x-coordinate of the player.
+     */
+    public float getPlayerX() {
+<span class="fc" id="L207">        return this.player_x;</span>
+    }
+
+    /**
+     * Retrieves the current y-coordinate of the player.
+     *
+     * @return The y-coordinate of the player.
+     */
+    public float getPlayerY() {
+<span class="fc" id="L216">        return this.player_y;</span>
+    }
+
+    /**
+     * Sets the location of the player to the specified coordinates.
+     *
+     * @param x The x-coordinate to set.
+     * @param y The y-coordinate to set.
+     */
+    public void setPlayerLoc(float x, float y){
+<span class="fc" id="L226">        this.player_x = x;</span>
+<span class="fc" id="L227">        this.player_y = y;</span>
+<span class="fc" id="L228">    }</span>
+
+    /**
+     * Cleans up resources associated with the Avatar object.
+     */
+<span class="nc" id="L233">    public void dispose() {}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

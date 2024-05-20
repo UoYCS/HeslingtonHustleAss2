@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Time.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle.core</a> &gt; <span class="el_source">Time.java</span></div><h1>Time.java</h1><pre class="source lang-java linenums">/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Testing
+ *          - Added new method to assist in unit testing
+ */
+
+package com.waddle_ware.heslington_hustle.core;
+
+import java.time.Clock;
+
+/**
+ * The Time class manages time in the game, representing a day with a specific duration (16 hours).
+ * It implements the ResourceBase interface for resource management.
+ */
+public class Time implements ResourceBase {
+    static final public int TIME_PER_STUDY = -120;
+    static final public int TIME_PER_RECREATIONAL = -120;
+    static final public int TIME_PER_FOOD = -60;
+    static final public int MINUTES_PER_DAY = 16 * 60;
+
+    /**
+     * This private constant will be used to convert the current minutes
+     * to an amount of intervals for updating the GUI layer
+     */
+    static final public int MINS_IN_INTERVAL = 15;
+
+    /**
+     * This constant variable will be used to specify the amount
+     * of time that needs to pass irl for 1 unit of time to decrement
+     */
+    public final int   milliseconds_irl_to_decrement;
+    public final int   game_minutes_per_decrement;
+    public int         minutes_remaining;
+    public Clock timer;
+    /**
+     * This variable will be used to check if the time to decrement has elapsed
+     */
+    public long        end_point;
+
+    /**
+     * Constructs a Time instance with specified parameters.
+     *
+     * @param mins_per_dec      The number of game minutes to decrement in each update cycle.
+     * @param secs_to_dec       The number of real-time seconds to decrement for each game time decrement.
+     */
+<span class="fc" id="L47">    public Time(int mins_per_dec, int secs_to_dec) {</span>
+<span class="fc" id="L48">        this.minutes_remaining = MINUTES_PER_DAY;</span>
+<span class="fc" id="L49">        this.game_minutes_per_decrement = mins_per_dec;</span>
+<span class="fc" id="L50">        this.milliseconds_irl_to_decrement = secs_to_dec * 1000;</span>
+<span class="fc" id="L51">        this.timer = Clock.systemUTC();</span>
+<span class="fc" id="L52">        this.end_point = this.timer.millis() + this.milliseconds_irl_to_decrement;</span>
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Updates the time, decrementing game time if necessary.
+     * This method is called to passively drain time.
+     */
+    public void update() {
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if(this.end_point &gt;= this.timer.millis()) return;</span>
+<span class="fc" id="L61">        this.minutes_remaining -= this.game_minutes_per_decrement;</span>
+<span class="fc" id="L62">        this.end_point = this.timer.millis() + this.milliseconds_irl_to_decrement;</span>
+<span class="fc" id="L63">    }</span>
+
+    @Override
+    public void reset() {
+<span class="fc" id="L67">        this.minutes_remaining = MINUTES_PER_DAY;</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Gets the number of bars to display in the progress bar on the HUD.
+     *
+     * @return The number of minutes remaining divided by MINS_IN_INTERVAL.
+     */
+    public int getIntervalsRemaining() {
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if(this.minutes_remaining &lt; 1) return 0;</span>
+
+<span class="fc" id="L78">        return (int) Math.ceil((double) this.minutes_remaining / MINS_IN_INTERVAL);</span>
+    }
+
+    /**
+     * Gets the number of game minutes remaining.
+     * Used by internal core function to check whether the game has ended
+     *
+     * @return The number of game minutes remaining.
+     */
+    public int getMinutesRemaining() {
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if(this.minutes_remaining &lt; 1) return 0;</span>
+
+<span class="fc" id="L90">        return this.minutes_remaining;</span>
+    }
+    @Override
+    public ExitConditions isOk(int amount) {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if(amount &lt;= 0) return ExitConditions.TooLow;</span>
+<span class="fc" id="L95">        return ExitConditions.IsOk;</span>
+    }
+    @Override
+    public ResourceExitConditions tryActivityType(ActivityType type) {
+        int cost_of_resource;
+<span class="fc bfc" id="L100" title="All 4 branches covered.">        switch(type) {</span>
+            case Study:
+<span class="fc" id="L102">                cost_of_resource = TIME_PER_STUDY;</span>
+<span class="fc" id="L103">                break;</span>
+            case Recreation:
+<span class="fc" id="L105">                cost_of_resource = TIME_PER_RECREATIONAL;</span>
+<span class="fc" id="L106">                break;</span>
+            case Food:
+<span class="fc" id="L108">                cost_of_resource = TIME_PER_FOOD;</span>
+<span class="fc" id="L109">                break;</span>
+            //This should never happen
+            default:
+<span class="fc" id="L112">                cost_of_resource = -99999999;</span>
+                break;
+        }
+<span class="fc" id="L115">        final int potential_state = this.minutes_remaining + cost_of_resource;</span>
+<span class="fc" id="L116">        final ExitConditions condition = isOk(potential_state);</span>
+<span class="fc" id="L117">        return new ResourceExitConditions(ResourceTypes.Time, condition);</span>
+    }
+    @Override
+    public void doActivity(ActivityType type) {
+<span class="fc bfc" id="L121" title="All 4 branches covered.">        switch(type) {</span>
+            case Study:
+<span class="fc" id="L123">                this.minutes_remaining += TIME_PER_STUDY;</span>
+<span class="fc" id="L124">                return;</span>
+            case Recreation:
+<span class="fc" id="L126">                this.minutes_remaining += TIME_PER_RECREATIONAL;</span>
+<span class="fc" id="L127">                return;</span>
+            case Food:
+<span class="fc" id="L129">                this.minutes_remaining += TIME_PER_FOOD;</span>
+        }
+<span class="fc" id="L131">    }</span>
+
+    /**
+     * CHANGELOG: NEW METHOD
+     * Added setter method for testing purposes
+     * @param minutes New testing time value.
+     */
+    public void set_minutes_remaining(int minutes){
+<span class="fc" id="L139">        this.minutes_remaining = minutes;</span>
+
+<span class="fc" id="L141">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

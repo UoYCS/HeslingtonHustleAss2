@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LeaderboardScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle.Screens</a> &gt; <span class="el_source">LeaderboardScreen.java</span></div><h1>LeaderboardScreen.java</h1><pre class="source lang-java linenums">/*
+ * CHANGELOG:
+ * NEW CLASS:
+ *      Added class to Implement new leaderboard functionality
+ */
+
+package com.waddle_ware.heslington_hustle.Screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.waddle_ware.heslington_hustle.Button;
+import com.waddle_ware.heslington_hustle.Font;
+import com.waddle_ware.heslington_hustle.HeslingtonHustle;
+import com.waddle_ware.heslington_hustle.Leaderboard;
+import com.waddle_ware.heslington_hustle.UserScore;
+
+/**
+ * CHANGELOG: NEW CLASS
+ *            ADDED CLASS TO IMPLEMENT LEADERBOARD SCREEN
+ *
+ * This class represents the games Leaderboard Screen.
+ * It displays the top 10 scores achieved in the game.
+ */
+public class LeaderboardScreen implements Screen {
+    private final HeslingtonHustle game;
+    private final Stage stage;
+    private final ScreenId previous_screen;
+    private final Texture background_image;
+    private final BitmapFont font;
+    private String displayText;
+
+    public static final String BLURRED_BACKGROUND_ASSET = &quot;Background_Blurred.png&quot;;
+    public static final String BACK_BUTTON_ASSET = &quot;BackButton.png&quot;;
+
+<span class="nc" id="L45">    private Leaderboard leaderboard = new Leaderboard();</span>
+
+    /**
+     * Constructs a new LeaderboardScreen.
+     *
+     * @param game             The game instance.
+     * @param previous_screen The screen to return to upon pressing the back button.
+     */
+<span class="nc" id="L53">    public LeaderboardScreen(HeslingtonHustle game, ScreenId previous_screen) {</span>
+<span class="nc" id="L54">        this.previous_screen = previous_screen;</span>
+<span class="nc" id="L55">        this.game = game;</span>
+<span class="nc" id="L56">        this.background_image = new Texture(BLURRED_BACKGROUND_ASSET);</span>
+<span class="nc" id="L57">        this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio</span>
+<span class="nc" id="L58">        Gdx.input.setInputProcessor(this.stage);</span>
+<span class="nc" id="L59">        initialiseMenu(); // Add menu elements</span>
+
+<span class="nc" id="L61">        this.font = Font.getGameFont(50, 4f);</span>
+
+<span class="nc" id="L63">    }</span>
+
+
+    /**
+     * Initialises the Leaderboard screen with associated UI elements.
+     */
+    private void initialiseMenu() {
+<span class="nc" id="L70">        VerticalGroup leader_group = new VerticalGroup();</span>
+<span class="nc" id="L71">        leader_group.setFillParent(true);</span>
+<span class="nc" id="L72">        leader_group.left().top().padTop(7);</span>
+<span class="nc" id="L73">        this.stage.addActor(leader_group);</span>
+
+        // Back button
+<span class="nc" id="L76">        ImageButton back_button = new ImageButton(Button.createTexRegDraw(BACK_BUTTON_ASSET));</span>
+<span class="nc" id="L77">        back_button.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc bnc" id="L80" title="All 3 branches missed.">                switch (previous_screen) {</span>
+                    case MenuScreen:
+<span class="nc" id="L82">                        game.setScreen(new MenuScreen(game));</span>
+<span class="nc" id="L83">                        break;</span>
+                    case PlayScreen:
+<span class="nc" id="L85">                        game.setScreen(new PlayScreen(game));</span>
+                        break;
+                }
+<span class="nc" id="L88">            }</span>
+        });
+<span class="nc" id="L90">        leader_group.addActor(back_button);</span>
+<span class="nc" id="L91">    }</span>
+
+    /**
+     * Called when this screen becomes the current screen of the game.
+     * Sets the input processor to the stage, allowing it to receive input events.
+     */
+    @Override
+    public void show() {
+<span class="nc" id="L99">        Gdx.input.setInputProcessor(this.stage);</span>
+
+<span class="nc" id="L101">        int i = 1;</span>
+<span class="nc" id="L102">        String result = &quot;&quot;;</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        for (UserScore score : this.leaderboard.getHighScores()){</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            if (score == null){</span>
+<span class="nc" id="L105">                break;</span>
+            }
+<span class="nc" id="L107">            int dots = (20 - (Integer.toString(score.getScore())).length());</span>
+
+<span class="nc bnc" id="L109" title="All 2 branches missed.">            if (i != 10){</span>
+<span class="nc" id="L110">                result += &quot; &quot;;</span>
+            }
+
+<span class="nc" id="L113">            result += i + &quot;. &quot; + score.getPlayerName() + &quot;.&quot;.repeat(dots) + score.getScore() + &quot;\n&quot;;</span>
+<span class="nc" id="L114">            i++;</span>
+
+        }
+<span class="nc" id="L117">        this.displayText = result;</span>
+
+
+
+
+
+<span class="nc" id="L123">    }</span>
+
+    /**
+     * Called when this screen should render itself.
+     *
+     * @param delta The time in seconds since the last render.
+     */
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L132">        Gdx.gl.glClearColor(0, 0, 0, 1);</span>
+<span class="nc" id="L133">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+
+<span class="nc" id="L135">        this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));</span>
+
+<span class="nc" id="L137">        this.stage.getBatch().begin();</span>
+<span class="nc" id="L138">        final float scaleX = this.stage.getViewport().getWorldWidth() / this.background_image.getWidth();</span>
+<span class="nc" id="L139">        final float scaleY = this.stage.getViewport().getWorldHeight() / this.background_image.getHeight();</span>
+<span class="nc" id="L140">        final float scale = Math.min(scaleX, scaleY);</span>
+<span class="nc" id="L141">        final float width = this.background_image.getWidth() * scale;</span>
+<span class="nc" id="L142">        final float height = this.background_image.getHeight() * scale;</span>
+<span class="nc" id="L143">        final float x = (this.stage.getViewport().getWorldWidth() - width) / 2;</span>
+<span class="nc" id="L144">        final float y = (this.stage.getViewport().getWorldHeight() - height) / 2;</span>
+<span class="nc" id="L145">        this.stage.getBatch().draw(this.background_image, x, y, width, height);</span>
+
+
+<span class="nc" id="L148">        GlyphLayout endText = new GlyphLayout(this.font, this.displayText);</span>
+<span class="nc" id="L149">        this.font.draw(this.stage.getBatch(),</span>
+                this.displayText,
+                (float) ((width - endText.width) / 2),
+                (float) ((height) / 1.3));
+
+
+
+<span class="nc" id="L156">        this.stage.getBatch().end();</span>
+<span class="nc" id="L157">        this.stage.draw();</span>
+<span class="nc" id="L158">    }</span>
+
+
+
+
+    /**
+     * Called when the screen is resized.
+     *
+     * @param width  The new width in pixels.
+     * @param height The new height in pixels.
+     */
+    @Override
+    public void resize(int width, int height) {
+<span class="nc" id="L171">        this.stage.getViewport().update(width, height, true);</span>
+<span class="nc" id="L172">    }</span>
+
+    @Override
+    public void pause() {
+<span class="nc" id="L176">    }</span>
+
+    @Override
+    public void resume() {
+<span class="nc" id="L180">    }</span>
+
+    /**
+     * Hides the screen and clears the input processor, preventing further input events.
+     * This method is called when the screen is no longer visible.
+     */
+    @Override
+    public void hide() {
+<span class="nc" id="L188">        Gdx.input.setInputProcessor(null);</span>
+<span class="nc" id="L189">    }</span>
+
+    /**
+     * Disposes of this screen's resources.
+     * This method is called when this screen is no longer needed.
+     */
+    @Override
+    public void dispose() {
+<span class="nc" id="L197">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

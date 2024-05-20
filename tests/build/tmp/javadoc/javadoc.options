@@ -1,0 +1,15 @@
+-classpath 'C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\build\\classes\\java\\main;C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\build\\resources\\main;C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\core\\build\\classes\\java\\main;C:\\Users\\400mx\\.gradle\\caches\\modules-2\\files-2.1\\junit\\junit\\4.14-SNAPSHOT\\507af44afc2ea54cc788ffa19b03f0cc140f92a5\\junit-4.14-SNAPSHOT.jar;C:\\Users\\400mx\\.gradle\\caches\\modules-2\\files-2.1\\org.mockito\\mockito-all\\1.10.19\\539df70269cc254a58cccc5d8e43286b4a73bf30\\mockito-all-1.10.19.jar;C:\\Users\\400mx\\.gradle\\caches\\modules-2\\files-2.1\\com.badlogicgames.gdx\\gdx-backend-headless\\1.12.1\\22b5d8ed8ad1358c63ed4ce223634d166003c70e\\gdx-backend-headless-1.12.1.jar;C:\\Users\\400mx\\.gradle\\caches\\modules-2\\files-2.1\\com.badlogicgames.gdx\\gdx-freetype\\1.12.1\\d5826997b0cfa595a72889610fadb18405056c1c\\gdx-freetype-1.12.1.jar;C:\\Users\\400mx\\.gradle\\caches\\modules-2\\files-2.1\\com.badlogicgames.gdx\\gdx-box2d\\1.12.1\\6c37ed04f97d062f1bdc4afe1f583182e539a269\\gdx-box2d-1.12.1.jar;C:\\Users\\400mx\\.gradle\\caches\\modules-2\\files-2.1\\com.badlogicgames.gdx\\gdx\\1.12.1\\a2d066c09329c457045c284c42d6f37122840aa\\gdx-1.12.1.jar;C:\\Users\\400mx\\.m2\\repository\\org\\hamcrest\\hamcrest-core\\1.3\\hamcrest-core-1.3.jar;C:\\Users\\400mx\\.gradle\\caches\\modules-2\\files-2.1\\com.badlogicgames.gdx\\gdx-jnigen-loader\\2.3.1\\2d472f69243631fbcb3d4c3f93dd2e137a6cb084\\gdx-jnigen-loader-2.3.1.jar'
+-d 'C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\build\\docs\\javadoc'
+-doctitle 'tests 1.0 API'
+-notimestamp 
+-quiet 
+-windowtitle 'tests 1.0 API'
+'C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\src\\com.thewafflers.tests\\AssetTests.java'
+'C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\src\\com.thewafflers.tests\\AvatarTests.java'
+'C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\src\\com.thewafflers.tests\\CoreTests.java'
+'C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\src\\com.thewafflers.tests\\EnergyTests.java'
+'C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\src\\com.thewafflers.tests\\GdxTestRunner.java'
+'C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\src\\com.thewafflers.tests\\LeaderboardTests.java'
+'C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\src\\com.thewafflers.tests\\PlayScreenTests.java'
+'C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\src\\com.thewafflers.tests\\ScoringTests.java'
+'C:\\Users\\400mx\\Documents\\GitHub\\HeslingtonHustleAss2\\tests\\src\\com.thewafflers.tests\\TimeTests.java'

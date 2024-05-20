@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InteractionPopup.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle</a> &gt; <span class="el_source">InteractionPopup.java</span></div><h1>InteractionPopup.java</h1><pre class="source lang-java linenums">/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Updated Functionality
+ *          - Interaction popups now change colour and provide better visual feedback upon interaction
+ *      Testing
+ *          - Updated code to assist in unit testing
+ */
+package com.waddle_ware.heslington_hustle;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+
+/**
+ * The InteractionPopup class represents a pop-up message displayed when a player is within range of an interaction.
+ * It renders the message using a specified font and displays it at a given position on the screen.
+ */
+public class InteractionPopup {
+    private final BitmapFont font;
+    private final String message;
+
+    public static final String FONT_GEN_ASSET = &quot;BebasNeue-Regular.ttf&quot;;
+
+    /**
+     * CHANGELOG: UPDATED METHOD
+     *            ADDED COLOUR ATTRIBUTE TO ASSIST IN VISUAL FEEDBACK
+     *
+     * Constructs a new InteractionPopup object with specified message.
+     *
+     * @param colour The colour of the pop-up.
+     * @param message The message to be displayed in the pop-up.
+     */
+<span class="nc" id="L36">    public InteractionPopup(String message, String colour) {</span>
+        // Generate font
+<span class="nc" id="L38">        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_GEN_ASSET));</span>
+<span class="nc" id="L39">        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();</span>
+<span class="nc" id="L40">        parameter.size = 10;</span>
+<span class="nc" id="L41">        parameter.borderColor = Color.BLACK;</span>
+
+        // CHANGELOG: ADDED DIFFERENT COLOURS OF POPUPS TO INDICATE ACTIVITY COMPLETION STATUS
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (colour.equals(&quot;white&quot;)){</span>
+<span class="nc" id="L45">            parameter.color = Color.WHITE;</span>
+        }
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        else if (colour.equals(&quot;green&quot;)){</span>
+<span class="nc" id="L48">            parameter.color = Color.GREEN;</span>
+        }
+        else{
+<span class="nc" id="L51">            parameter.color = Color.RED;</span>
+        }
+
+<span class="nc" id="L54">        parameter.borderWidth = 1.5f;</span>
+<span class="nc" id="L55">        parameter.borderStraight = false;</span>
+
+        // Generate font and dispose generator
+<span class="nc" id="L58">        this.font = generator.generateFont(parameter);</span>
+<span class="nc" id="L59">        generator.dispose();</span>
+<span class="nc" id="L60">        this.message = message;</span>
+<span class="nc" id="L61">    }</span>
+
+    /**
+     * Renders the pop-up message at the specified position on the screen.
+     *
+     * @param batch The batch used for rendering.
+     * @param x     The x-coordinate of the pop-up position.
+     * @param y     The y-coordinate of the pop-up position.
+     */
+    public void render(Batch batch, float x, float y) {
+<span class="nc" id="L71">        batch.begin();</span>
+<span class="nc" id="L72">        this.font.draw(batch, this.message, x, y);</span>
+<span class="nc" id="L73">        batch.end();</span>
+<span class="nc" id="L74">    }</span>
+
+    /**
+     * Disposes of the font used for rendering the pop-up message.
+     */
+    public void dispose() {
+<span class="nc" id="L80">        this.font.dispose();</span>
+<span class="nc" id="L81">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

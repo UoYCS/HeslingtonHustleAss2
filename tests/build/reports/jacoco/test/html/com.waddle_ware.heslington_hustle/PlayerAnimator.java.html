@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayerAnimator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle</a> &gt; <span class="el_source">PlayerAnimator.java</span></div><h1>PlayerAnimator.java</h1><pre class="source lang-java linenums">/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Testing
+ *          - Updated code and to assist in unit testing
+ */
+
+
+package com.waddle_ware.heslington_hustle;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+
+/**
+ * CHANGELOG: UPDATED CLASS
+ *            ADDED ATTRIBUTES TO STORE SPRITE SHEET PNGS
+ * The PlayerAnimator class manages animation of the player character when moving.
+ * It selects the appropriate sprite sheet based on the player's current movement direction
+ * and creates the animation accordingly.
+ */
+<span class="nc" id="L24">public class PlayerAnimator {</span>
+    // Constant rows and columns of the sprite sheet
+    static Animation&lt;TextureRegion&gt; walk_animation;
+    static Texture walk_down_sheet;
+<span class="nc" id="L28">    static float state_time = 0f; // Tracks elapsed time of animation</span>
+
+    // CHANGELOG: ADDED VARIABLES TO STORE SPRITE PNGS
+    public static final String PLAYER_STILL_SPRITE_SHEET_ASSET = &quot;player.png&quot;;
+    public static final String PLAYER_LEFT_SPRITE_SHEET_ASSET = &quot;move_left_sprite_sheet.png&quot;;
+    public static final String PLAYER_RIGHT_SPRITE_SHEET_ASSET = &quot;move_right_sprite_sheet.png&quot;;
+    public static final String PLAYER_UP_SPRITE_SHEET_ASSET = &quot;move_up_sprite_sheet.png&quot;;
+    public static final String PLAYER_DOWN_SPRITE_SHEET_ASSET = &quot;move_down_sprite_sheet.png&quot;;
+
+    /**
+     * CHANGELOG: UPDATED METHOD
+     *            USES NEW SPRITESHEET ATTRIBUTES INSTEAD OF HARD CODED FILES
+     * Creates an animation based on the players movement velocity.
+     *
+     * @param velocity The velocity of the player.
+     * @return The animation representing the player's movement.
+     */
+    public static Animation&lt;TextureRegion&gt; createAnimation(Vector2 velocity) {
+<span class="nc" id="L46">        String sprite_sheet = getSpriteSheet(velocity);</span>
+//        System.out.println(sprite_sheet);
+        int frame_rows;
+<span class="nc" id="L49">        int frame_cols = 1;</span>
+
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        if (sprite_sheet.equals(PLAYER_STILL_SPRITE_SHEET_ASSET)) {</span>
+<span class="nc" id="L52">            frame_rows = 1;</span>
+        }
+        else {
+<span class="nc" id="L55">            frame_rows = 3;</span>
+        }
+
+        // Load sprite sheet as a texture
+<span class="nc" id="L59">        walk_down_sheet = new Texture(Gdx.files.internal(sprite_sheet));</span>
+
+        // Create 2d array of TextureRegions to match sprite sheet
+<span class="nc" id="L62">        TextureRegion[][] tmp = TextureRegion.split(walk_down_sheet,</span>
+<span class="nc" id="L63">                walk_down_sheet.getWidth() / frame_cols,</span>
+<span class="nc" id="L64">                walk_down_sheet.getHeight() / frame_rows);</span>
+
+        // Convert to 1d array with animation frames in the correct order
+<span class="nc" id="L67">        TextureRegion[] walkDownFrames = new TextureRegion[frame_cols * frame_rows];</span>
+<span class="nc" id="L68">        int index = 0;</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        for (int i = 0; i &lt; frame_rows; i++) {</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">            for (int j = 0; j &lt; frame_cols; j++) {</span>
+<span class="nc" id="L71">                walkDownFrames[index] = tmp[i][j];</span>
+<span class="nc" id="L72">                index += 1;</span>
+            }
+        }
+        // Initialise animation with the frame interval (time spent on each animation frame)
+        // and the array of frames.
+<span class="nc" id="L77">        walk_animation = new Animation&lt;&gt;(0.1f, walkDownFrames);</span>
+
+<span class="nc" id="L79">        return walk_animation;</span>
+    }
+
+    /**
+     * Determines which sprite sheet to use based on the player's current movement direction.
+     *
+     * @param velocity The velocity of the player.
+     * @return The filename of the sprite sheet to be used.
+     */
+    private static String getSpriteSheet(Vector2 velocity) {
+        // Finds the direction the sprite is moving in so correct sprite sheet is used.
+
+<span class="nc bnc" id="L91" title="All 4 branches missed.">        if (Math.round(velocity.x) == 0 &amp;&amp; Math.round(velocity.y) == 0) {</span>
+            // Check if player is standing still
+<span class="nc" id="L93">            return PLAYER_STILL_SPRITE_SHEET_ASSET;</span>
+        }
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        else if (Math.abs(velocity.x) &gt; Math.abs(velocity.y)) {</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            if (velocity.x &lt; 0) {</span>
+<span class="nc" id="L97">                return PLAYER_LEFT_SPRITE_SHEET_ASSET;</span>
+            }
+            else {
+<span class="nc" id="L100">                return PLAYER_RIGHT_SPRITE_SHEET_ASSET;</span>
+            }
+        }
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        else if (Math.abs(velocity.x) &lt; Math.abs(velocity.y)) {</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            if (velocity.y &lt; 0) {</span>
+<span class="nc" id="L105">                return PLAYER_DOWN_SPRITE_SHEET_ASSET;</span>
+            }
+            else {
+<span class="nc" id="L108">                return PLAYER_UP_SPRITE_SHEET_ASSET;</span>
+            }
+        }
+<span class="nc" id="L111">        return &quot;player.png&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

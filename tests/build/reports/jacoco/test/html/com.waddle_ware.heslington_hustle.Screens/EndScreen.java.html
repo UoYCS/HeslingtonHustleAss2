@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EndScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle.Screens</a> &gt; <span class="el_source">EndScreen.java</span></div><h1>EndScreen.java</h1><pre class="source lang-java linenums">/*
+ * CHANGELOG:
+ * SEVERAL CHANGES REQUIRED:
+ *      Streaks
+ *          - Added streaks functionality as displayed achievements
+ *      Scoring
+ *          - Added game score to end screen
+ *      General Changes
+ *          - Updated Background
+ *          - Updated Font sizing/placement
+ *          - Added continue button to go to name entry screen
+ *      Testing
+ *          - Updated code to assist in unit testing
+ *
+ */
+
+package com.waddle_ware.heslington_hustle.Screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.waddle_ware.heslington_hustle.Font;
+import com.waddle_ware.heslington_hustle.Button;
+import com.waddle_ware.heslington_hustle.HeslingtonHustle;
+
+// CHANGELOG: Added Library to calculate sizes of text for centering purposes
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+
+/**
+ * CHANGELOG: UPDATED METHOD
+ *            ADDDED STREAKS FUNCTIONALITY
+ *            
+ * The EndScreen class represents the screen displayed at the end of the game.
+ * It displays either a win or lose screen based on the game outcome.
+ * It also displays the user score and the streaks they did/didn't achieve
+ */
+public class EndScreen implements Screen {
+    private final HeslingtonHustle game;
+    private final Stage stage;
+    public final int score;
+    private final Texture to_render;
+    private final BitmapFont font;
+
+    // CHANGELOG: ADDED MORE PRIVATE VARIABLES
+    private final CharSequence status_text; // Text the displays if the user has won or lost.
+    private final BitmapFont small_font; // Smaller font to use for streaks
+    private final BitmapFont big_font; // Bigger font to use for title
+    private final boolean streak_athlete; // Boolean value of if Athlete streak was achieved
+    private final boolean streak_bookworm; // Boolean value of if Bookworm streak was achieved
+    private final boolean streak_clubber; // Boolean value of if Clubber streak was achieved
+
+    public static final String ACHIEVEMENTS_ASSET = &quot;achievements.png&quot;;
+<span class="nc" id="L62">    private final Texture achievementsPNG = new Texture(Gdx.files.internal(ACHIEVEMENTS_ASSET));</span>
+
+    public static final String BLURRED_BACKGROUND_ASSET = &quot;Background_Blurred.png&quot;;
+
+<span class="nc" id="L66">    private final TextureRegion[][] achievements = TextureRegion.split(achievementsPNG, achievementsPNG.getWidth() / 2, achievementsPNG.getHeight()/3);</span>
+
+
+    /**
+     * CHANGELOG: UPDATED METHOD
+     *            ADDED STREAKS PARAMETER
+     *            
+     * Constructs a new EndScreen.
+     * @param game      The game instance.
+     * @param has_won   Boolean value indicating whether the player has won the game.
+     * @param score     The player's score at the end of the game.
+     * @param streaks   Boolean array (size 3) of which streaks have been completed
+     */
+<span class="nc" id="L79">    public EndScreen(HeslingtonHustle game, boolean has_won, int score, boolean[] streaks) {</span>
+<span class="nc" id="L80">        this.game = game;</span>
+
+
+        // CHANGELOG: ADDED UPDATED MAP BACKGROUND FOR END SCREEN
+<span class="nc" id="L84">        this.to_render = new Texture(BLURRED_BACKGROUND_ASSET);</span>
+
+<span class="nc" id="L86">        this.streak_athlete = streaks[0];</span>
+<span class="nc" id="L87">        this.streak_bookworm = streaks[1];</span>
+<span class="nc" id="L88">        this.streak_clubber = streaks[2];</span>
+
+        // CHANGELOG: If the player has won and the score &gt; 40, set the status text accordingly
+<span class="nc bnc" id="L91" title="All 4 branches missed.">        if(has_won &amp;&amp; score &gt;= 40) {</span>
+<span class="nc" id="L92">            this.status_text = &quot;You Won!&quot;;</span>
+<span class="nc" id="L93">            this.score = score;</span>
+        }
+        else {
+            // CHANGELOG: If the player lost, cap the score at 39 and set the status text
+<span class="nc" id="L97">            this.score = Math.min(39, score);</span>
+<span class="nc" id="L98">            this.status_text = &quot;You Lose&quot;;}</span>
+
+
+        // CHANGELOG: REMOVED IN-FILE FONT-GENERATION
+        // this.font_gen = new FreeTypeFontGenerator(Gdx.files.internal(&quot;OETZTYP_.TTF&quot;));
+        // this.font = genFont(150, 6f);
+        // this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        // CHANGELOG: Font generation now done through Font class
+<span class="nc" id="L107">        this.small_font = Font.getGameFont(30, 2f);</span>
+<span class="nc" id="L108">        this.font = Font.getGameFont(150, 6f);</span>
+<span class="nc" id="L109">        this.big_font = Font.getGameFont(300, 10f);</span>
+
+<span class="nc" id="L111">        this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio</span>
+<span class="nc" id="L112">        Gdx.input.setInputProcessor(this.stage);</span>
+<span class="nc" id="L113">        initialiseMenu();</span>
+<span class="nc" id="L114">    }</span>
+
+
+    /**
+     * CHANGELOG: NEW METHOD
+     *
+     * This method is used to implement the Continue button that takes the user to the Name Entry screen
+     */
+    private void initialiseMenu(){
+<span class="nc" id="L123">        VerticalGroup end_screen_group = new VerticalGroup();</span>
+<span class="nc" id="L124">        end_screen_group.setFillParent(true);</span>
+<span class="nc" id="L125">        end_screen_group.right().bottom().padBottom(7);</span>
+<span class="nc" id="L126">        this.stage.addActor(end_screen_group);</span>
+
+        // Continue Button
+<span class="nc" id="L129">        ImageButton continue_button = new ImageButton(Button.createTexRegDraw(&quot;ContinueButton.png&quot;));</span>
+<span class="nc" id="L130">        continue_button.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // NameEntryScreen
+<span class="nc" id="L134">                game.setScreen(new NameScreen(game, score ));</span>
+<span class="nc" id="L135">            }</span>
+        });
+<span class="nc" id="L137">        end_screen_group.addActor(continue_button);</span>
+
+<span class="nc" id="L139">    }</span>
+
+
+    // CHANGELOG : REMOVED IN-FILE FONT GENERATION
+    // private BitmapFont genFont(int size, float borderWidth) {
+    //       ....
+    // }
+
+
+    @Override
+    public void show() {
+<span class="nc" id="L150">    }</span>
+
+    /**
+     * CHANGELOG: UPDATED METHOD
+     * Called when this screen should render itself.
+     *
+     * @param delta The time in seconds since the last render.
+     */
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L160">        Gdx.gl.glClearColor(0, 0, 0, 1);</span>
+<span class="nc" id="L161">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+
+<span class="nc" id="L163">        this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));</span>
+
+<span class="nc" id="L165">        this.stage.getBatch().begin();</span>
+<span class="nc" id="L166">        final float scaleX = this.stage.getViewport().getWorldWidth() / to_render.getWidth();</span>
+<span class="nc" id="L167">        final float scaleY = this.stage.getViewport().getWorldHeight() / to_render.getHeight();</span>
+<span class="nc" id="L168">        final float scale = Math.min(scaleX, scaleY);</span>
+<span class="nc" id="L169">        final float width = this.to_render.getWidth() * scale;</span>
+<span class="nc" id="L170">        final float height = this.to_render.getHeight() * scale;</span>
+<span class="nc" id="L171">        final float x = (this.stage.getViewport().getWorldWidth() - width) / 2;</span>
+<span class="nc" id="L172">        final float y = (this.stage.getViewport().getWorldHeight() - height) / 2;</span>
+<span class="nc" id="L173">        this.stage.getBatch().draw(this.to_render, x, y, width, height);</span>
+
+        /*
+         * CHANGELOG: UPDATED HOW END SCREEN IS DISPLAYED USING ONLY TEXT
+         */
+
+        // Drawing Title to screen
+<span class="nc" id="L180">        GlyphLayout endText = new GlyphLayout(this.big_font, this.status_text);</span>
+<span class="nc" id="L181">        this.big_font.draw(this.stage.getBatch(),</span>
+                this.status_text,
+                (float) ((width - endText.width) / 2.0),
+                (float) ((height + endText.height) / 1.3));
+
+
+        // Drawing score to screen
+<span class="nc" id="L188">        GlyphLayout scoreText = new GlyphLayout(this.font, &quot;Your Score&quot;);</span>
+<span class="nc" id="L189">        this.font.draw(this.stage.getBatch(),</span>
+                &quot;Your Score&quot;,
+                (float) ((width - scoreText.width) / 2.0),
+                (float) ((height + scoreText.height) / 1.8));
+<span class="nc" id="L193">        GlyphLayout scoreNum = new GlyphLayout(this.font, Integer.toString(this.score) + &quot; / 100&quot;);</span>
+<span class="nc" id="L194">        this.font.draw(this.stage.getBatch(),</span>
+<span class="nc" id="L195">                Integer.toString(this.score) + &quot; / 100&quot;,</span>
+                (float) ((width - scoreNum.width) / 2.0),
+                (float) ((height + scoreNum.height) / 2.4));
+
+
+
+        // CHANGELOG : DRAW TEXT/ICONS FOR WHICH STREAKS WERE OBTAINED
+
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        if (streak_athlete){</span>
+<span class="nc" id="L204">            GlyphLayout athleteText = new GlyphLayout(this.small_font, &quot;Athlete +10&quot;);</span>
+<span class="nc" id="L205">            this.small_font.draw(this.stage.getBatch(),</span>
+                    &quot;Athlete +10&quot;,
+                    (float) ((width - athleteText.width) * 0.3),
+                    (float) ((height + athleteText.height) * 0.1));
+
+            // DRAW OBTAINED ACHIEVEMENT ICON
+
+<span class="nc" id="L212">            this.stage.getBatch().draw(achievements[1][0],</span>
+<span class="nc" id="L213">                    (float) ((width - achievements[1][0].getRegionWidth()*4) * 0.3),</span>
+<span class="nc" id="L214">                    (float) ((height - achievements[1][0].getRegionHeight()*4) * 0.15),</span>
+                    200,
+                    200);
+<span class="nc" id="L217">        } else{</span>
+            // DRAW GREYED-OUT ACHIEVEMENT ICON
+
+<span class="nc" id="L220">            this.stage.getBatch().draw(achievements[1][1],</span>
+<span class="nc" id="L221">                    (float) ((width - achievements[1][1].getRegionWidth()*4) * 0.3),</span>
+<span class="nc" id="L222">                    (float) ((height - achievements[1][1].getRegionHeight()*4) * 0.15),</span>
+                    200,
+                    200);
+        }
+
+
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        if (streak_bookworm){</span>
+<span class="nc" id="L229">            GlyphLayout bookwormText = new GlyphLayout(this.small_font, &quot;Bookworm +10&quot;);</span>
+<span class="nc" id="L230">            this.small_font.draw(this.stage.getBatch(),</span>
+                    &quot;Bookworm +10&quot;,
+                    (float) ((width - bookwormText.width) * 0.5),
+                    (float) ((height + bookwormText.height) * 0.1));
+            // DRAW OBTAINED ACHIEVEMENT ICON
+
+<span class="nc" id="L236">            this.stage.getBatch().draw(achievements[0][0],</span>
+<span class="nc" id="L237">                    (float) ((width - achievements[0][0].getRegionWidth()*4) * 0.5),</span>
+<span class="nc" id="L238">                    (float) ((height - achievements[0][0].getRegionHeight()*4) * 0.15),</span>
+                    200,
+                    200);
+<span class="nc" id="L241">        } else{</span>
+            // DRAW GREYED-OUT ACHIEVEMENT ICON
+
+<span class="nc" id="L244">            this.stage.getBatch().draw(achievements[0][1],</span>
+<span class="nc" id="L245">                    (float) ((width - achievements[0][1].getRegionWidth()*4) * 0.5),</span>
+<span class="nc" id="L246">                    (float) ((height - achievements[0][1].getRegionHeight()*4) * 0.15),</span>
+                    200,
+                    200);
+        }
+
+
+
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        if (streak_clubber){</span>
+<span class="nc" id="L254">            GlyphLayout clubberText = new GlyphLayout(this.small_font, &quot;Clubber +10&quot;);</span>
+<span class="nc" id="L255">            this.small_font.draw(this.stage.getBatch(),</span>
+                    &quot;Clubber +10&quot;,
+                    (float) ((width - clubberText.width) * 0.7),
+                    (float) ((height + clubberText.height) * 0.1));
+            // DRAW OBTAINED ACHIEVEMENT ICON
+
+<span class="nc" id="L261">            this.stage.getBatch().draw(achievements[2][0],</span>
+<span class="nc" id="L262">                    (float) ((width - achievements[2][0].getRegionWidth()*4) * 0.7),</span>
+<span class="nc" id="L263">                    (float) ((height - achievements[2][0].getRegionHeight()*4) * 0.15),</span>
+                    200,
+                    200);
+<span class="nc" id="L266">        } else{</span>
+            // DRAW GREYED-OUT ACHIEVEMENT ICON
+
+<span class="nc" id="L269">            this.stage.getBatch().draw(achievements[2][1],</span>
+<span class="nc" id="L270">                    (float) ((width - achievements[2][1].getRegionWidth()*4) * 0.7),</span>
+<span class="nc" id="L271">                    (float) ((height - achievements[2][1].getRegionHeight()*4) * 0.15),</span>
+                    200,
+                    200);
+        }
+
+
+
+<span class="nc" id="L278">        this.stage.getBatch().end();</span>
+
+<span class="nc" id="L280">        this.stage.draw();</span>
+<span class="nc" id="L281">    }</span>
+
+    /**
+     * Called when the screen is resized.
+     *
+     * @param width  The new width in pixels.
+     * @param height The new height in pixels.
+     */
+    @Override
+    public void resize(int width, int height) {
+<span class="nc" id="L291">        this.stage.getViewport().update(width, height, true);</span>
+<span class="nc" id="L292">    }</span>
+
+    @Override
+    public void pause() {
+<span class="nc" id="L296">    }</span>
+
+    @Override
+    public void resume() {
+<span class="nc" id="L300">    }</span>
+
+    @Override
+    public void hide() {
+<span class="nc" id="L304">    }</span>
+
+    /**
+     * Disposes of this screen's resources.
+     * This method is called when this screen is no longer needed.
+     */
+    @Override
+    public void dispose() {
+<span class="nc" id="L312">        this.stage.dispose();</span>
+<span class="nc" id="L313">        this.to_render.dispose();</span>
+<span class="nc" id="L314">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

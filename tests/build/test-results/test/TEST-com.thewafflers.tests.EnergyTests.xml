@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.thewafflers.tests.EnergyTests" tests="9" skipped="0" failures="0" errors="0" timestamp="2024-05-20T22:22:31" hostname="MERRILL-LAPTOP" time="0.002">
+  <properties/>
+  <testcase name="testResetEnergy" classname="com.thewafflers.tests.EnergyTests" time="0.001"/>
+  <testcase name="testGetLimit" classname="com.thewafflers.tests.EnergyTests" time="0.0"/>
+  <testcase name="testNotEnoughEnergyToRecreate" classname="com.thewafflers.tests.EnergyTests" time="0.0"/>
+  <testcase name="testGetCurrentEnergy" classname="com.thewafflers.tests.EnergyTests" time="0.0"/>
+  <testcase name="testTooMuchEnergyToEat" classname="com.thewafflers.tests.EnergyTests" time="0.0"/>
+  <testcase name="testNotEnoughEnergyToStudy" classname="com.thewafflers.tests.EnergyTests" time="0.0"/>
+  <testcase name="testDoActivity" classname="com.thewafflers.tests.EnergyTests" time="0.0"/>
+  <testcase name="testValidEnergyForActivity" classname="com.thewafflers.tests.EnergyTests" time="0.0"/>
+  <testcase name="testSleepPassedIntoActivityType" classname="com.thewafflers.tests.EnergyTests" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

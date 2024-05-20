@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TutorialScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle.Screens</a> &gt; <span class="el_source">TutorialScreen.java</span></div><h1>TutorialScreen.java</h1><pre class="source lang-java linenums">/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Screen functionality:
+ *          - Refactored code that generated buttons within file to use Button classes
+ *      Testing
+ *          - Updated code and added new method to assist in unit testing
+ */
+
+package com.waddle_ware.heslington_hustle.Screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.waddle_ware.heslington_hustle.Button;
+import com.waddle_ware.heslington_hustle.HeslingtonHustle;
+
+/**
+ * This class represents the games tutorial screen.
+ * It displays controls and instructions on how to play the game.
+ */
+public class TutorialScreen implements Screen {
+    private final HeslingtonHustle game;
+    private final Stage stage;
+    private final ScreenId previous_screen;
+    private final Texture tutorial_img;
+
+    public static final String TUTORIAL_SCREEN_ASSET = &quot;TutorialScreen_New.png&quot;;
+    public static final String BACK_BUTTON_ASSET = &quot;BackButton.png&quot;;
+
+    /**
+     * Constructs a new TutorialScreen.
+     *
+     * @param game             The game instance.
+     * @param previous_screen The screen to return to upon pressing the back button.
+     */
+<span class="nc" id="L46">    public TutorialScreen(HeslingtonHustle game, ScreenId previous_screen) {</span>
+<span class="nc" id="L47">        this.previous_screen = previous_screen;</span>
+<span class="nc" id="L48">        this.game = game;</span>
+
+        // CHANGELOG : UPDATED TUTORIAL SCREEN BACKGROUND
+<span class="nc" id="L51">        this.tutorial_img = new Texture(TUTORIAL_SCREEN_ASSET);</span>
+<span class="nc" id="L52">        this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio</span>
+<span class="nc" id="L53">        Gdx.input.setInputProcessor(this.stage);</span>
+<span class="nc" id="L54">        initialiseMenu(); // Add menu elements</span>
+<span class="nc" id="L55">    }</span>
+
+
+  // CHANGELOG : REMOVED IN-FILE BUTTON STYLE GENERATION
+  // private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
+  //       ....
+  // }
+
+    /**
+     * Initialises the tutorial screen with associated UI elements.
+     */
+    private void initialiseMenu() {
+<span class="nc" id="L67">        VerticalGroup tutorial_group = new VerticalGroup();</span>
+<span class="nc" id="L68">        tutorial_group.setFillParent(true);</span>
+<span class="nc" id="L69">        tutorial_group.left().top().padTop(7);</span>
+<span class="nc" id="L70">        this.stage.addActor(tutorial_group);</span>
+
+        // Back button
+<span class="nc" id="L73">        ImageButton back_button = new ImageButton(Button.createTexRegDraw(BACK_BUTTON_ASSET));</span>
+<span class="nc" id="L74">        back_button.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc bnc" id="L77" title="All 3 branches missed.">                switch (previous_screen) {</span>
+                    case MenuScreen:
+<span class="nc" id="L79">                        game.setScreen(new MenuScreen(game));</span>
+<span class="nc" id="L80">                        break;</span>
+                    case PlayScreen:
+<span class="nc" id="L82">                        game.setScreen(new PlayScreen(game));</span>
+                        break;
+                }
+<span class="nc" id="L85">            }</span>
+        });
+<span class="nc" id="L87">        tutorial_group.addActor(back_button);</span>
+<span class="nc" id="L88">    }</span>
+
+    /**
+     * Called when this screen becomes the current screen of the game.
+     * Sets the input processor to the stage, allowing it to receive input events.
+     */
+    @Override
+    public void show() {
+<span class="nc" id="L96">        Gdx.input.setInputProcessor(this.stage);</span>
+<span class="nc" id="L97">    }</span>
+
+    /**
+     * Called when this screen should render itself.
+     *
+     * @param delta The time in seconds since the last render.
+     */
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L106">        Gdx.gl.glClearColor(0, 0, 0, 1);</span>
+<span class="nc" id="L107">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+
+<span class="nc" id="L109">        this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));</span>
+
+<span class="nc" id="L111">        this.stage.getBatch().begin();</span>
+<span class="nc" id="L112">        final float scaleX = this.stage.getViewport().getWorldWidth() / this.tutorial_img.getWidth();</span>
+<span class="nc" id="L113">        final float scaleY = this.stage.getViewport().getWorldHeight() / this.tutorial_img.getHeight();</span>
+<span class="nc" id="L114">        final float scale = Math.min(scaleX, scaleY);</span>
+<span class="nc" id="L115">        final float width = this.tutorial_img.getWidth() * scale;</span>
+<span class="nc" id="L116">        final float height = this.tutorial_img.getHeight() * scale;</span>
+<span class="nc" id="L117">        final float x = (this.stage.getViewport().getWorldWidth() - width) / 2;</span>
+<span class="nc" id="L118">        final float y = (this.stage.getViewport().getWorldHeight() - height) / 2;</span>
+<span class="nc" id="L119">        this.stage.getBatch().draw(this.tutorial_img, x, y, width, height);</span>
+<span class="nc" id="L120">        this.stage.getBatch().end();</span>
+
+<span class="nc" id="L122">        this.stage.draw();</span>
+<span class="nc" id="L123">    }</span>
+
+    /**
+     * Called when the screen is resized.
+     *
+     * @param width  The new width in pixels.
+     * @param height The new height in pixels.
+     */
+    @Override
+    public void resize(int width, int height) {
+<span class="nc" id="L133">        this.stage.getViewport().update(width, height, true);</span>
+<span class="nc" id="L134">    }</span>
+
+    @Override
+    public void pause() {
+<span class="nc" id="L138">    }</span>
+
+    @Override
+    public void resume() {
+<span class="nc" id="L142">    }</span>
+
+    /**
+     * Hides the screen and clears the input processor, preventing further input events.
+     * This method is called when the screen is no longer visible.
+     */
+    @Override
+    public void hide() {
+<span class="nc" id="L150">        Gdx.input.setInputProcessor(null);</span>
+<span class="nc" id="L151">    }</span>
+
+    /**
+     * Disposes of this screen's resources.
+     * This method is called when this screen is no longer needed.
+     */
+    @Override
+    public void dispose() {
+<span class="nc" id="L159">        this.stage.dispose();</span>
+<span class="nc" id="L160">        this.tutorial_img.dispose();</span>
+<span class="nc" id="L161">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
