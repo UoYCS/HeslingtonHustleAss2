@@ -33,9 +33,9 @@ public class Core {
     public static final int MAX_NUMBER_OF_DAYS = 7;
 
     // Member variables
-    private final Energy energy;
+    public Energy energy;
     private int day;
-    private final Time time;
+    public Time time;
 
     // CHANGELOG: Updated variable accessibility for testing
     public int[] study_count;
@@ -229,10 +229,6 @@ public class Core {
         int days_studied = getNumDaysActivity(this.study_count);
         if (days_studied == 7){
             score += 250;
-        } else if (days_studied == 6){
-            if (times_studied > 6){
-                score += 250;
-            }
         }
 
         // BONUS FOR STUDYING IN DIFFERENT PLACES
@@ -539,6 +535,13 @@ public class Core {
     }
 
     /**
+     * gets meal count
+     *
+     * @return meal count array
+     */
+    public int[] getMealCount(){return meal_count;}
+
+    /**
      * sets study count. This is only used for testing
      *
      * @param studied Testing study count array
@@ -554,6 +557,7 @@ public class Core {
         }
 
     }
+    public int[] getStudyCount(){return study_count;}
 
     /**
      * sets relax count. This is only used for testing
@@ -570,4 +574,5 @@ public class Core {
             throw new RuntimeException("relax count must have a length of seven denoting seven days");
         }
     }
+    public int[] getRelaxCount(){return relax_count;}
 }

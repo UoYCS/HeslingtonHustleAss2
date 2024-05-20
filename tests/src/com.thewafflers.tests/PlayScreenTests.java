@@ -122,42 +122,6 @@ public class PlayScreenTests {
      * is done at the activity
      */
 
-     //DOESNT FUCKING WORK
-//    @Test
-//    public void testActivitiesCanBeInteractedWith(){
-//        HeslingtonHustle game  = new HeslingtonHustle();
-//        PlayScreen playScreen = new PlayScreen(game);
-//        playScreen.player = new Avatar(0, 0, 408, 2280);
-//        // set player loc at CS to check interact study
-//
-//        float CS_X = playScreen.activityLocations[2].getX();
-//        float CS_Y = playScreen.activityLocations[2].getY();
-//
-//        ActivityLocation mock_study = mock(ActivityLocation.class);
-//        doReturn(ActivityType.Study).when(mock_study).getType();
-//        playScreen.activityLocations[2] = mock_study;
-//
-//        float duck_X = playScreen.activityLocations[3].getX();
-//        float duck_Y = playScreen.activityLocations[3].getY();
-//
-//        float sleep_x = playScreen.activityLocations[0].getX();
-//        float sleep_y = playScreen.activityLocations[0].getY();
-//
-//        float piazza_x = playScreen.activityLocations[6].getX();
-//        float piazza_y = playScreen.activityLocations[6].getY();
-//
-//        playScreen.player.setPlayerLoc(CS_X,CS_Y);
-//
-//        Core spy_core = spy(Core.class);
-//
-//        ResourceExitConditions output = new ResourceExitConditions(ResourceTypes.Energy, ExitConditions.IsOk);
-//        doReturn(output).when(spy_core).interactedWith(any());
-//        playScreen.core = spy_core;
-//        //verify(spy_core,times(1)).getCurrentDay();
-//        verify(mock_study,times(1)).incrementCounter(any());
-
-
-    //}
 
     /**
      * This tests the utility method isPlayerWithinInteractionArea

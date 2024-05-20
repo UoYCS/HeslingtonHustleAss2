@@ -132,7 +132,7 @@ public class Energy implements ResourceBase {
 
     /**
      * CHANGELOG: NEW METHOD
-     * Added setter method for testing purposes
+     * Added setter method for energy for testing purposes
      * @param newcurrent New testing energy value.
      */
     public void setcurrent(int newcurrent){this.current = newcurrent;}

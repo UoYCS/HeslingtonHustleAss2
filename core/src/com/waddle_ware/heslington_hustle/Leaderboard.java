@@ -18,7 +18,7 @@ public class Leaderboard {
     // Set base attributes for leaderboard
     private final String FILE_NAME = "leaderboard.txt";
     private final int NUM_SCORES = 10;
-    private UserScore[] highscores;
+    public UserScore[] highscores;
 
 
     /**

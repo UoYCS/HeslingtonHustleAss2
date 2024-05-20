@@ -14,29 +14,29 @@ import java.time.Clock;
  * It implements the ResourceBase interface for resource management.
  */
 public class Time implements ResourceBase {
-    static final private int TIME_PER_STUDY = -120;
-    static final private int TIME_PER_RECREATIONAL = -120;
-    static final private int TIME_PER_FOOD = -60;
+    static final public int TIME_PER_STUDY = -120;
+    static final public int TIME_PER_RECREATIONAL = -120;
+    static final public int TIME_PER_FOOD = -60;
     static final public int MINUTES_PER_DAY = 16 * 60;
 
     /**
      * This private constant will be used to convert the current minutes
      * to an amount of intervals for updating the GUI layer
      */
-    static final private int MINS_IN_INTERVAL = 15;
+    static final public int MINS_IN_INTERVAL = 15;
 
     /**
      * This constant variable will be used to specify the amount
      * of time that needs to pass irl for 1 unit of time to decrement
      */
-    private final int   milliseconds_irl_to_decrement;
-    private final int   game_minutes_per_decrement;
-    private int         minutes_remaining;
-    private final Clock timer;
+    public final int   milliseconds_irl_to_decrement;
+    public final int   game_minutes_per_decrement;
+    public int         minutes_remaining;
+    public Clock timer;
     /**
      * This variable will be used to check if the time to decrement has elapsed
      */
-    private long        end_point;
+    public long        end_point;
 
     /**
      * Constructs a Time instance with specified parameters.
