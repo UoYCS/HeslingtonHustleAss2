@@ -1,5 +1,6 @@
 RSS,82
 ABC,39
+ASD,20
 PRO,5
 DUC,0
 RSS,0
@@ -7,4 +8,3 @@ ASD,0
 ASD,0
 EFA,0
 ACS,0
-BAD,0

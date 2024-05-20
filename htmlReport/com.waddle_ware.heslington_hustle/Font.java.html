@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Font.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">test.exec</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle</a> &gt; <span class="el_source">Font.java</span></div><h1>Font.java</h1><pre class="source lang-java linenums">package com.waddle_ware.heslington_hustle;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+
+<span class="nc" id="L9">public class Font {</span>
+
+    public static final String FONT_GEN_ASSET = &quot;OETZTYP_.TTF&quot;;
+<span class="nc" id="L12">    private static final FreeTypeFontGenerator font_gen = new FreeTypeFontGenerator(Gdx.files.internal(FONT_GEN_ASSET));</span>
+
+    public static BitmapFont getGameFont(int size, float border){
+<span class="nc" id="L15">        BitmapFont font = genFont(size, border);</span>
+<span class="nc" id="L16">        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);</span>
+
+<span class="nc" id="L18">        return font;</span>
+    }
+
+    private static BitmapFont genFont(int size, float borderWidth) {
+<span class="nc" id="L22">        FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();</span>
+<span class="nc" id="L23">        param.size = size;</span>
+<span class="nc" id="L24">        param.borderColor = Color.BLACK;</span>
+<span class="nc" id="L25">        param.borderWidth = borderWidth;</span>
+<span class="nc" id="L26">        param.borderStraight = false;</span>
+<span class="nc" id="L27">        return font_gen.generateFont(param);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

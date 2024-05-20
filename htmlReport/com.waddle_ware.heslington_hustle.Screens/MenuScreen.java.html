@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MenuScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">test.exec</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle.Screens</a> &gt; <span class="el_source">MenuScreen.java</span></div><h1>MenuScreen.java</h1><pre class="source lang-java linenums">package com.waddle_ware.heslington_hustle.Screens;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
+import com.waddle_ware.heslington_hustle.HeslingtonHustle;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.waddle_ware.heslington_hustle.Button;
+/**
+ * The MenuScreen class represents the screen where the game menu is displayed.
+ * It implements the Screen interface and handles user input for menu navigation.
+ */
+public class MenuScreen implements Screen {
+    private final HeslingtonHustle game;
+    private final Stage stage;
+    private final Texture background;
+
+    public static final String BACKGROUND_ASSET = &quot;MenuScreen_New.png&quot;;
+    public static final String PLAYBUTTON_ASSET = &quot;PlayButton.png&quot;;
+    public static final String TUTORIALBUTTON_ASSET = &quot;TutorialButton.png&quot;;
+    public static final String LEADERBOARDBUTTON_ASSET = &quot;LeaderButton.png&quot;;
+    public static final String EXITBUTTON_ASSET = &quot;ExitButton.png&quot;;
+
+    /**
+     * Constructs a new MenuScreen.
+     *
+     * @param game The game instance.
+     */
+<span class="nc" id="L38">    public MenuScreen(HeslingtonHustle game) {</span>
+<span class="nc" id="L39">        this.game = game;</span>
+<span class="nc" id="L40">        this.stage = new Stage(new FitViewport(1920, 1080));</span>
+<span class="nc" id="L41">        Gdx.input.setInputProcessor(this.stage);</span>
+
+        // CHANGELOG : UPDATED MAIN MENU BACKGROUND
+<span class="nc" id="L44">        this.background  = new Texture(BACKGROUND_ASSET);</span>
+<span class="nc" id="L45">        initialiseMenu(); // Add menu elements</span>
+<span class="nc" id="L46">    }</span>
+
+
+    // CHANGELOG : REMOVED IN-FILE BUTTON STYLE GENERATION
+//    /**
+//     * Creates an ImageButtonStyle with a provided image path.
+//     *
+//     * @param path The path to the image file.
+//     * @return The ImageButtonStyle created with the specified image.
+//     */
+//    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
+//        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+//        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
+//        style.imageUp.setMinWidth(475);
+//        style.imageUp.setMinHeight(125);
+//        return style;
+//    }
+
+    /**
+     * Initialises menu elements, such as buttons and their listeners.
+     */
+    private void initialiseMenu() {
+<span class="nc" id="L68">        VerticalGroup menu_group = new VerticalGroup();</span>
+<span class="nc" id="L69">        menu_group.setFillParent(true);</span>
+<span class="nc" id="L70">        menu_group.center(); // centre align vertically</span>
+<span class="nc" id="L71">        menu_group.align(Align.bottom);</span>
+<span class="nc" id="L72">        this.stage.addActor(menu_group);</span>
+
+        // Play button
+<span class="nc" id="L75">        ImageButton play_button = new ImageButton(Button.createTexRegDraw(PLAYBUTTON_ASSET));</span>
+<span class="nc" id="L76">        play_button.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L79">                game.setScreen(new PlayScreen(game));</span>
+<span class="nc" id="L80">            }</span>
+        });
+
+        // Tutorial button
+<span class="nc" id="L84">        ImageButton tutorial_button = new ImageButton(Button.createTexRegDraw(TUTORIALBUTTON_ASSET));</span>
+<span class="nc" id="L85">        tutorial_button.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L88">                game.setScreen(new TutorialScreen(game, ScreenId.MenuScreen));</span>
+<span class="nc" id="L89">            }</span>
+        });
+
+        // CHANGELOG : ADDED LEADERBOARD BUTTON TO MAIN MENU
+<span class="nc" id="L93">        ImageButton leader_button = new ImageButton(Button.createTexRegDraw(LEADERBOARDBUTTON_ASSET));</span>
+<span class="nc" id="L94">        leader_button.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L97">                game.setScreen(new LeaderboardScreen(game, ScreenId.MenuScreen));</span>
+<span class="nc" id="L98">            }</span>
+        });
+
+        // Exit button
+<span class="nc" id="L102">        ImageButton exit_button = new ImageButton(Button.createTexRegDraw(EXITBUTTON_ASSET));</span>
+<span class="nc" id="L103">        exit_button.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L106">                Gdx.app.exit();</span>
+<span class="nc" id="L107">            }</span>
+        });
+
+<span class="nc" id="L110">        menu_group.addActor(play_button);</span>
+<span class="nc" id="L111">        menu_group.addActor(tutorial_button);</span>
+<span class="nc" id="L112">        menu_group.addActor(leader_button);</span>
+<span class="nc" id="L113">        menu_group.addActor(exit_button);</span>
+<span class="nc" id="L114">    }</span>
+
+    /**
+     * Called when this screen becomes the current screen of the game.
+     * Sets the input processor to the stage, allowing it to receive input events.
+     */
+    @Override
+    public void show() {
+<span class="nc" id="L122">        Gdx.input.setInputProcessor(this.stage);</span>
+<span class="nc" id="L123">    }</span>
+
+    /**
+     * Called when this screen should render itself.
+     *
+     * @param delta The time in seconds since the last render.
+     */
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L132">        Gdx.gl.glClearColor(0, 0, 0, 1);</span>
+<span class="nc" id="L133">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+
+<span class="nc" id="L135">        this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));</span>
+
+<span class="nc" id="L137">        this.stage.getBatch().begin();</span>
+<span class="nc" id="L138">        final float scaleX = this.stage.getViewport().getWorldWidth() / this.background.getWidth();</span>
+<span class="nc" id="L139">        final float scaleY = this.stage.getViewport().getWorldHeight() / this.background.getHeight();</span>
+<span class="nc" id="L140">        final float scale = Math.min(scaleX, scaleY);</span>
+<span class="nc" id="L141">        final float width = this.background.getWidth() * scale;</span>
+<span class="nc" id="L142">        final float height = this.background.getHeight() * scale;</span>
+<span class="nc" id="L143">        final float x = (this.stage.getViewport().getWorldWidth() - width) / 2;</span>
+<span class="nc" id="L144">        final float y = (this.stage.getViewport().getWorldHeight() - height) / 2;</span>
+<span class="nc" id="L145">        this.stage.getBatch().draw(this.background, x, y, width, height);</span>
+<span class="nc" id="L146">        this.stage.getBatch().end();</span>
+
+<span class="nc" id="L148">        this.stage.draw();</span>
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Called when the screen is resized.
+     *
+     * @param width  The new width in pixels.
+     * @param height The new height in pixels.
+     */
+    @Override
+    public void resize(int width, int height) {
+<span class="nc" id="L159">        this.stage.getViewport().update(width, height, true);</span>
+<span class="nc" id="L160">    }</span>
+
+    @Override
+    public void pause() {
+<span class="nc" id="L164">    }</span>
+
+    @Override
+    public void resume() {
+<span class="nc" id="L168">    }</span>
+
+    /**
+     * Hides the screen and clears the input processor, preventing further input events.
+     * This method is called when the screen is no longer visible.
+     */
+    @Override
+    public void hide() {
+<span class="nc" id="L176">        Gdx.input.setInputProcessor(null);</span>
+<span class="nc" id="L177">    }</span>
+
+    /**
+     * Disposes of this screen's resources.
+     * This method is called when this screen is no longer needed.
+     */
+    @Override
+    public void dispose() {
+<span class="nc" id="L185">        this.stage.dispose();</span>
+<span class="nc" id="L186">        this.background.dispose();</span>
+<span class="nc" id="L187">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

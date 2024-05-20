@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">test.exec</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle.Screens</a> &gt; <span class="el_source">PlayScreen.java</span></div><h1>PlayScreen.java</h1><pre class="source lang-java linenums">package com.waddle_ware.heslington_hustle.Screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.waddle_ware.heslington_hustle.ActivityLocation;
+import com.waddle_ware.heslington_hustle.Avatar;
+import com.waddle_ware.heslington_hustle.HUD;
+import com.waddle_ware.heslington_hustle.HeslingtonHustle;
+import com.waddle_ware.heslington_hustle.InteractionPopup;
+import com.waddle_ware.heslington_hustle.core.ActivityType;
+import com.waddle_ware.heslington_hustle.core.Core;
+import com.waddle_ware.heslington_hustle.core.ExitConditions;
+import com.waddle_ware.heslington_hustle.core.ResourceExitConditions;
+
+import java.util.Arrays;
+
+/**
+ * The PlayScreen class represents the games screen where the gameplay is.
+ * It implements the Screen interface and manages rendering and input handling.
+ */
+public class PlayScreen implements Screen {
+    private OrthographicCamera camera;
+    private Viewport viewport;
+    private TiledMap tile_map;
+    private OrthogonalTiledMapRenderer map_renderer;
+<span class="fc" id="L38">    private boolean is_fullscreen = false;  // Track fullscreen state</span>
+<span class="fc" id="L39">    private int current_map_section = 1;</span>
+<span class="fc" id="L40">    private final int map_section_offset = 48*16;</span>
+
+<span class="fc" id="L42">    private int frames_since_int = 0;</span>
+
+
+    public Avatar player;
+    private float world_width;
+    private float world_height;
+    private HUD hud;
+    private final HeslingtonHustle game;
+
+    public static final String ICON_ANIMATION_ASSET = &quot;iconAnimations.png&quot;;
+    public static final String TILEMAP_ASSET = &quot;MapToCode/map.tmx&quot;;
+
+    public Core core;
+
+
+    // CHANGELOG: ADDED ACTIVITIES TO ARRAY INSTEAD OF USING VARIABLES TO ALLOW FOR EXTRA ACTIVITIES
+
+    // Define activity locations array
+<span class="fc" id="L60">    public final ActivityLocation[] activityLocations = {</span>
+
+            // SLEEPING at Goodricke
+            new ActivityLocation(1786, 264, 20, &quot;sleep&quot;, ActivityType.Sleep),
+
+            // STUDYING at Library
+            new ActivityLocation(1136, 258, 20, &quot;study at library&quot;, ActivityType.Study),
+
+            // STUDYING at CS building
+            new ActivityLocation(1664, 24, 20, &quot;study&quot;, ActivityType.Study),
+
+            // RECREATION at Duck pond
+            new ActivityLocation(2031, 144, 20, &quot;feed the ducks&quot;, ActivityType.Recreation),
+
+            // RECREATION at Sports Centre
+            new ActivityLocation(970, 125, 20, &quot;play football&quot;, ActivityType.Recreation),
+
+            // RECREATION in town
+            new ActivityLocation(136, 280, 20, &quot;go clubbing&quot;, ActivityType.Recreation),
+
+            // EATING at Piazza
+            new ActivityLocation(2104, 264, 20, &quot;eat&quot;, ActivityType.Food),
+
+            // EATING at Courtyard
+            new ActivityLocation(1288, 55, 20, &quot;eat&quot;, ActivityType.Food),
+
+            // EATING in town
+            new ActivityLocation(633, 260, 20, &quot;eat&quot;, ActivityType.Food)
+
+
+    };
+
+
+    private InteractionPopup interaction_popup; // Add a field for the interaction pop-up
+    private float popupX;
+    private float popupY;
+    private int interacted;
+    private String reason;
+
+
+    //  CHANGELOG: variables for the activity icon animations
+    Animation&lt;TextureRegion&gt; sleepIcon;
+    Animation&lt;TextureRegion&gt; eatIcon;
+    Animation&lt;TextureRegion&gt; studyIcon;
+    Animation&lt;TextureRegion&gt; feedDucksIcon;
+    Animation&lt;TextureRegion&gt; playFootballIcon;
+    Animation&lt;TextureRegion&gt; drinkIcon;
+<span class="fc" id="L107">    Texture iconSpriteSheet = new Texture(Gdx.files.internal(ICON_ANIMATION_ASSET));</span>
+    float stateTime;
+
+
+    /**
+     * Constructs a new PlayScreen.
+     *
+     * @param game The game instance.
+     */
+    public PlayScreen(HeslingtonHustle game)
+<span class="fc" id="L117">    {</span>
+<span class="fc" id="L118">        this.game = game;</span>
+
+
+        // CHANGELOG: Initialise TextureRegions/Frames for the Activity Icons
+<span class="fc" id="L122">        TextureRegion[][] tmp = TextureRegion.split(iconSpriteSheet, iconSpriteSheet.getWidth() / 6, iconSpriteSheet.getHeight()/6);</span>
+<span class="fc" id="L123">        TextureRegion[] sleepFrames = new TextureRegion[6];</span>
+<span class="fc" id="L124">        TextureRegion[] eatFrames = new TextureRegion[6];</span>
+<span class="fc" id="L125">        TextureRegion[] studyFrames = new TextureRegion[6];</span>
+<span class="fc" id="L126">        TextureRegion[] duckFrames = new TextureRegion[6];</span>
+<span class="fc" id="L127">        TextureRegion[] footballFrames = new TextureRegion[6];</span>
+<span class="fc" id="L128">        TextureRegion[] drinkFrames = new TextureRegion[6];</span>
+
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        for (int i = 0; i &lt; 6; i++) {</span>
+<span class="fc" id="L131">            sleepFrames[i] = tmp[0][i];</span>
+<span class="fc" id="L132">            eatFrames[i] = tmp[1][i];</span>
+<span class="fc" id="L133">            studyFrames[i] = tmp[2][i];</span>
+<span class="fc" id="L134">            duckFrames[i] = tmp[3][i];</span>
+<span class="fc" id="L135">            footballFrames[i] = tmp[4][i];</span>
+<span class="fc" id="L136">            drinkFrames[i] = tmp[5][i];</span>
+        }
+<span class="fc" id="L138">        float frameRate = 0.08f;</span>
+
+<span class="fc" id="L140">        sleepIcon = new Animation&lt;TextureRegion&gt;(frameRate, sleepFrames);</span>
+<span class="fc" id="L141">        eatIcon = new Animation&lt;TextureRegion&gt;(frameRate, eatFrames);</span>
+<span class="fc" id="L142">        studyIcon = new Animation&lt;TextureRegion&gt;(frameRate, studyFrames);</span>
+<span class="fc" id="L143">        feedDucksIcon = new Animation&lt;TextureRegion&gt;(frameRate, duckFrames);</span>
+<span class="fc" id="L144">        playFootballIcon = new Animation&lt;TextureRegion&gt;(frameRate, footballFrames);</span>
+<span class="fc" id="L145">        drinkIcon = new Animation&lt;TextureRegion&gt;(frameRate, drinkFrames);</span>
+
+<span class="fc" id="L147">        stateTime = 0f;</span>
+<span class="fc" id="L148">    }</span>
+
+    /**
+     * Called when this screen becomes the current screen.
+     * Initialises camera, viewport, tile map, and player avatar.
+     */
+    @Override
+    public void show() {
+        // Create camera and viewport
+<span class="nc" id="L157">        this.camera = new OrthographicCamera();</span>
+
+<span class="nc" id="L159">        this.core = new Core();</span>
+        // Load tile Map
+<span class="nc" id="L161">        this.tile_map = new TmxMapLoader().load(TILEMAP_ASSET); // load tile map</span>
+<span class="nc" id="L162">        this.map_renderer = new OrthogonalTiledMapRenderer(this.tile_map);</span>
+
+        // Set target aspect ratio for tile map
+<span class="nc" id="L165">        float target_aspect_ratio = 16f / 9f;</span>
+
+        // Calculate world dimensions
+<span class="nc" id="L168">        final int map_tile_width = this.tile_map.getProperties().get(&quot;width&quot;, Integer.class);</span>
+<span class="nc" id="L169">        final int map_tile_height = this.tile_map.getProperties().get(&quot;height&quot;, Integer.class);</span>
+
+<span class="nc" id="L171">        final int tile_size = this.tile_map.getProperties().get(&quot;tilewidth&quot;, Integer.class);</span>
+
+<span class="nc" id="L173">        this.world_width = map_tile_width * tile_size;</span>
+<span class="nc" id="L174">        this.world_height = map_tile_height * tile_size;</span>
+
+
+        
+<span class="nc" id="L178">        this.player = new Avatar(0, 0, this.world_height, this.world_width);</span>
+<span class="nc" id="L179">        this.player.setPlayerLoc(260+ (2*48*16), 250);</span>
+
+        // Set the viewport to use the whole screen with the desired aspect ratio
+<span class="nc" id="L182">        this.viewport = new FitViewport(this.world_width/3, this.world_height, this.camera);</span>
+<span class="nc" id="L183">        this.hud = new HUD(this.core);</span>
+
+        // Center the camera on the tile map
+
+
+<span class="nc" id="L188">        this.camera.position.set((this.world_width / 2f)+map_section_offset, this.world_height / 2f, 0);</span>
+<span class="nc" id="L189">        this.camera.update();</span>
+
+        // Adjust the viewport if needed to ensure the tile map fills the entire screen (for tile maps that are not 16:9)
+<span class="nc" id="L192">        float aspect_ratio = (float) Gdx.graphics.getHeight() / Gdx.graphics.getWidth();</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (aspect_ratio &gt; target_aspect_ratio) {</span>
+<span class="nc" id="L194">            final float new_world_height = this.world_width * aspect_ratio;</span>
+<span class="nc" id="L195">            final float y_offset = (new_world_height - this.world_height) / 2f;</span>
+<span class="nc" id="L196">            this.viewport.setWorldSize(this.world_width, new_world_height);</span>
+<span class="nc" id="L197">            this.camera.position.add(0, y_offset, 0);</span>
+<span class="nc" id="L198">            this.camera.update();</span>
+        }
+
+
+
+<span class="nc" id="L203">    }</span>
+
+    /**
+     * Called when screen should render itself.
+     * Handles input, updates the camera, renders the tile map, and renders the player sprite on top.
+     *
+     * @param delta time in seconds since the last render.
+     */
+    @Override
+    public void render(float delta) {
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        if(this.core.hasEnded()) {</span>
+            // CHANGELOG : EndScreen now takes streakArray parameter
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            this.game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore(activityLocations), this.core.checkStreaks(activityLocations)));</span>
+        }
+<span class="nc" id="L217">        handleInput(); // Call method to handle inputs</span>
+<span class="nc" id="L218">        this.player.handleInput();</span>
+
+
+<span class="nc" id="L221">        current_map_section = getGameArea(this.player.getPlayerX());</span>
+
+<span class="nc" id="L223">        this.camera.position.set(</span>
+<span class="nc" id="L224">                (this.world_width / 2f) + (getGameArea(this.player.getPlayerX()) * map_section_offset),</span>
+                this.world_height / 2f,
+                0);
+
+        // Update camera and viewport
+<span class="nc" id="L229">        this.camera.update();</span>
+<span class="nc" id="L230">        this.map_renderer.setView(this.camera);</span>
+<span class="nc" id="L231">        this.hud.update(this.core, current_map_section);</span>
+<span class="nc" id="L232">        this.player.update(this.tile_map);</span>
+<span class="nc" id="L233">        this.core.update();</span>
+
+        // Clear the screen
+<span class="nc" id="L236">        Gdx.gl.glClearColor(0, 0, 0, 1);</span>
+<span class="nc" id="L237">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+
+<span class="nc" id="L239">        this.map_renderer.render(); // Render tile map</span>
+
+
+        // Render player sprite
+<span class="nc" id="L243">        this.map_renderer.getBatch().begin();</span>
+<span class="nc" id="L244">        this.player.render(this.map_renderer);// Draw sprite in updated position with specified dimensions</span>
+
+        // ADDING FLOATING ICONS FOR ACTIVITIES
+<span class="nc" id="L247">        drawActivityIcons();</span>
+
+<span class="nc" id="L249">        this.hud.render(this.map_renderer.getBatch());</span>
+
+<span class="nc" id="L251">        this.map_renderer.getBatch().end();</span>
+
+
+<span class="nc" id="L254">        checkInteractionProximity(); // Check for proximity and update interaction pop-ups</span>
+
+
+        // Render the pop-up message if it exists
+<span class="nc bnc" id="L258" title="All 2 branches missed.">        if (this.interaction_popup != null) {</span>
+<span class="nc" id="L259">            this.interaction_popup.render(this.map_renderer.getBatch(), this.popupX, this.popupY); // Adjust popupX and popupY as needed</span>
+        }
+<span class="nc" id="L261">    }</span>
+
+    /** Called when the window is resized.
+     * Updates the viewport and ensures the sprite stays within the new window boundaries.
+     * @param width  the new width in pixels.
+     * @param height the new height in pixels.
+     */
+    @Override
+    public void resize(int width, int height) {
+        // Update viewport when the window is resized
+<span class="nc" id="L271">        this.viewport.update(width, height);</span>
+<span class="nc" id="L272">    }</span>
+
+    /**
+     * CHANGELOG: ADDED NEW METHOD.
+     * Method used to draw floating activity icons to the map.
+     */
+    private void drawActivityIcons(){
+        // Update the games state time
+<span class="nc" id="L280">        stateTime += Gdx.graphics.getDeltaTime();</span>
+
+<span class="nc bnc" id="L282" title="All 2 branches missed.">        for (ActivityLocation activity : activityLocations) {</span>
+            // For each activity, check if it is in the current map section
+<span class="nc bnc" id="L284" title="All 2 branches missed.">            if (getGameArea(activity.getX()) == current_map_section){</span>
+
+                // If it is, animate its icon depending on the activity type/name
+
+<span class="nc bnc" id="L288" title="All 5 branches missed.">                switch (activity.getType()){</span>
+                    case Study:
+<span class="nc" id="L290">                        iconAnimate(studyIcon, activity.getX(), activity.getY()+50);</span>
+<span class="nc" id="L291">                        break;</span>
+
+                    case Sleep:
+<span class="nc" id="L294">                        iconAnimate(sleepIcon, activity.getX(), activity.getY()+30);</span>
+<span class="nc" id="L295">                        break;</span>
+
+                    case Recreation:
+<span class="nc bnc" id="L298" title="All 4 branches missed.">                        switch (activity.getName()) {</span>
+                            case &quot;feed the ducks&quot;:
+<span class="nc" id="L300">                                iconAnimate(feedDucksIcon, activity.getX(), activity.getY());</span>
+<span class="nc" id="L301">                                break;</span>
+                            case &quot;play football&quot;:
+<span class="nc" id="L303">                                iconAnimate(playFootballIcon, activity.getX(), activity.getY());</span>
+<span class="nc" id="L304">                                break;</span>
+                            case &quot;go clubbing&quot;:
+<span class="nc" id="L306">                                iconAnimate(drinkIcon, activity.getX(), activity.getY()+50);}</span>
+<span class="nc" id="L307">                        break;</span>
+
+                    case Food:
+<span class="nc" id="L310">                        iconAnimate(eatIcon, activity.getX(), activity.getY()+40);</span>
+                        break;
+                }
+            }
+        }
+<span class="nc" id="L315">    }</span>
+
+
+    /**
+     * CHANGELOG: ADDED NEW METHOD.
+     * Method used to animate activity icons.
+     *
+     * @param icon Icon to be animated.
+     * @param x x-coordinate of icon animation.
+     * @param y y-coordinate of icon animation.
+     */
+    private void iconAnimate(Animation&lt;TextureRegion&gt; icon, float x, float y){
+
+        // Get the current frame of animation required
+<span class="nc" id="L329">        TextureRegion currentFrame = icon.getKeyFrame(stateTime, true);</span>
+
+        // Draw this frame at the activities position
+<span class="nc" id="L332">        this.map_renderer.getBatch().draw(currentFrame, x ,y);</span>
+<span class="nc" id="L333">    }</span>
+
+    /**
+     * CHANGELOG: ADDED NEW METHOD
+     * This method takes an x coordinate and returns which location of the map it is in.
+     *
+     * @param xValue X Coordinate to check
+     * @return -1 for left map (town), 0 for centre map (west), 1 for right map (east)
+     */
+    public int getGameArea(float xValue) {
+<span class="fc bfc" id="L343" title="All 2 branches covered.">        if (xValue &gt; 1523) {</span>
+<span class="fc" id="L344">            return 1;</span>
+<span class="pc bpc" id="L345" title="1 of 4 branches missed.">        } else if (xValue &lt;= 1523 &amp;&amp; xValue &gt; 755) {</span>
+<span class="fc" id="L346">            return 0;</span>
+        } else {
+<span class="fc" id="L348">            return -1;</span>
+        }
+    }
+
+
+
+    /**
+     * Handles user input to move the sprite with wasd keys.
+     * Checks boundaries to prevent the sprite from moving outside the game window.
+     */
+    private void handleInput() {
+        //Used for testing
+//        if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) &amp;&amp; Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+//            this.core.interactedWith(ActivityType.Study);
+//        }
+//        if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) &amp;&amp; Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+//            this.core.interactedWith(ActivityType.Food);
+//        }
+//        if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) &amp;&amp; Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+//            this.core.interactedWith(ActivityType.Sleep);
+//        }
+//        if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) &amp;&amp; Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+//            this.core.interactedWith(ActivityType.Recreation);
+//        }
+//        if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) &amp;&amp; Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+//            this.game.setScreen(new EndScreen(game, true, 2342));
+//        }
+//        if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) &amp;&amp; Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+//            this.game.setScreen(new EndScreen(game, false, 7613));
+//        }
+
+        // Toggle fullscreen when F11 is pressed
+<span class="nc bnc" id="L380" title="All 2 branches missed.">        if (Gdx.input.isKeyJustPressed(Input.Keys.F11)) {</span>
+<span class="nc" id="L381">            toggleFullscreen();</span>
+        }
+        // Interact when &quot;E&quot; is pressed
+<span class="nc bnc" id="L384" title="All 2 branches missed.">        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {</span>
+<span class="nc" id="L385">            handleInteraction();</span>
+        }
+
+        // TEMPORARY FOR TESTING
+<span class="nc bnc" id="L389" title="All 2 branches missed.">        if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {</span>
+<span class="nc" id="L390">            System.out.println(this.player.getPlayerX());</span>
+<span class="nc" id="L391">            System.out.println(this.player.getPlayerY());</span>
+        }
+
+        // TEMPORARY FOR TESTING
+<span class="nc bnc" id="L395" title="All 2 branches missed.">        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {</span>
+<span class="nc" id="L396">            System.out.println(&quot;----------&quot;);</span>
+<span class="nc bnc" id="L397" title="All 2 branches missed.">            for (ActivityLocation activity : activityLocations) {</span>
+<span class="nc" id="L398">                System.out.println(Arrays.toString(activity.getInteractions()) + &quot;, &quot; + activity.getName());</span>
+            }
+<span class="nc" id="L400">            System.out.println(&quot;----------&quot;);</span>
+
+        }
+
+
+<span class="nc" id="L405">    }</span>
+
+    /**
+     * Handles player interaction with various activity locations based on their proximity to the player's position.
+     * Checks if the player is within the interaction area of each activity location
+     * If the player is within range, trigger the interaction with the activity and handle any outcome.
+     */
+    private void handleInteraction() {
+        // Get players current position
+<span class="nc" id="L414">        final float playerX = this.player.getPlayerX();</span>
+<span class="nc" id="L415">        final float playerY = this.player.getPlayerY();</span>
+        ResourceExitConditions exit_value;
+
+
+
+        // CHANGELOG: CHANGED THIS FUNCTION TO USE A LOOP TO ALLOW FOR EXTRA ACTIVITIES
+        // CHANGELOG: ADDED LINE TO INCREMENT COUNTER FOR SPECIFIC ACTIVITY
+        // TODO: Change int increment to array format
+<span class="nc bnc" id="L423" title="All 2 branches missed.">        for (ActivityLocation activity : activityLocations){</span>
+
+<span class="nc bnc" id="L425" title="All 2 branches missed.">            if (isPlayerWithinInteractionArea(playerX, playerY, activity)){</span>
+<span class="nc" id="L426">                frames_since_int = 0;</span>
+<span class="nc bnc" id="L427" title="All 4 branches missed.">                if (activity.getType() == ActivityType.Study || activity.getType() == ActivityType.Recreation){</span>
+<span class="nc" id="L428">                    exit_value = this.core.interactedWith(activity.getType());</span>
+<span class="nc bnc" id="L429" title="All 2 branches missed.">                    if (exit_value.getConditions() == ExitConditions.IsOk){</span>
+<span class="nc" id="L430">                        activity.incrementCounter(this.core.getCurrentDay() - 1);</span>
+<span class="nc" id="L431">                        interacted = 1;</span>
+<span class="nc" id="L432">                        return;</span>
+                    }
+<span class="nc" id="L434">                    interacted = -1;</span>
+<span class="nc" id="L435">                    reason = String.format(&quot;%s %s\n&quot;, exit_value.getTypes().toString(), exit_value.getConditions().toString().substring(4));</span>
+                }
+
+<span class="nc bnc" id="L438" title="All 2 branches missed.">                if (activity.getType() == ActivityType.Food) {</span>
+<span class="nc" id="L439">                    exit_value = this.core.interactedWith(ActivityType.Food);</span>
+<span class="nc bnc" id="L440" title="All 2 branches missed.">                    if (exit_value.getConditions() == ExitConditions.IsOk){</span>
+<span class="nc" id="L441">                        activity.incrementCounter(this.core.getCurrentDay() - 1);</span>
+<span class="nc" id="L442">                        interacted = 1;</span>
+                    }
+                    else{
+<span class="nc" id="L445">                        interacted = -1;</span>
+<span class="nc" id="L446">                        reason = String.format(&quot;%s %s\n&quot;, exit_value.getTypes().toString(), exit_value.getConditions().toString().substring(4));</span>
+                    }
+<span class="nc" id="L448">                    return;</span>
+                }
+
+<span class="nc bnc" id="L451" title="All 4 branches missed.">                if (activity.getType() == ActivityType.Sleep &amp;&amp; interacted == 0) {</span>
+<span class="nc bnc" id="L452" title="All 2 branches missed.">                    if(this.core.isLastDay()) {</span>
+                        // CHANGELOG : EndScreen now takes streakArray parameter
+<span class="nc bnc" id="L454" title="All 2 branches missed.">                        game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore(activityLocations), this.core.checkStreaks(activityLocations)));</span>
+                    }
+<span class="nc" id="L456">                    else this.core.interactedWith(ActivityType.Sleep);</span>
+<span class="nc" id="L457">                    interacted = 1;</span>
+                }
+
+
+
+            }
+        }
+
+
+//        // Check for interaction with each activity location
+//        if (isPlayerWithinInteractionArea(playerX, playerY, study_location)) {
+//            final ResourceExitConditions exit_value = this.core.interactedWith(ActivityType.Study);
+//            if(exit_value.getConditions() == ExitConditions.IsOk)
+//                return;
+//            System.out.printf(&quot;%s%s\n&quot;,exit_value.getTypes().toString(),exit_value.getConditions().toString());
+//        }
+//
+//        if (isPlayerWithinInteractionArea(playerX, playerY, recreation_location)) {
+//            final ResourceExitConditions exit_value = this.core.interactedWith(ActivityType.Recreation);
+//            if(exit_value.getConditions() == ExitConditions.IsOk)
+//                return;
+//            System.out.printf(&quot;%s%s\n&quot;,exit_value.getTypes().toString(),exit_value.getConditions().toString());
+//        }
+//
+
+//        if (isPlayerWithinInteractionArea(playerX, playerY, food_location)) { // Food and sleep should not be able to fail, so they can remain unchecked
+//            this.core.interactedWith(ActivityType.Food);
+//            return;
+//        }
+//
+//
+//        if (isPlayerWithinInteractionArea(playerX, playerY, sleep_location)) {
+//            if(this.core.isLastDay()) {
+//                game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore()));
+//            }
+//            else this.core.interactedWith(ActivityType.Sleep);
+//        }
+
+
+<span class="nc" id="L496">    }</span>
+
+    /**
+     * Checks the proximity of the player to various activity locations and updates the interaction pop-up message accordingly.
+     * If the player is within range of an activity location, an interaction pop-up message is displayed.
+     * If the player is not within range of any activity location, the interaction pop-up is hidden.
+     */
+    private void checkInteractionProximity() {
+        // Get players current position
+<span class="nc" id="L505">        final float playerX = this.player.getPlayerX();</span>
+<span class="nc" id="L506">        final float playerY = this.player.getPlayerY();</span>
+
+<span class="nc" id="L508">        boolean near_activity = false;</span>
+
+        // set pop up above players location
+<span class="nc" id="L511">        this.popupX = playerX;</span>
+<span class="nc" id="L512">        this.popupY = playerY + 50;</span>
+<span class="nc" id="L513">        frames_since_int += 1;</span>
+
+        // CHANGELOG: CHANGED THIS FUNCTION TO USE A LOOP TO ALLOW FOR EXTRA ACTIVITIES
+<span class="nc bnc" id="L516" title="All 2 branches missed.">        for (ActivityLocation activity : activityLocations){</span>
+<span class="nc bnc" id="L517" title="All 2 branches missed.">            if (isPlayerWithinInteractionArea(playerX, playerY, activity)){</span>
+<span class="nc" id="L518">                String colour = &quot;white&quot;;</span>
+<span class="nc" id="L519">                String message = &quot;Press E to &quot;+ activity.getName();</span>
+<span class="nc bnc" id="L520" title="All 4 branches missed.">                if(interacted == 1 &amp;&amp; frames_since_int &lt; 60){</span>
+<span class="nc" id="L521">                    colour = &quot;green&quot;;</span>
+                }
+<span class="nc bnc" id="L523" title="All 4 branches missed.">                else if (interacted == -1 &amp;&amp; frames_since_int &lt; 60){</span>
+<span class="nc" id="L524">                    colour = &quot;red&quot;;</span>
+<span class="nc bnc" id="L525" title="All 2 branches missed.">                    if (reason.equals(&quot;Time too low\n&quot;)){</span>
+<span class="nc" id="L526">                        message = &quot;Not enough time&quot;;</span>
+                    }
+                    else {
+<span class="nc" id="L529">                        message = reason;</span>
+                    }
+                }
+                else{
+<span class="nc" id="L533">                    interacted = 0;</span>
+                }
+
+<span class="nc" id="L536">                this.interaction_popup = new InteractionPopup(message, colour);</span>
+<span class="nc" id="L537">                near_activity = true;</span>
+            }
+        }
+
+<span class="nc bnc" id="L541" title="All 2 branches missed.">        if (!near_activity){</span>
+<span class="nc" id="L542">            this.interaction_popup = null;</span>
+<span class="nc" id="L543">            interacted = 0;</span>
+        }
+
+
+
+
+//        // Check if the player is within range of an activity location
+//        if (isPlayerWithinInteractionArea(playerX, playerY, this.study_location)) {
+//            this.interaction_popup = new InteractionPopup(&quot;Press E to &quot;+ this.study_location.getName());
+//            // set pop up above players location
+//            this.popupX = playerX;
+//            this.popupY = playerY + 50;
+//        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.recreation_location)) {
+//            this.interaction_popup = new InteractionPopup(&quot;Press E to &quot;+ this.recreation_location.getName());
+//            this.popupX = playerX;
+//            this.popupY = playerY + 50;
+//        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.food_location)) {
+//            this.interaction_popup = new InteractionPopup(&quot;Press E to &quot;+ this.food_location.getName());
+//            this.popupX = playerX;
+//            this.popupY = playerY + 50;
+//        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.sleep_location)) {
+//            this.interaction_popup = new InteractionPopup(&quot;Press E to &quot;+ this.sleep_location.getName());
+//            this.popupX = playerX;
+//            this.popupY = playerY + 50;
+//        } else {
+//            // Hide message if the player is out of range
+//            this.interaction_popup = null;
+//        }
+<span class="nc" id="L571">    }</span>
+
+    /**
+     * Toggles fullscreen mode of the application.
+     * If the application is currently in fullscreen mode, it switches to windowed mode with the dimensions of the game world.
+     * If the application is in windowed mode, it switches to fullscreen mode using the current display mode.
+     */
+    private void toggleFullscreen() {
+<span class="nc bnc" id="L579" title="All 2 branches missed.">        this.is_fullscreen = !this.is_fullscreen;</span>
+
+<span class="nc bnc" id="L581" title="All 2 branches missed.">        if (this.is_fullscreen) {</span>
+<span class="nc" id="L582">            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());</span>
+        } else {
+<span class="nc" id="L584">            Gdx.graphics.setWindowedMode((int) this.world_width/3, (int) this.world_height);</span>
+        }
+<span class="nc" id="L586">    }</span>
+
+    /**
+     * Checks if the player is within the interaction area of a given activity location.
+     *
+     * @param playerX   The x-coordinate of the player's position.
+     * @param playerY   The y-coordinate of the player's position.
+     * @param location  The activity location to check for interaction area.
+     * @return True if the player is within the interaction area of the activity location, false otherwise.
+     */
+    public boolean isPlayerWithinInteractionArea(float playerX, float playerY, ActivityLocation location) {
+        // Calculate the squared distance between the player and the activity location
+<span class="fc" id="L598">        float distance_squared = (playerX - location.getX()) * (playerX - location.getX())</span>
+<span class="fc" id="L599">                + (playerY - location.getY()) * (playerY - location.getY());</span>
+        // Compare squared distance with the square of the interaction radius of the location
+<span class="fc bfc" id="L601" title="All 2 branches covered.">        return distance_squared &lt;= location.getRadius() * location.getRadius();</span>
+    }
+
+    @Override
+    public void pause() {
+<span class="nc" id="L606">    }</span>
+
+    @Override
+    public void resume() {
+<span class="nc" id="L610">    }</span>
+
+    @Override
+    public void hide() {
+<span class="nc" id="L614">    }</span>
+
+    /** Called when the application is destroyed. Preceded by a call to {@link #pause()}. */
+    @Override
+    public void dispose() {
+<span class="nc" id="L619">        this.tile_map.dispose();</span>
+<span class="nc" id="L620">        this.map_renderer.dispose();</span>
+<span class="nc" id="L621">        this.player.dispose();</span>
+<span class="nc" id="L622">        this.hud.dispose();</span>
+<span class="nc" id="L623">        this.interaction_popup.dispose();</span>
+
+        // CHANGELOG: Need to Dispose of activity icon sprites.
+<span class="nc" id="L626">        this.iconSpriteSheet.dispose();</span>
+<span class="nc" id="L627">    }</span>
+
+<span class="nc" id="L629">    public float getWorldHeight(){return this.world_height;}</span>
+<span class="nc" id="L630">    public float getWorldWidth(){return this.world_width;}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
