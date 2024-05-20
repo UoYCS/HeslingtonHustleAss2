@@ -26,28 +26,29 @@ import static org.mockito.Mockito.*;
 @RunWith(GdxTestRunner.class)
 public class AvatarTests {
 
+
+    /**
+     * Tests that the velocity of the player is correct when the W key is pressed
+     *
+     */
     @Test
     public void testMovePlayerUp(){
         Input fake_input = mock(Input.class);
-        //Graphics fake_time = spy(Graphics.class);
 
 
         doReturn(true).when(fake_input).isKeyPressed(Input.Keys.W);
-        //doReturn(0.5F).when(fake_time).getDeltaTime();
-        //doReturn(true).when(fake_input).isKeyPressed(Input.Keys.S);
         Gdx.input = fake_input;
-        //Gdx.graphics = fake_time;
 
-        Avatar avatar = new Avatar(0,0,408,2280);
+        Avatar avatar = new Avatar(100,100,408,2280);
         avatar.handleInput();
         assertTrue("velocity upwards should be > 0 when up arrow pressed",avatar.velocity.y > 0);
         assertTrue("velocity horizontal should be 0",avatar.velocity.x == 0);
 
-        //assertSame(avatar.getPlayerX(), 1);
-        //Gdx.input = fake_input;
-        //avatar.handleInput();
-        //assertTrue(avatar.velocity.y == 0);
     }
+    /**
+     * Tests that the velocity of the player is correct when the S key is pressed
+     *
+     */
     @Test
     public void testMovePlayerDown(){
         Input fake_input = mock(Input.class);
@@ -56,12 +57,16 @@ public class AvatarTests {
 
         Gdx.input = fake_input;
 
-        Avatar avatar = new Avatar(0,0,408,2280);
+        Avatar avatar = new Avatar(100,100,408,2280);
         avatar.handleInput();
         assertTrue("velocity upwards should be < 0 when only down arrow pressed",avatar.velocity.y < 0);
         assertTrue("velocity horizontal should be 0",avatar.velocity.x == 0);
     }
 
+    /**
+     * Tests that the velocity of the player is correct when the A key is pressed
+     *
+     */
     @Test
     public void testMovePlayerLeft(){
         Input fake_input = mock(Input.class);
@@ -70,12 +75,16 @@ public class AvatarTests {
 
         Gdx.input = fake_input;
 
-        Avatar avatar = new Avatar(0,0,408,2280);
+        Avatar avatar = new Avatar(100,100,408,2280);
         avatar.handleInput();
         assertTrue("velocity horizontal should be < 0 when only left arrow pressed",avatar.velocity.x < 0);
         assertTrue("velocity vertical should be 0",avatar.velocity.y == 0);
     }
 
+    /**
+     * Tests that the velocity of the player is correct when the D key is pressed
+     *
+     */
     @Test
     public void testMovePlayerRight(){
         Input fake_input = mock(Input.class);
@@ -84,12 +93,36 @@ public class AvatarTests {
 
         Gdx.input = fake_input;
 
-        Avatar avatar = new Avatar(0,0,408,2280);
+        Avatar avatar = new Avatar(100,100,408,2280);
         avatar.handleInput();
         assertTrue("velocity upwards should be > 0 when only right arrow pressed",avatar.velocity.x > 0);
         assertTrue("velocity vertical should be 0",avatar.velocity.y == 0);
     }
+    /**
+     * Tests that the velocity of the player is 0 when keys for opposite directions are both pressed
+     *
+     */
+    @Test
+    public void testDontMovePlayer(){
+        Input fake_input = mock(Input.class);
 
+        doReturn(true).when(fake_input).isKeyPressed(Input.Keys.D);
+        doReturn(true).when(fake_input).isKeyPressed(Input.Keys.S);
+        doReturn(true).when(fake_input).isKeyPressed(Input.Keys.A);
+        doReturn(true).when(fake_input).isKeyPressed(Input.Keys.W);
+
+        Gdx.input = fake_input;
+
+        Avatar avatar = new Avatar(100,100,408,2280);
+        avatar.handleInput();
+        assertTrue("velocity horizontal 0 when only both horizontal pressed",avatar.velocity.x == 0);
+        assertTrue("velocity vertical should be 0 when both vertical pressed",avatar.velocity.y == 0);
+    }
+
+    /**
+     *Checks the getter methods which return player position are valid
+     *
+     */
     @Test
     public void testGetPlayerXYPos(){
         float x_pos = 50;
@@ -100,6 +133,10 @@ public class AvatarTests {
 
     }
 
+    /**
+     * Checks the setter methods for player position set the playerloc correctly
+     * Doesn't test whether its a valid input, i.e. inside the map
+     */
     @Test
     public void testSetPlayerLoc(){
         Avatar avatar = new Avatar(50,100,1000,1000);

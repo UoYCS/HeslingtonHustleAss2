@@ -19,10 +19,10 @@ import java.awt.*;
 public class AssetTests {
 
 
-  /*
-  before these tests are completed the classes should be refactored so they
-  have string storing the name of the asset file, which are used in the code
-  instead of directly using filename when creating textures
+  /**
+  These tests check that the assets used by the game exist
+
+   Organised into assets for each class
    */
   @Test
   public void testMenuScreenAssetsExists() {

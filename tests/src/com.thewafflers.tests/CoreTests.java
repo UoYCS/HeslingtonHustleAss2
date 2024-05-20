@@ -19,18 +19,7 @@ import static org.mockito.Mockito.*;
 public class CoreTests {
 
     /**
-
-    These tests will test the game logic in core class
-    The string at the start of a multiline comment
-
-    I need to check whethrer its ok to have multiple unit tests in a method or whether i need
-    to only have 1 test per method.
-     */
-
-
-
-    /**
-    test core.islastday()
+    Verifies core.islastday() which returns true/false on if its the final day
 
     unit test:
         invalid inputs: day incremented less than 6 times
@@ -49,7 +38,10 @@ public class CoreTests {
 
     }
 
-
+    /**
+     * Verifies that the incrementday method correctly increases the day by one
+     *
+     */
     @Test
     public void testValidIncrementDay(){
         Core core = new Core();
@@ -58,6 +50,12 @@ public class CoreTests {
         assertEquals(day + 1, core.getCurrentDay() );
 
     }
+
+    /**
+     * Tests that the incremenetday method correctly creates a runtime exception if
+     * the program tries to call the method on the final day
+     *
+     */
     @Test(expected = RuntimeException.class)
     public void testIncrementOver7Days(){
         Core core = new Core();
@@ -154,6 +152,18 @@ public class CoreTests {
 
     }
 
+    /**
+     * Verifies that the method interactedwith() correctly handles each activity type
+     *
+     * While this should probably be separate tests for each type, its nice to not have to repeat code
+     * or have to do a @Before method. Each test has a message for if it fails so it should be clear why
+     *
+     * the Class returns ResourceExitConditions, stating whether the interaction was valid, and if not which
+     * resource type was invalid and why
+     *
+     * If the interaction is valid
+     *
+     */
     @Test
     public void testInteraction(){
         ActivityType test_type = ActivityType.Sleep;
@@ -175,14 +185,14 @@ public class CoreTests {
         ResourceExitConditions correct_output = new ResourceExitConditions(null,ExitConditions.IsOk);
         ResourceExitConditions actual_output;
 
-        actual_output = core.interactedWith(test_type);
+        actual_output = core.interactedWith(test_type); // activity done was sleep
 
         assertSame(correct_output.getConditions(),actual_output.getConditions());
         assertEquals(2, core.getCurrentDay());
 
         // core now on day 2 (1 if counting 0 based)
 
-        test_type = ActivityType.Food;
+        test_type = ActivityType.Food; // activity type now being used is EATING
         doReturn(energy_output).when(mock_energy).tryActivityType(test_type);
         doReturn(time_output).when(mock_time).tryActivityType(test_type);
 
@@ -190,7 +200,7 @@ public class CoreTests {
         assertSame(correct_output.getConditions(),actual_output.getConditions());
         assertEquals(1,core.getTimesEatenToday());
 
-        test_type = ActivityType.Study;
+        test_type = ActivityType.Study; // activity type now being used is STUDYING
         doReturn(energy_output).when(mock_energy).tryActivityType(test_type);
         doReturn(time_output).when(mock_time).tryActivityType(test_type);
 
@@ -198,7 +208,7 @@ public class CoreTests {
         assertSame(correct_output.getConditions(),actual_output.getConditions());
         assertEquals(1,core.getTimesStudiedToday());
 
-        test_type = ActivityType.Recreation;
+        test_type = ActivityType.Recreation; // activity type now being used is RECREATING
         doReturn(energy_output).when(mock_energy).tryActivityType(test_type);
         doReturn(time_output).when(mock_time).tryActivityType(test_type);
 
@@ -209,16 +219,22 @@ public class CoreTests {
         energy_output = new ResourceExitConditions(ResourceTypes.Energy, ExitConditions.TooLow);
         time_output = new ResourceExitConditions(ResourceTypes.Time, ExitConditions.TooLow);
 
-
+        /**
+         * Checks here whether it returns that not enough time or energy to do recreation activity
+         *
+         * And checks that if there isnt enough time / energy that it doesnt change the counters
+         */
         doReturn(time_output).when(mock_time).tryActivityType(test_type);
 
         actual_output = core.interactedWith(test_type);
         assertSame(time_output.getConditions(),actual_output.getConditions());
+        assertEquals(1,core.getTimesRelaxedToday());
 
         doReturn(energy_output).when(mock_energy).tryActivityType(test_type);
 
         actual_output = core.interactedWith(test_type);
         assertSame(energy_output.getConditions(),actual_output.getConditions());
+        assertEquals(1,core.getTimesRelaxedToday());
 
 
     }
