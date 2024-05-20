@@ -1,3 +1,11 @@
+/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Updated Functionality
+ *          - Interaction popups now change colour and provide better visual feedback upon interaction
+ *      Testing
+ *          - Updated code to assist in unit testing
+ */
 package com.waddle_ware.heslington_hustle;
 
 import com.badlogic.gdx.Gdx;
@@ -17,8 +25,12 @@ public class InteractionPopup {
     public static final String FONT_GEN_ASSET = "BebasNeue-Regular.ttf";
 
     /**
+     * CHANGELOG: UPDATED METHOD
+     *            ADDED COLOUR ATTRIBUTE TO ASSIST IN VISUAL FEEDBACK
+     *
      * Constructs a new InteractionPopup object with specified message.
      *
+     * @param colour The colour of the pop-up.
      * @param message The message to be displayed in the pop-up.
      */
     public InteractionPopup(String message, String colour) {
@@ -28,6 +40,7 @@ public class InteractionPopup {
         parameter.size = 10;
         parameter.borderColor = Color.BLACK;
 
+        // CHANGELOG: ADDED DIFFERENT COLOURS OF POPUPS TO INDICATE ACTIVITY COMPLETION STATUS
         if (colour.equals("white")){
             parameter.color = Color.WHITE;
         }

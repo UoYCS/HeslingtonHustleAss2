@@ -1,3 +1,8 @@
+/*
+ * CHANGELOG:
+ * NO CHANGES REQUIRED FOR THIS FILE
+ */
+
 package com.waddle_ware.heslington_hustle.core;
 
 /**

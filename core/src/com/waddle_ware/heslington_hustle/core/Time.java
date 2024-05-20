@@ -1,3 +1,10 @@
+/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Testing
+ *          - Added new method to assist in unit testing
+ */
+
 package com.waddle_ware.heslington_hustle.core;
 
 import java.time.Clock;
@@ -123,6 +130,11 @@ public class Time implements ResourceBase {
         }
     }
 
+    /**
+     * CHANGELOG: NEW METHOD
+     * Added setter method for testing purposes
+     * @param minutes New testing time value.
+     */
     public void set_minutes_remaining(int minutes){
         this.minutes_remaining = minutes;
 

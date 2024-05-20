@@ -1,3 +1,14 @@
+/*
+ * CHANGELOG:
+ * SEVERAL CHANGES REQUIRED:
+ *      Scoring
+ *          - Updated and added functionality to scoring logic including streaks
+ *          - Added new methods to assist in score calculation
+ *      Testing
+ *          - Updated code and added new methods to assist in unit testing
+ *
+ */
+
 package com.waddle_ware.heslington_hustle.core;
 // CHANGELOG: Added access to Activity Location to be used for streak calculation
 import com.waddle_ware.heslington_hustle.ActivityLocation;
@@ -9,6 +20,8 @@ import java.util.Arrays;
  */
 public class Core {
     // The constants below define the values for the impact that the individual components will have on the score.
+
+    // CHANGELOG : Updated scoring values as well as updated variable accessibility in order to be more testable
     public static final int MEAL_SCORE_VALUE = 30;
     public static final int RELAX_SCORE_VALUE = 50;
     public static final int STUDY_SCORE_VALUE = 100;
@@ -24,6 +37,7 @@ public class Core {
     private int day;
     public Time time;
 
+    // CHANGELOG: Updated variable accessibility for testing
     public int[] study_count;
     public int[] relax_count;
     public int[] meal_count;
@@ -153,14 +167,15 @@ public class Core {
     }
 
     /**
+     * CHANGELOG : UPDATED METHOD
+     * CHANGELOG : Method now takes array of activityLocations
+     * CHANGELOG : Updated all scoring calculations and return score as a percentage from 0-100
+     *
      * This function generate the player's score based on their
      * tracked metrics and the value of each metric as specified
      * by their respective constants.
      * This should only be called once the game has ended.
      * It will throw an exception if called before.
-     *
-     * CHANGELOG : Method now takes array of activityLocations
-     * CHANGELOG : Updated all scoring calculations and return score as a percentage from 0-100
      *
      * @return The total score that the player has achieved
      */
@@ -168,15 +183,24 @@ public class Core {
         if(!isLastDay())
             throw new RuntimeException("generateScore has been called before the game has ended");
 
+        //
+        // CHANGELOG:
+        // Scoring was not implemented correctly/functionally in inherited code
+        // Added code to take data of what a user has done throughout the game
+        // And perform calculation to output a final score
+        //
+
+
         /*
+         * In order to map the final score as a percentage from 0-100
+         * The maximum possible score must be known:
          * Studying = 1500 pts
          * Recreation = 1000 pts
          * Eating = 1000 pts
          */
         int max_possible_score = 3500;
 
-        boolean [] streaks = checkStreaks(activityLocations);
-
+        // Initialise Score to 0
         int score = 0;
 
         /*
@@ -192,11 +216,8 @@ public class Core {
          * 250 pts : Bonus for studying in different locations
          */
 
-        int times_studied = Arrays.stream(this.study_count).sum();
-        int locations_studied = getNumLocationsActivity(activityLocations, ActivityType.Study);
-        int days_studied = getNumDaysActivity(this.study_count);
-
         // POINTS FOR STUDYING
+        int times_studied = Arrays.stream(this.study_count).sum();
         if (times_studied <= 10){
             score += times_studied * STUDY_SCORE_VALUE;
         } else {
@@ -205,11 +226,13 @@ public class Core {
         }
 
         // BONUS FOR STUDYING EVERYDAY
+        int days_studied = getNumDaysActivity(this.study_count);
         if (days_studied == 7){
             score += 250;
         }
 
         // BONUS FOR STUDYING IN DIFFERENT PLACES
+        int locations_studied = getNumLocationsActivity(activityLocations, ActivityType.Study);
         if (locations_studied > 1){
             score += 250;
         }
@@ -230,14 +253,13 @@ public class Core {
          */
 
 
-        int times_rec = Arrays.stream(this.relax_count).sum();
-        int days_rec = getNumDaysActivity(this.relax_count);
-        int locations_rec = getNumLocationsActivity(activityLocations, ActivityType.Recreation);
 
         // Points for studying
+        int times_rec = Arrays.stream(this.relax_count).sum();
         score += Math.min(times_rec, 14) * RELAX_SCORE_VALUE;
 
         // Bonus for everyday
+        int days_rec = getNumDaysActivity(this.relax_count);
         if (days_rec == 7){
             score += RELAX_SCORE_VALUE * 3;
         }
@@ -245,6 +267,7 @@ public class Core {
         // No bonus if recreation at 1 place
         // Bonus of 100 if done at 2 places
         // Bonus of 150 if done at 3 places
+        int locations_rec = getNumLocationsActivity(activityLocations, ActivityType.Recreation);
         if (locations_rec == 2){
             score += (RELAX_SCORE_VALUE * 2);
         } else if (locations_rec == 3) {
@@ -265,10 +288,7 @@ public class Core {
          */
 
 
-        int times_eaten = Arrays.stream(this.meal_count).sum();
-        int locations_eaten = getNumLocationsActivity(activityLocations, ActivityType.Food);
-        int days_eaten = getNumDaysActivity(this.meal_count);
-
+        // Points for eating (several times) every day
         for (int num : this.meal_count){
             switch (num) {
                 case 1:
@@ -286,6 +306,8 @@ public class Core {
             }
         }
 
+        // Bonus for eating at multiple locations
+        int locations_eaten = getNumLocationsActivity(activityLocations, ActivityType.Food);
         // No bonus if recreation at 1 place
         // Bonus of 30 if done at 2 places
         // Bonus of 90 if done at 3 places
@@ -295,31 +317,14 @@ public class Core {
             score += (MEAL_SCORE_VALUE * 3);
         }
 
+        // Bonus for eating everyday
+        int days_eaten = getNumDaysActivity(this.meal_count);
         if (days_eaten == 7){
             score += 70;
         }
 
 
-//        for (int i = 0; i < 7; ++i) {
-//
-//            if(this.meal_count[i] == 0)
-//                score += MEAL_SCORE_PENALTY;
-//            else
-//                score += this.meal_count[i]  * MEAL_SCORE_VALUE;
-//
-//            if(this.relax_count[i] == 0)
-//                score += RELAX_SCORE_PENALTY;
-//            else
-//                score += this.relax_count[i]  * RELAX_SCORE_VALUE;
-//
-//            if(this.study_count[i] >= TOO_MUCH_STUDY_THRESHOLD)
-//                score += STUDY_TOO_MUCH_PENALTY;
-//            else
-//                score += this.study_count[i]  * STUDY_SCORE_VALUE;
-//
-//        }
-
-        // CHANGELOG : PREVENT NEGATIVE SCORE
+        // Prevent the score from being negative
         if (score < 0){
             score = 0;
         }
@@ -328,6 +333,8 @@ public class Core {
         int percent_score = (int)(((double)score / max_possible_score) * 100);
 
         // CHANGELOG : ADD STREAK BONUSES AS EXTRA 10%
+        boolean [] streaks = checkStreaks(activityLocations);
+
         for (boolean streak : streaks){
             if (streak){
                 percent_score += 10;
@@ -343,10 +350,10 @@ public class Core {
     }
 
     /**
-     * CHANGELOG : NEW METHOD
-     *
-     * Takes in an array of activities and an Acitivty type and returns then number of different
-     * locations that type of activity was done in
+     * CHANGELOG: NEW METHOD
+     * Added in order to complete scoring logic:
+     * Takes in an array of activities and an Activity type and
+     * returns then number of different locations that type of activity was done at
      *
      * @param activities Array of ActivityLocations
      * @param type Type of activity to check
@@ -355,21 +362,23 @@ public class Core {
     public int getNumLocationsActivity(ActivityLocation[] activities, ActivityType type){
         int locations = 0;
 
+        // Iterate over all activities
         for (ActivityLocation activity : activities) {
             if (activity.getType() == type){
                 if (Arrays.stream(activity.getInteractions()).sum() > 0){
+                    // Increment if an activity of the given type had any interactions
                     locations ++;}
             }
         }
-
         return locations;
     }
 
 
     /**
      * CHANGELOG : NEW METHOD
-     *
-     * Takes in the activity counter arrays and returns the number of days it was done on
+     * Added in order to complete scoring logic:
+     * Takes in the activity counter arrays and
+     * returns the number of days it was done on
      *
      * @param list Array of ActivityLocations
      * @return Number of different days the player did that type of activity
@@ -377,6 +386,7 @@ public class Core {
     public int getNumDaysActivity(int[] list){
         int days_done = 0;
 
+        // Increment if the activity was done (at least once) on that day
         for (int num : list){
             if (num > 0){
                 days_done ++;}
@@ -491,6 +501,8 @@ public class Core {
     }
 
     /**
+     * CHANGELOG : NEW METHOD
+     *
      * Returns the number of recreational activities done today.
      *
      * @return The number of recreational activities done today.
@@ -498,12 +510,16 @@ public class Core {
     public int getTimesRelaxedToday() {
         return relax_count[this.day];
     }
-  
+
+
+    /**
+     * CHANGELOG : Added setter methods to be used for testing purposes
+
 
     /**
      * sets meal count. This is only used for testing
      *
-     * @Param meals
+     * @param meals Testing meal count array
      *
      */
     public void setMeal_count(int[] meals){
@@ -528,7 +544,7 @@ public class Core {
     /**
      * sets study count. This is only used for testing
      *
-     * @param studied
+     * @param studied Testing study count array
      */
     public void setStudy_count(int[] studied){
         if(studied.length == 7) {
@@ -546,7 +562,7 @@ public class Core {
     /**
      * sets relax count. This is only used for testing
      *
-     * @param relax
+     * @param relax Testing relax count array
      */
     public void setRelax_count(int[] relax){
         if(relax.length == 7) {

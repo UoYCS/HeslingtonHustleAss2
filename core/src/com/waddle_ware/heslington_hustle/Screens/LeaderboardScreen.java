@@ -1,19 +1,22 @@
+/*
+ * CHANGELOG:
+ * NEW CLASS:
+ *      Added class to Implement new leaderboard functionality
+ */
+
 package com.waddle_ware.heslington_hustle.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.waddle_ware.heslington_hustle.Button;
 import com.waddle_ware.heslington_hustle.Font;
@@ -22,6 +25,9 @@ import com.waddle_ware.heslington_hustle.Leaderboard;
 import com.waddle_ware.heslington_hustle.UserScore;
 
 /**
+ * CHANGELOG: NEW CLASS
+ *            ADDED CLASS TO IMPLEMENT LEADERBOARD SCREEN
+ *
  * This class represents the games Leaderboard Screen.
  * It displays the top 10 scores achieved in the game.
  */
@@ -52,13 +58,9 @@ public class LeaderboardScreen implements Screen {
         Gdx.input.setInputProcessor(this.stage);
         initialiseMenu(); // Add menu elements
 
-
-
         this.font = Font.getGameFont(50, 4f);
 
     }
-
-
 
 
     /**
