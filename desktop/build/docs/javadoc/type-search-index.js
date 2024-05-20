@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"com.waddle_ware.heslington_hustle","l":"DesktopLauncher"}]
