@@ -89,4 +89,25 @@ public class AvatarTests {
         assertTrue("velocity upwards should be > 0 when only right arrow pressed",avatar.velocity.x > 0);
         assertTrue("velocity vertical should be 0",avatar.velocity.y == 0);
     }
+
+    @Test
+    public void testGetPlayerXYPos(){
+        float x_pos = 50;
+        float y_pos = 100;
+        Avatar avatar = new Avatar(x_pos,y_pos,1000,1000);
+        assertTrue(x_pos == avatar.getPlayerX());
+        assertTrue(y_pos == avatar.getPlayerY());
+
+    }
+
+    @Test
+    public void testSetPlayerLoc(){
+        Avatar avatar = new Avatar(50,100,1000,1000);
+        float x_pos = 250;
+        float y_pos = 500;
+        avatar.setPlayerLoc(x_pos,y_pos);
+        assertTrue(x_pos == avatar.getPlayerX());
+        assertTrue(y_pos == avatar.getPlayerY());
+
+    }
 }
