@@ -152,18 +152,14 @@ public class Core {
             throw new RuntimeException("hasPlayerFailed has been called before the game has ended");
 
         // fail conditions are missed studying for 2 days
-        for (final int i : this.meal_count) {
-            if(i == 0) return true;
-        }
-        for (final int i : this.relax_count) {
-            if(i == 0) return true;
-        }
         int studied_zero_times_per_day_count = 0;
+        boolean catch_up = false;
         for (final int i : this.study_count) {
             if(i == 0) ++studied_zero_times_per_day_count;
+            if(i > 1){catch_up = true;}
         }
         if (studied_zero_times_per_day_count >= 2) return true;
-        return false;
+        return studied_zero_times_per_day_count == 1 && !catch_up;
     }
 
     /**
