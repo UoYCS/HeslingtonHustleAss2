@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Leaderboard {
     private final String FILE_NAME = "leaderboard.txt";
     private final int NUM_SCORES = 10;
-    private UserScore[] highscores;
+    public UserScore[] highscores;
 
 
     public Leaderboard() {
