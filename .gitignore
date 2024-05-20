@@ -108,3 +108,7 @@ Thumbs.db
 
 
 
+/tests/build/reports
+/tests/build
+/tests/build/reports/tests/test/classes
+/tests/build/reports/tests
