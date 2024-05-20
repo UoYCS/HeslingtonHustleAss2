@@ -124,5 +124,12 @@ public class Energy implements ResourceBase {
         return this.limit;
     }
 
+
+    /**
+     * Sets energy at specified level.
+     * Only used for testing purposes.
+     *
+     * @param newcurrent
+     */
     public void setcurrent(int newcurrent){this.current = newcurrent;}
 }
