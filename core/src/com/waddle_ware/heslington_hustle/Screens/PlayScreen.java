@@ -1,3 +1,18 @@
+/*
+ * CHANGELOG:
+ * SEVERAL CHANGES REQUIRED:
+ *      MAP
+ *          - Updated and Expanding game map
+ *          - Required changes to camera and location logic
+ *      ACTIVITIES
+ *          - Added more activities
+ *          - Added floating activity icons
+ *      Testing
+ *          - Updated code and added new methods to assist in unit testing
+ *
+ */
+
+
 package com.waddle_ware.heslington_hustle.Screens;
 
 import com.badlogic.gdx.Gdx;
@@ -27,6 +42,7 @@ import com.waddle_ware.heslington_hustle.core.ResourceExitConditions;
 import java.util.Arrays;
 
 /**
+ * CHANGELOG: UPDATED CLASS
  * The PlayScreen class represents the games screen where the gameplay is.
  * It implements the Screen interface and manages rendering and input handling.
  */
@@ -36,9 +52,13 @@ public class PlayScreen implements Screen {
     private TiledMap tile_map;
     private OrthogonalTiledMapRenderer map_renderer;
     private boolean is_fullscreen = false;  // Track fullscreen state
+
+    // CHANGELOG: Added attributes to store the users current map section location
+    //            -1: Town, 0: WestCampus, 1:EastCampus(StartingZone)
     private int current_map_section = 1;
     private final int map_section_offset = 48*16;
 
+    // CHANGELOG: Added attribute to store # of frames since last activity interaction
     private int frames_since_int = 0;
 
 
@@ -97,7 +117,7 @@ public class PlayScreen implements Screen {
     private String reason;
 
 
-    //  CHANGELOG: variables for the activity icon animations
+    // CHANGELOG: Added attributes for the activity icon animations
     Animation<TextureRegion> sleepIcon;
     Animation<TextureRegion> eatIcon;
     Animation<TextureRegion> studyIcon;
@@ -109,8 +129,9 @@ public class PlayScreen implements Screen {
 
 
     /**
-     * Constructs a new PlayScreen.
+     * CHANGELOG: UPDATED METHOD
      *
+     * Constructs a new PlayScreen.
      * @param game The game instance.
      */
     public PlayScreen(HeslingtonHustle game)
@@ -148,6 +169,8 @@ public class PlayScreen implements Screen {
     }
 
     /**
+     * CHANGELOG: UPDATED METHOD
+     *
      * Called when this screen becomes the current screen.
      * Initialises camera, viewport, tile map, and player avatar.
      */
@@ -167,14 +190,11 @@ public class PlayScreen implements Screen {
         // Calculate world dimensions
         final int map_tile_width = this.tile_map.getProperties().get("width", Integer.class);
         final int map_tile_height = this.tile_map.getProperties().get("height", Integer.class);
-
         final int tile_size = this.tile_map.getProperties().get("tilewidth", Integer.class);
-
         this.world_width = map_tile_width * tile_size;
         this.world_height = map_tile_height * tile_size;
 
 
-        
         this.player = new Avatar(0, 0, this.world_height, this.world_width);
         this.player.setPlayerLoc(260+ (2*48*16), 250);
 
@@ -182,9 +202,7 @@ public class PlayScreen implements Screen {
         this.viewport = new FitViewport(this.world_width/3, this.world_height, this.camera);
         this.hud = new HUD(this.core);
 
-        // Center the camera on the tile map
-
-
+        // Initialise the camera on the starting map section.
         this.camera.position.set((this.world_width / 2f)+map_section_offset, this.world_height / 2f, 0);
         this.camera.update();
 
@@ -203,6 +221,8 @@ public class PlayScreen implements Screen {
     }
 
     /**
+     * CHANGELOG: UPDATED METHOD
+     *
      * Called when screen should render itself.
      * Handles input, updates the camera, renders the tile map, and renders the player sprite on top.
      *
@@ -217,9 +237,10 @@ public class PlayScreen implements Screen {
         handleInput(); // Call method to handle inputs
         this.player.handleInput();
 
-
+        // CHANGELOG: Update which map section the player is currently in
         current_map_section = getGameArea(this.player.getPlayerX());
 
+        // CHANGELOG: Update the camera based on the current map section thep player is in
         this.camera.position.set(
                 (this.world_width / 2f) + (getGameArea(this.player.getPlayerX()) * map_section_offset),
                 this.world_height / 2f,
@@ -341,14 +362,13 @@ public class PlayScreen implements Screen {
      */
     public int getGameArea(float xValue) {
         if (xValue > 1523) {
-            return 1;
+            return 1; // East Campus (Right)
         } else if (xValue <= 1523 && xValue > 755) {
-            return 0;
+            return 0; // West Campus (Centre)
         } else {
-            return -1;
+            return -1;// Town (Left)
         }
     }
-
 
 
     /**
@@ -356,7 +376,8 @@ public class PlayScreen implements Screen {
      * Checks boundaries to prevent the sprite from moving outside the game window.
      */
     private void handleInput() {
-        //Used for testing
+
+        // Temporary: Used for Testing+Debugging
 //        if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.S)) {
 //            this.core.interactedWith(ActivityType.Study);
 //        }
@@ -375,6 +396,20 @@ public class PlayScreen implements Screen {
 //        if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.L)) {
 //            this.game.setScreen(new EndScreen(game, false, 7613));
 //        }
+//
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
+//            System.out.println(this.player.getPlayerX());
+//            System.out.println(this.player.getPlayerY());
+//        }
+//
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+//            System.out.println("----------");
+//            for (ActivityLocation activity : activityLocations) {
+//                System.out.println(Arrays.toString(activity.getInteractions()) + ", " + activity.getName());
+//            }
+//            System.out.println("----------");
+//
+//        }
 
         // Toggle fullscreen when F11 is pressed
         if (Gdx.input.isKeyJustPressed(Input.Keys.F11)) {
@@ -385,26 +420,12 @@ public class PlayScreen implements Screen {
             handleInteraction();
         }
 
-        // TEMPORARY FOR TESTING
-        if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
-            System.out.println(this.player.getPlayerX());
-            System.out.println(this.player.getPlayerY());
-        }
-
-        // TEMPORARY FOR TESTING
-        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
-            System.out.println("----------");
-            for (ActivityLocation activity : activityLocations) {
-                System.out.println(Arrays.toString(activity.getInteractions()) + ", " + activity.getName());
-            }
-            System.out.println("----------");
-
-        }
-
 
     }
 
     /**
+     * CHANGELOG: UPDATED METHOD
+     *
      * Handles player interaction with various activity locations based on their proximity to the player's position.
      * Checks if the player is within the interaction area of each activity location
      * If the player is within range, trigger the interaction with the activity and handle any outcome.
@@ -416,17 +437,16 @@ public class PlayScreen implements Screen {
         ResourceExitConditions exit_value;
 
 
-
         // CHANGELOG: CHANGED THIS FUNCTION TO USE A LOOP TO ALLOW FOR EXTRA ACTIVITIES
         // CHANGELOG: ADDED LINE TO INCREMENT COUNTER FOR SPECIFIC ACTIVITY
-        // TODO: Change int increment to array format
         for (ActivityLocation activity : activityLocations){
-
             if (isPlayerWithinInteractionArea(playerX, playerY, activity)){
+                // Updated the frames since the last interaction to be 0
                 frames_since_int = 0;
                 if (activity.getType() == ActivityType.Study || activity.getType() == ActivityType.Recreation){
                     exit_value = this.core.interactedWith(activity.getType());
                     if (exit_value.getConditions() == ExitConditions.IsOk){
+                        // Increments counter within activity object
                         activity.incrementCounter(this.core.getCurrentDay() - 1);
                         interacted = 1;
                         return;
@@ -438,6 +458,7 @@ public class PlayScreen implements Screen {
                 if (activity.getType() == ActivityType.Food) {
                     exit_value = this.core.interactedWith(ActivityType.Food);
                     if (exit_value.getConditions() == ExitConditions.IsOk){
+                        // Increments counter within activity object
                         activity.incrementCounter(this.core.getCurrentDay() - 1);
                         interacted = 1;
                     }
@@ -463,39 +484,10 @@ public class PlayScreen implements Screen {
         }
 
 
-//        // Check for interaction with each activity location
-//        if (isPlayerWithinInteractionArea(playerX, playerY, study_location)) {
-//            final ResourceExitConditions exit_value = this.core.interactedWith(ActivityType.Study);
-//            if(exit_value.getConditions() == ExitConditions.IsOk)
-//                return;
-//            System.out.printf("%s%s\n",exit_value.getTypes().toString(),exit_value.getConditions().toString());
-//        }
-//
-//        if (isPlayerWithinInteractionArea(playerX, playerY, recreation_location)) {
-//            final ResourceExitConditions exit_value = this.core.interactedWith(ActivityType.Recreation);
-//            if(exit_value.getConditions() == ExitConditions.IsOk)
-//                return;
-//            System.out.printf("%s%s\n",exit_value.getTypes().toString(),exit_value.getConditions().toString());
-//        }
-//
-
-//        if (isPlayerWithinInteractionArea(playerX, playerY, food_location)) { // Food and sleep should not be able to fail, so they can remain unchecked
-//            this.core.interactedWith(ActivityType.Food);
-//            return;
-//        }
-//
-//
-//        if (isPlayerWithinInteractionArea(playerX, playerY, sleep_location)) {
-//            if(this.core.isLastDay()) {
-//                game.setScreen(new EndScreen(this.game, !this.core.hasPlayerFailed(), this.core.generateScore()));
-//            }
-//            else this.core.interactedWith(ActivityType.Sleep);
-//        }
-
-
     }
 
     /**
+     * CHANGELOG: UPDATED METHOD
      * Checks the proximity of the player to various activity locations and updates the interaction pop-up message accordingly.
      * If the player is within range of an activity location, an interaction pop-up message is displayed.
      * If the player is not within range of any activity location, the interaction pop-up is hidden.
@@ -510,9 +502,12 @@ public class PlayScreen implements Screen {
         // set pop up above players location
         this.popupX = playerX;
         this.popupY = playerY + 50;
+
+        // CHANGELOG: Increment frames since last interaction
         frames_since_int += 1;
 
         // CHANGELOG: CHANGED THIS FUNCTION TO USE A LOOP TO ALLOW FOR EXTRA ACTIVITIES
+        // CHANGELOG: ADDED COLOURS TO INTERACTION POPUPS BASED ON INTERACTION STATUS
         for (ActivityLocation activity : activityLocations){
             if (isPlayerWithinInteractionArea(playerX, playerY, activity)){
                 String colour = "white";
@@ -544,30 +539,6 @@ public class PlayScreen implements Screen {
         }
 
 
-
-
-//        // Check if the player is within range of an activity location
-//        if (isPlayerWithinInteractionArea(playerX, playerY, this.study_location)) {
-//            this.interaction_popup = new InteractionPopup("Press E to "+ this.study_location.getName());
-//            // set pop up above players location
-//            this.popupX = playerX;
-//            this.popupY = playerY + 50;
-//        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.recreation_location)) {
-//            this.interaction_popup = new InteractionPopup("Press E to "+ this.recreation_location.getName());
-//            this.popupX = playerX;
-//            this.popupY = playerY + 50;
-//        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.food_location)) {
-//            this.interaction_popup = new InteractionPopup("Press E to "+ this.food_location.getName());
-//            this.popupX = playerX;
-//            this.popupY = playerY + 50;
-//        } else if (isPlayerWithinInteractionArea(playerX, playerY, this.sleep_location)) {
-//            this.interaction_popup = new InteractionPopup("Press E to "+ this.sleep_location.getName());
-//            this.popupX = playerX;
-//            this.popupY = playerY + 50;
-//        } else {
-//            // Hide message if the player is out of range
-//            this.interaction_popup = null;
-//        }
     }
 
     /**
@@ -626,6 +597,11 @@ public class PlayScreen implements Screen {
         this.iconSpriteSheet.dispose();
     }
 
+    /**
+     * CHANGELOG: ADDED METHODS
+     * Added getter methods for testing
+     * @return World Height/Width
+     */
     public float getWorldHeight(){return this.world_height;}
     public float getWorldWidth(){return this.world_width;}
 }

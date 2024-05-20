@@ -1,3 +1,12 @@
+/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Screen functionality:
+ *          - Refactored code that generated buttons within file to use Button classes
+ *      Testing
+ *          - Updated code and added new method to assist in unit testing
+ */
+
 package com.waddle_ware.heslington_hustle.Screens;
 
 import com.badlogic.gdx.Gdx;
@@ -46,14 +55,10 @@ public class TutorialScreen implements Screen {
     }
 
 
-    // CHANGELOG : REMOVED IN-FILE BUTTON STYLE GENERATION
-//    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
-//        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-//        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
-//        style.imageUp.setMinWidth(475);
-//        style.imageUp.setMinHeight(125);
-//        return style;
-//    }
+  // CHANGELOG : REMOVED IN-FILE BUTTON STYLE GENERATION
+  // private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
+  //       ....
+  // }
 
     /**
      * Initialises the tutorial screen with associated UI elements.

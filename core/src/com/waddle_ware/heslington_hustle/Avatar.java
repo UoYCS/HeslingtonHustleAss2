@@ -1,3 +1,10 @@
+/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Testing
+ *          - Updated code to assist in unit testing
+ */
+
 package com.waddle_ware.heslington_hustle;
 
 import com.badlogic.gdx.Gdx;
@@ -21,6 +28,8 @@ import static com.waddle_ware.heslington_hustle.PlayerAnimator.state_time;
 public class Avatar {
     private final float player_size;
     private float player_x, player_y;
+
+    // CHANGELOG: Updated variable accessibility for testing
     public final Vector2 velocity;
 
     private final float world_height;

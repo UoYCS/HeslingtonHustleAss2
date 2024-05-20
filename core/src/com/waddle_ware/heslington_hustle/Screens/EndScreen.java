@@ -1,3 +1,19 @@
+/*
+ * CHANGELOG:
+ * SEVERAL CHANGES REQUIRED:
+ *      Streaks
+ *          - Added streaks functionality as displayed achievements
+ *      Scoring
+ *          - Added game score to end screen
+ *      General Changes
+ *          - Updated Background
+ *          - Updated Font sizing/placement
+ *          - Added continue button to go to name entry screen
+ *      Testing
+ *          - Updated code to assist in unit testing
+ *
+ */
+
 package com.waddle_ware.heslington_hustle.Screens;
 
 import com.badlogic.gdx.Gdx;
@@ -11,18 +27,21 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.waddle_ware.heslington_hustle.Font;
 import com.waddle_ware.heslington_hustle.Button;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
 
-// CHANGELOG : Added Library to calculate sizes of text for centering purposes
+// CHANGELOG: Added Library to calculate sizes of text for centering purposes
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 /**
+ * CHANGELOG: UPDATED METHOD
+ *            ADDDED STREAKS FUNCTIONALITY
+ *            
  * The EndScreen class represents the screen displayed at the end of the game.
  * It displays either a win or lose screen based on the game outcome.
+ * It also displays the user score and the streaks they did/didn't achieve
  */
 public class EndScreen implements Screen {
     private final HeslingtonHustle game;
@@ -31,7 +50,7 @@ public class EndScreen implements Screen {
     private final Texture to_render;
     private final BitmapFont font;
 
-    // CHANGELOG : ADDED MORE PRIVATE VARIABLES
+    // CHANGELOG: ADDED MORE PRIVATE VARIABLES
     private final CharSequence status_text; // Text the displays if the user has won or lost.
     private final BitmapFont small_font; // Smaller font to use for streaks
     private final BitmapFont big_font; // Bigger font to use for title
@@ -48,10 +67,10 @@ public class EndScreen implements Screen {
 
 
     /**
+     * CHANGELOG: UPDATED METHOD
+     *            ADDED STREAKS PARAMETER
+     *            
      * Constructs a new EndScreen.
-     *
-     * CHANGELOG : ADDED STREAKS PARAMETER TO CLASS
-     *
      * @param game      The game instance.
      * @param has_won   Boolean value indicating whether the player has won the game.
      * @param score     The player's score at the end of the game.
@@ -61,29 +80,30 @@ public class EndScreen implements Screen {
         this.game = game;
 
 
-        // CHANGELOG : ADDED UPDATED MAP BACKGROUND FOR END SCREEN
+        // CHANGELOG: ADDED UPDATED MAP BACKGROUND FOR END SCREEN
         this.to_render = new Texture(BLURRED_BACKGROUND_ASSET);
 
         this.streak_athlete = streaks[0];
         this.streak_bookworm = streaks[1];
         this.streak_clubber = streaks[2];
 
-        // CHANGELOG : If the player has won and the score > 40, set the status text accordingly
+        // CHANGELOG: If the player has won and the score > 40, set the status text accordingly
         if(has_won && score >= 40) {
             this.status_text = "You Won!";
             this.score = score;
         }
         else {
-            // CHANGELOG : If the player lost, cap the score at 39 and set the status text
+            // CHANGELOG: If the player lost, cap the score at 39 and set the status text
             this.score = Math.min(39, score);
             this.status_text = "You Lose";}
 
 
-        // CHANGELOG : REMOVED IN-FILE FONT-GENERATION
+        // CHANGELOG: REMOVED IN-FILE FONT-GENERATION
         // this.font_gen = new FreeTypeFontGenerator(Gdx.files.internal("OETZTYP_.TTF"));
         // this.font = genFont(150, 6f);
         // this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
+        // CHANGELOG: Font generation now done through Font class
         this.small_font = Font.getGameFont(30, 2f);
         this.font = Font.getGameFont(150, 6f);
         this.big_font = Font.getGameFont(300, 10f);
@@ -94,6 +114,11 @@ public class EndScreen implements Screen {
     }
 
 
+    /**
+     * CHANGELOG: NEW METHOD
+     *
+     * This method is used to implement the Continue button that takes the user to the Name Entry screen
+     */
     private void initialiseMenu(){
         VerticalGroup end_screen_group = new VerticalGroup();
         end_screen_group.setFillParent(true);
@@ -114,29 +139,18 @@ public class EndScreen implements Screen {
     }
 
 
-      // CHANGELOG : REMOVED IN-FILE FONT GENERATION
+    // CHANGELOG : REMOVED IN-FILE FONT GENERATION
+    // private BitmapFont genFont(int size, float borderWidth) {
+    //       ....
+    // }
 
-//    /**
-//     * Generates a custom font for displaying the player's score on the end screen.
-//     *
-//     * @return The generated BitmapFont object with custom font settings.
-//     * @param size Font size of generated font
-//     * @param borderWidth Border width of generated font
-//     */
-//    private BitmapFont genFont(int size, float borderWidth) {
-//        FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-//        param.size = size;
-//        param.borderColor = Color.BLACK;
-//        param.borderWidth = borderWidth;
-//        param.borderStraight = false;
-//        return font_gen.generateFont(param);
-//    }
 
     @Override
     public void show() {
     }
 
     /**
+     * CHANGELOG: UPDATED METHOD
      * Called when this screen should render itself.
      *
      * @param delta The time in seconds since the last render.
@@ -159,7 +173,7 @@ public class EndScreen implements Screen {
         this.stage.getBatch().draw(this.to_render, x, y, width, height);
 
         /*
-         * CHANGELOG : UPDATED HOW END SCREEN IS DISPLAYED USING ONLY TEXT
+         * CHANGELOG: UPDATED HOW END SCREEN IS DISPLAYED USING ONLY TEXT
          */
 
         // Drawing Title to screen
@@ -184,7 +198,7 @@ public class EndScreen implements Screen {
 
 
 
-        // DRAW TEXT/ICONS FOR WHICH STREAKS WERE OBTAINED
+        // CHANGELOG : DRAW TEXT/ICONS FOR WHICH STREAKS WERE OBTAINED
 
         if (streak_athlete){
             GlyphLayout athleteText = new GlyphLayout(this.small_font, "Athlete +10");
@@ -209,6 +223,7 @@ public class EndScreen implements Screen {
                     200,
                     200);
         }
+
 
         if (streak_bookworm){
             GlyphLayout bookwormText = new GlyphLayout(this.small_font, "Bookworm +10");

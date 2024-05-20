@@ -1,3 +1,10 @@
+/*
+ * CHANGELOG:
+ * NEW CLASS:
+ *      Added class to reduce repeated code within Screen classes
+ *      Provides button generation functionality
+ */
+
 package com.waddle_ware.heslington_hustle;
 
 import com.badlogic.gdx.graphics.Texture;
@@ -5,6 +12,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+/**
+ * CHANGELOG : NEW CLASS
+ * The Button class generates Buttons that are used within the screen classes.
+ * This class was added to remove a large amount of repeated code within other classes.
+ */
 public class Button {
     private static final int MIN_WIDTH = 475;
     private static final int MIN_HEIGHT = 125;

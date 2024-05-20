@@ -1,20 +1,24 @@
+/*
+ * CHANGELOG:
+ * NEW CLASS:
+ *      Added class to Implement new leaderboard functionality
+ *      Specifically, for Name Entry at the end of game
+ */
+
 package com.waddle_ware.heslington_hustle.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.waddle_ware.heslington_hustle.Button;
 import com.waddle_ware.heslington_hustle.Font;
@@ -25,7 +29,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.waddle_ware.heslington_hustle.Leaderboard;
 
-import java.util.Arrays;
 
 /**
  * CHANGELOG : NEW CLASS
@@ -89,8 +92,6 @@ public class NameScreen implements Screen, InputProcessor {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 String name = new String(current_name);
-                System.out.println(name);
-                System.out.println(score);
 
                 if (current_name_length == 3) {
                     Leaderboard l = new Leaderboard();
@@ -186,8 +187,9 @@ public class NameScreen implements Screen, InputProcessor {
      * Called when a key is pressed down
      * Used to implement backspace functionality to
      * remove a letter from the inputted name
-     * @param keycode
-     * @return
+     *
+     * @param keycode ID of the pressed key
+     * @return true when key is pressed
      */
     @Override
     public boolean keyDown(int keycode) {
@@ -200,6 +202,13 @@ public class NameScreen implements Screen, InputProcessor {
         return true;
     }
 
+    /**
+     * Called when a key is typed
+     * Used to implement name entry functionality
+     *
+     * @param c Character pressed
+     * @return true when key is pressed
+     */
     @Override
     public boolean keyTyped(char c) {
         if (c >= 'a' && c <= 'z') {

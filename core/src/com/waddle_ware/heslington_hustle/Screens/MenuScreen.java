@@ -1,3 +1,16 @@
+/*
+ * CHANGELOG:
+ * SEVERAL CHANGES REQUIRED:
+ *      Leaderboard functionality
+ *          - Added functionality to access leaderboard screen
+ *      General changes
+ *          - Updated Background
+ *      Testing
+ *          - Updated code to assist in unit testing
+ *
+ */
+
+
 package com.waddle_ware.heslington_hustle.Screens;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -24,6 +37,7 @@ public class MenuScreen implements Screen {
     private final Stage stage;
     private final Texture background;
 
+    // CHANGELOG: ADDED ATTRIUBTES TO STORE SPRITE PNGS
     public static final String BACKGROUND_ASSET = "MenuScreen_New.png";
     public static final String PLAYBUTTON_ASSET = "PlayButton.png";
     public static final String TUTORIALBUTTON_ASSET = "TutorialButton.png";
@@ -45,21 +59,10 @@ public class MenuScreen implements Screen {
         initialiseMenu(); // Add menu elements
     }
 
-
     // CHANGELOG : REMOVED IN-FILE BUTTON STYLE GENERATION
-//    /**
-//     * Creates an ImageButtonStyle with a provided image path.
-//     *
-//     * @param path The path to the image file.
-//     * @return The ImageButtonStyle created with the specified image.
-//     */
-//    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
-//        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-//        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
-//        style.imageUp.setMinWidth(475);
-//        style.imageUp.setMinHeight(125);
-//        return style;
-//    }
+    // private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
+    //       ....
+    // }
 
     /**
      * Initialises menu elements, such as buttons and their listeners.
@@ -70,6 +73,9 @@ public class MenuScreen implements Screen {
         menu_group.center(); // centre align vertically
         menu_group.align(Align.bottom);
         this.stage.addActor(menu_group);
+
+        // CHANGELOG: UPDATED BUTTONS TO USE BUTTON CLASS FOR GENERATION
+        // CHANGELOG: UPDATED BUTTONS TO USE NEW ATTRIBUTES FOR TEXTURES
 
         // Play button
         ImageButton play_button = new ImageButton(Button.createTexRegDraw(PLAYBUTTON_ASSET));
@@ -109,6 +115,8 @@ public class MenuScreen implements Screen {
 
         menu_group.addActor(play_button);
         menu_group.addActor(tutorial_button);
+
+        // CHANGELOG: ADDED LEADERBOARD BUTTON
         menu_group.addActor(leader_button);
         menu_group.addActor(exit_button);
     }

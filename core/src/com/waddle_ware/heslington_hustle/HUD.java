@@ -1,3 +1,12 @@
+/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      HUD
+ *          - New HUD design implementation
+ *      Testing
+ *          - Updated code to assist in unit testing
+ */
+
 package com.waddle_ware.heslington_hustle;
 
 import com.badlogic.gdx.Gdx;
@@ -27,6 +36,7 @@ public class HUD {
     FreeTypeFontGenerator font_gen;
     private int current_map_section;
 
+    // CHANGELOG: ADDED NEW ATTRIBUTES FOR CHANGES
     private Texture hudBackground = new Texture("hudBackground.png");
     public static final String FONT_GEN_ASSET = "BebasNeue-Regular.ttf";
 
@@ -41,11 +51,15 @@ public class HUD {
         this.font   = genFont();
         this.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
+        // CHANGELOG: ENERGY DISPLAYS AS A VALUE FROM 0-100
         this.energy = String.format("Energy: %d", (int) (100*c.getCurrentEnergy()/c.getEnergyLimit()));
+        // CHANGELOG: TIME NOW FORMATS AS A hh:mm TIME INSTEAD OF MINUTES REMAINING
         this.time   = String.format("Time: %02d:%02d",((1440 - c.getTimeRemaining())/60), (1440 - c.getTimeRemaining())%60);
+        // CHANGELOG: ADDED COUNTER FOR TIMES RELAXED
+        this.recreation = String.format("Relaxed: %d", c.getTimesRelaxedToday());
+
         this.studied = String.format("Studied: %d", c.getTimesStudiedToday());
         this.eaten = String.format("Eaten: %d", c.getTimesEatenToday());
-        this.recreation = String.format("Relaxed: %d", c.getTimesRelaxedToday());
         this.current_day = String.format("Day %d", c.getCurrentDay());
     }
 
@@ -64,6 +78,9 @@ public class HUD {
     }
 
     /**
+     * CHANGELOG: UPDATED METHOD
+     *            ADDED NEW HUD BACKGROUND
+     *            HUD IS NOW DRAWN IN DIFFERENT X-LOCATIONS BASED ON CURRENT MAP LOCATION
      * Renders HUD on the screen.
      *
      * @param batch The Batch object used for rendering.
@@ -72,6 +89,7 @@ public class HUD {
 
         int x_location = 665 + ((current_map_section+1)*(768));
 
+        // Draws HUD Background and information
         batch.draw(hudBackground, x_location - 33, 10, 140, 140);
         this.font.draw(batch, this.energy,       x_location, 123);
         this.font.draw(batch, this.time,         x_location, 108);
@@ -82,8 +100,11 @@ public class HUD {
     }
 
     /**
+     * CHANGELOG: UPDATED METHOD
+     *            ADDED MAP_SECTION PARAMETER TO CORRECTLY DISPLAY HUD
      * Updates the HUD with new game data.
      *
+     * @param map_section section of the map in which to draw HUD
      * @param c The Core object providing updated game data.
      */
     public void update(Core c, int map_section) {
