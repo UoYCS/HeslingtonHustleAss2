@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.thewafflers.tests.CoreTests" tests="17" skipped="0" failures="0" errors="0" timestamp="2024-05-20T22:22:31" hostname="MERRILL-LAPTOP" time="0.019">
+<testsuite name="com.thewafflers.tests.CoreTests" tests="17" skipped="0" failures="0" errors="0" timestamp="2024-05-20T22:25:07" hostname="MERRILL-LAPTOP" time="0.024">
   <properties/>
-  <testcase name="testSetBadMealCount" classname="com.thewafflers.tests.CoreTests" time="0.001"/>
+  <testcase name="testSetBadMealCount" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
   <testcase name="testValidIncrementDay" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
   <testcase name="testIncrementOver7Days" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
   <testcase name="testSetBadStudyCount" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
   <testcase name="testSetBadRelaxCount" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
   <testcase name="testActivityTypeToString" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
-  <testcase name="testGetCurrentEnergy" classname="com.thewafflers.tests.CoreTests" time="0.001"/>
+  <testcase name="testGetCurrentEnergy" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
   <testcase name="testIsLastDay" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
-  <testcase name="testTimeUpdate" classname="com.thewafflers.tests.CoreTests" time="0.011"/>
+  <testcase name="testTimeUpdate" classname="com.thewafflers.tests.CoreTests" time="0.014"/>
   <testcase name="testGetEnergyLimit" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
   <testcase name="testGetTimeRemaining" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
   <testcase name="testSetCounts" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
   <testcase name="testHasEnded" classname="com.thewafflers.tests.CoreTests" time="0.001"/>
-  <testcase name="testExitConditionsToString" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
+  <testcase name="testExitConditionsToString" classname="com.thewafflers.tests.CoreTests" time="0.001"/>
   <testcase name="testGetTimeLimit" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
-  <testcase name="testInteraction" classname="com.thewafflers.tests.CoreTests" time="0.004"/>
+  <testcase name="testInteraction" classname="com.thewafflers.tests.CoreTests" time="0.006"/>
   <testcase name="testResourceTypesToString" classname="com.thewafflers.tests.CoreTests" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
