@@ -1,3 +1,11 @@
+/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Testing
+ *          - Updated code and to assist in unit testing
+ */
+
+
 package com.waddle_ware.heslington_hustle;
 
 import com.badlogic.gdx.Gdx;
@@ -7,6 +15,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 /**
+ * CHANGELOG: UPDATED CLASS
+ *            ADDED ATTRIBUTES TO STORE SPRITE SHEET PNGS
  * The PlayerAnimator class manages animation of the player character when moving.
  * It selects the appropriate sprite sheet based on the player's current movement direction
  * and creates the animation accordingly.
@@ -17,7 +27,16 @@ public class PlayerAnimator {
     static Texture walk_down_sheet;
     static float state_time = 0f; // Tracks elapsed time of animation
 
+    // CHANGELOG: ADDED VARIABLES TO STORE SPRITE PNGS
+    public static final String PLAYER_STILL_SPRITE_SHEET_ASSET = "player.png";
+    public static final String PLAYER_LEFT_SPRITE_SHEET_ASSET = "move_left_sprite_sheet.png";
+    public static final String PLAYER_RIGHT_SPRITE_SHEET_ASSET = "move_right_sprite_sheet.png";
+    public static final String PLAYER_UP_SPRITE_SHEET_ASSET = "move_up_sprite_sheet.png";
+    public static final String PLAYER_DOWN_SPRITE_SHEET_ASSET = "move_down_sprite_sheet.png";
+
     /**
+     * CHANGELOG: UPDATED METHOD
+     *            USES NEW SPRITESHEET ATTRIBUTES INSTEAD OF HARD CODED FILES
      * Creates an animation based on the players movement velocity.
      *
      * @param velocity The velocity of the player.
@@ -29,7 +48,7 @@ public class PlayerAnimator {
         int frame_rows;
         int frame_cols = 1;
 
-        if (sprite_sheet.equals("player.png")) {
+        if (sprite_sheet.equals(PLAYER_STILL_SPRITE_SHEET_ASSET)) {
             frame_rows = 1;
         }
         else {
@@ -71,22 +90,22 @@ public class PlayerAnimator {
 
         if (Math.round(velocity.x) == 0 && Math.round(velocity.y) == 0) {
             // Check if player is standing still
-            return "player.png";
+            return PLAYER_STILL_SPRITE_SHEET_ASSET;
         }
         else if (Math.abs(velocity.x) > Math.abs(velocity.y)) {
             if (velocity.x < 0) {
-                return "move_left_sprite_sheet.png";
+                return PLAYER_LEFT_SPRITE_SHEET_ASSET;
             }
             else {
-                return "move_right_sprite_sheet.png";
+                return PLAYER_RIGHT_SPRITE_SHEET_ASSET;
             }
         }
         else if (Math.abs(velocity.x) < Math.abs(velocity.y)) {
             if (velocity.y < 0) {
-                return "move_down_sprite_sheet.png";
+                return PLAYER_DOWN_SPRITE_SHEET_ASSET;
             }
             else {
-                return "move_up_sprite_sheet.png";
+                return PLAYER_UP_SPRITE_SHEET_ASSET;
             }
         }
         return "player.png";

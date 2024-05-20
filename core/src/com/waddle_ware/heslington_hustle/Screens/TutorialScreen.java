@@ -1,3 +1,12 @@
+/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Screen functionality:
+ *          - Refactored code that generated buttons within file to use Button classes
+ *      Testing
+ *          - Updated code and added new method to assist in unit testing
+ */
+
 package com.waddle_ware.heslington_hustle.Screens;
 
 import com.badlogic.gdx.Gdx;
@@ -12,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.waddle_ware.heslington_hustle.Button;
 import com.waddle_ware.heslington_hustle.HeslingtonHustle;
 
 /**
@@ -24,6 +34,9 @@ public class TutorialScreen implements Screen {
     private final ScreenId previous_screen;
     private final Texture tutorial_img;
 
+    public static final String TUTORIAL_SCREEN_ASSET = "TutorialScreen_New.png";
+    public static final String BACK_BUTTON_ASSET = "BackButton.png";
+
     /**
      * Constructs a new TutorialScreen.
      *
@@ -33,19 +46,19 @@ public class TutorialScreen implements Screen {
     public TutorialScreen(HeslingtonHustle game, ScreenId previous_screen) {
         this.previous_screen = previous_screen;
         this.game = game;
-        this.tutorial_img = new Texture("TutorialScreen.png");
+
+        // CHANGELOG : UPDATED TUTORIAL SCREEN BACKGROUND
+        this.tutorial_img = new Texture(TUTORIAL_SCREEN_ASSET);
         this.stage = new Stage(new FitViewport(1920, 1080)); // Set virtual screen size to 16:9 aspect ratio
         Gdx.input.setInputProcessor(this.stage);
         initialiseMenu(); // Add menu elements
     }
 
-    private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
-        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-        style.imageUp = new TextureRegionDrawable( new TextureRegion(new Texture(path)));
-        style.imageUp.setMinWidth(475);
-        style.imageUp.setMinHeight(125);
-        return style;
-    }
+
+  // CHANGELOG : REMOVED IN-FILE BUTTON STYLE GENERATION
+  // private ImageButton.ImageButtonStyle createTexRegDraw(String path) {
+  //       ....
+  // }
 
     /**
      * Initialises the tutorial screen with associated UI elements.
@@ -57,7 +70,7 @@ public class TutorialScreen implements Screen {
         this.stage.addActor(tutorial_group);
 
         // Back button
-        ImageButton back_button = new ImageButton(createTexRegDraw("BackButton.png"));
+        ImageButton back_button = new ImageButton(Button.createTexRegDraw(BACK_BUTTON_ASSET));
         back_button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

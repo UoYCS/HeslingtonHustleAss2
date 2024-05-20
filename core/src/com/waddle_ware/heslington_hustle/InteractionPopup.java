@@ -1,3 +1,11 @@
+/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Updated Functionality
+ *          - Interaction popups now change colour and provide better visual feedback upon interaction
+ *      Testing
+ *          - Updated code to assist in unit testing
+ */
 package com.waddle_ware.heslington_hustle;
 
 import com.badlogic.gdx.Gdx;
@@ -14,17 +22,35 @@ public class InteractionPopup {
     private final BitmapFont font;
     private final String message;
 
+    public static final String FONT_GEN_ASSET = "BebasNeue-Regular.ttf";
+
     /**
+     * CHANGELOG: UPDATED METHOD
+     *            ADDED COLOUR ATTRIBUTE TO ASSIST IN VISUAL FEEDBACK
+     *
      * Constructs a new InteractionPopup object with specified message.
      *
+     * @param colour The colour of the pop-up.
      * @param message The message to be displayed in the pop-up.
      */
-    public InteractionPopup(String message) {
+    public InteractionPopup(String message, String colour) {
         // Generate font
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("BebasNeue-Regular.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_GEN_ASSET));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 10;
         parameter.borderColor = Color.BLACK;
+
+        // CHANGELOG: ADDED DIFFERENT COLOURS OF POPUPS TO INDICATE ACTIVITY COMPLETION STATUS
+        if (colour.equals("white")){
+            parameter.color = Color.WHITE;
+        }
+        else if (colour.equals("green")){
+            parameter.color = Color.GREEN;
+        }
+        else{
+            parameter.color = Color.RED;
+        }
+
         parameter.borderWidth = 1.5f;
         parameter.borderStraight = false;
 

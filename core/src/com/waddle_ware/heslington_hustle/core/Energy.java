@@ -1,3 +1,10 @@
+/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      Testing
+ *          - Updated code and added new method to assist in unit testing
+ */
+
 package com.waddle_ware.heslington_hustle.core;
 
 /**
@@ -6,9 +13,10 @@ package com.waddle_ware.heslington_hustle.core;
  */
 public class Energy implements ResourceBase {
     // Static constants
-    static final private int ENERGY_PER_STUDY = -2;
-    static final private int ENERGY_PER_RECREATIONAL = -1;
-    static final private int ENERGY_PER_FOOD = 1;
+    // CHANGELOG: Updated variable accessibility for testing
+    static final public int ENERGY_PER_STUDY = -2;
+    static final public int ENERGY_PER_RECREATIONAL = -1;
+    static final public int ENERGY_PER_FOOD = 1;
 
     // Member variables.
     final private int limit;
@@ -78,9 +86,20 @@ public class Energy implements ResourceBase {
                 cost_of_resource = -99999999;
                 break;
         }
-        final int potential_state = this.current + cost_of_resource;
-        final ExitConditions condition = isOk(potential_state);
+
+        final int potential_state = this.current + cost_of_resource; // future energy amount
+        final ExitConditions condition = isOk(potential_state); // checks if enough energy
         return new ResourceExitConditions(ResourceTypes.Energy, condition);
+        // ResourceExitConditions has an attribute Resource type,
+        // type is either Time or Energy
+        // this says whether it's referring to time or energy, this refers to energy as set out in parameter 1
+        // condition is exitcondition class
+        // exitconditions says if the attempt at doing activity is valid or not
+        // i.e. yes (isOK), or too low / too high
+
+        // so basically this returns that an activity uses energy? and whether there is enough energy to do a task
+        // the resourcetype attribute isn't actually used in core
+        // only bit used by core class is whether it's a valid activity use
     }
 
     /**
@@ -110,4 +129,11 @@ public class Energy implements ResourceBase {
     public int getLimit() {
         return this.limit;
     }
+
+    /**
+     * CHANGELOG: NEW METHOD
+     * Added setter method for energy for testing purposes
+     * @param newcurrent New testing energy value.
+     */
+    public void setcurrent(int newcurrent){this.current = newcurrent;}
 }

@@ -1,3 +1,8 @@
+/*
+ * CHANGELOG:
+ * NO CHANGES REQUIRED FOR THIS FILE
+ */
+
 package com.waddle_ware.heslington_hustle.core;
 
 /**
@@ -15,18 +20,18 @@ public enum ActivityType {
      *
      * @return A string describing the activity type.
      */
-    @Override
-    public String toString() {
-        switch (this) {
-            case Recreation:
-                return "Recreation";
-            case Study:
-                return "Study";
-            case Food:
-                return "Food";
-            case Sleep:
-                return "Sleep";
-        }
-        return "FAILED";
-    }
+//    @Override
+//    public String toString() {
+//        switch (this) {
+//            case Recreation:
+//                return "Recreation";
+//            case Study:
+//                return "Study";
+//            case Food:
+//                return "Food";
+//            case Sleep:
+//                return "Sleep";
+//        }
+//        return "FAILED";
+//    }
 }

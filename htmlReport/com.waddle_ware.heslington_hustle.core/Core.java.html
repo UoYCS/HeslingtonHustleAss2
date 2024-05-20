@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Core.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">test.exec</a> &gt; <a href="index.source.html" class="el_package">com.waddle_ware.heslington_hustle.core</a> &gt; <span class="el_source">Core.java</span></div><h1>Core.java</h1><pre class="source lang-java linenums">package com.waddle_ware.heslington_hustle.core;
+// CHANGELOG: Added access to Activity Location to be used for streak calculation
+import com.waddle_ware.heslington_hustle.ActivityLocation;
+// CHANGELOG: Added library to help with array processing
+import java.util.Arrays;
+
+/**
+ * The Core class represents the core functionality of the game, managing game state, interactions, and scoring.
+ */
+public class Core {
+    // The constants below define the values for the impact that the individual components will have on the score.
+    public static final int MEAL_SCORE_VALUE = 30;
+    public static final int RELAX_SCORE_VALUE = 50;
+    public static final int STUDY_SCORE_VALUE = 100;
+    public static final int MEAL_SCORE_PENALTY = -100;
+    public static final int RELAX_SCORE_PENALTY = -100;
+    public static final int STUDY_TOO_MUCH_PENALTY = -50;
+    public static final int TOO_MUCH_STUDY_THRESHOLD = 3;
+
+    public static final int MAX_NUMBER_OF_DAYS = 7;
+
+    // Member variables
+    public Energy energy;
+    private int day;
+    public Time time;
+
+    public int[] study_count;
+    public int[] relax_count;
+    public int[] meal_count;
+
+    /**
+     * Constructs a new Core instance.
+     * Initialises energy, time, and activity count arrays.
+     */
+<span class="fc" id="L35">    public Core() {</span>
+<span class="fc" id="L36">        this.energy = new Energy(4);</span>
+<span class="fc" id="L37">        this.time = new Time(15,3);</span>
+<span class="fc" id="L38">        this.study_count = new int[7];</span>
+<span class="fc" id="L39">        this.relax_count = new int[7];</span>
+<span class="fc" id="L40">        this.meal_count = new int[7];</span>
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * This method should be called in the main update loop in order
+     * to keep the game state up to date. Currently, the only thing that
+     * needs updating is time (to see if enough irl time has passed
+     * to decrease the remaining time).
+     */
+    public void update() {
+<span class="fc" id="L50">        this.time.update();</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * This function is the main way for the GUI to interact and manipulate
+     * the game state.
+     * It should be called whenever a person tries to interact with a building.
+     * It will check if the interaction is legal (there is enough energy and time).
+     *
+     * @param type The type of the interaction.
+     * @return Resource exit condition. If it is successful, returns (Null, IsOk),
+     * else it returns the ResourceType and the type of fault (too high / low).
+     */
+    public ResourceExitConditions interactedWith(ActivityType type) {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if(type == ActivityType.Sleep) {</span>
+<span class="fc" id="L65">            incrementDay();</span>
+<span class="fc" id="L66">            return new ResourceExitConditions(null, ExitConditions.IsOk);</span>
+        }
+        //check if we can do activity
+<span class="fc" id="L69">        final ResourceExitConditions energy = this.energy.tryActivityType(type);</span>
+<span class="fc" id="L70">        final ResourceExitConditions time = this.time.tryActivityType(type);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if(energy.getConditions() != ExitConditions.IsOk) return energy;</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        if(time.getConditions() != ExitConditions.IsOk) return time;</span>
+
+        //do activity
+<span class="fc" id="L75">        this.time.doActivity(type);</span>
+<span class="fc" id="L76">        this.energy.doActivity(type);</span>
+
+        //update activity tracking data
+<span class="pc bpc" id="L79" title="1 of 4 branches missed.">        switch (type) {</span>
+            case Study:
+<span class="fc" id="L81">                this.study_count[this.day] += 1;</span>
+<span class="fc" id="L82">                break;</span>
+            case Recreation:
+<span class="fc" id="L84">                this.relax_count[this.day] += 1;</span>
+<span class="fc" id="L85">                break;</span>
+            case Food:
+<span class="fc" id="L87">                this.meal_count[this.day] += 1;</span>
+<span class="fc" id="L88">                break;</span>
+            default:
+                break;
+        }
+<span class="fc" id="L92">        return new ResourceExitConditions(null, ExitConditions.IsOk);</span>
+    }
+
+    /**
+     * Checks whether it's the last day of the game.
+     *
+     * @return true if it's the last day, false otherwise.
+     */
+    public boolean isLastDay() {
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        return this.day &gt;= (MAX_NUMBER_OF_DAYS - 1);</span>
+    }
+
+    /**
+     * Checks whether the game has ended. (Intended to be used to indicate a need to change from the play screen).
+     *
+     * @return true if the game has ended, false otherwise.
+     */
+    public boolean hasEnded() {
+<span class="fc bfc" id="L110" title="All 4 branches covered.">         return isLastDay() &amp;&amp; this.time.getMinutesRemaining() == 0;</span>
+    }
+
+    /**
+     * Changes to the next day.
+     * Throws an exception if the maximum number of days is exceeded.
+     */
+    public void incrementDay() {
+        //makes sure that we can't go over the max number
+        //of days
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        if(this.day &gt; (MAX_NUMBER_OF_DAYS - 1))</span>
+<span class="fc" id="L121">            throw new RuntimeException(&quot;Attempted to increment day past its max&quot;);</span>
+<span class="fc" id="L122">        ++this.day;</span>
+<span class="fc" id="L123">        this.time.reset();</span>
+<span class="fc" id="L124">        this.energy.reset();</span>
+<span class="fc" id="L125">    }</span>
+
+    /**
+     * Checks whether the player has hit a fail condition
+     * Intended to be used after game has ended to determine
+     * whether to display a fail or win screen.
+     * This should only be called once the game has ended.
+     * It will throw an exception if called before.
+     *
+     * @return true/false based on whether the play has failed
+     */
+    public boolean hasPlayerFailed() {
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if(!isLastDay())</span>
+<span class="fc" id="L138">            throw new RuntimeException(&quot;hasPlayerFailed has been called before the game has ended&quot;);</span>
+
+        // fail conditions are missed studying for 2 days
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        for (final int i : this.meal_count) {</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            if(i == 0) return true;</span>
+        }
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        for (final int i : this.relax_count) {</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">            if(i == 0) return true;</span>
+        }
+<span class="fc" id="L147">        int studied_zero_times_per_day_count = 0;</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        for (final int i : this.study_count) {</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">            if(i == 0) ++studied_zero_times_per_day_count;</span>
+        }
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">        if (studied_zero_times_per_day_count &gt;= 2) return true;</span>
+<span class="fc" id="L152">        return false;</span>
+    }
+
+    /**
+     * This function generate the player's score based on their
+     * tracked metrics and the value of each metric as specified
+     * by their respective constants.
+     * This should only be called once the game has ended.
+     * It will throw an exception if called before.
+     *
+     * CHANGELOG : Method now takes array of activityLocations
+     * CHANGELOG : Updated all scoring calculations and return score as a percentage from 0-100
+     *
+     * @return The total score that the player has achieved
+     */
+    public int generateScore(ActivityLocation[] activityLocations) {
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        if(!isLastDay())</span>
+<span class="fc" id="L169">            throw new RuntimeException(&quot;generateScore has been called before the game has ended&quot;);</span>
+
+        /*
+         * Studying = 1500 pts
+         * Recreation = 1000 pts
+         * Eating = 1000 pts
+         */
+<span class="fc" id="L176">        int max_possible_score = 3500;</span>
+
+<span class="fc" id="L178">        boolean [] streaks = checkStreaks(activityLocations);</span>
+
+<span class="fc" id="L180">        int score = 0;</span>
+
+        /*
+         * STUDYING POINTS
+         *
+         * Studying more than 10 times a week will remove points from the player
+         * Bonus for studying every day
+         * Bonus for studying across different locations
+         *
+         * Maximum points:
+         * 1000 pts : Studying (up to 10 times)
+         * 250 pts : Bonus for studying every day
+         * 250 pts : Bonus for studying in different locations
+         */
+
+<span class="fc" id="L195">        int times_studied = Arrays.stream(this.study_count).sum();</span>
+<span class="fc" id="L196">        int locations_studied = getNumLocationsActivity(activityLocations, ActivityType.Study);</span>
+<span class="fc" id="L197">        int days_studied = getNumDaysActivity(this.study_count);</span>
+
+        // POINTS FOR STUDYING
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        if (times_studied &lt;= 10){</span>
+<span class="fc" id="L201">            score += times_studied * STUDY_SCORE_VALUE;</span>
+        } else {
+<span class="fc" id="L203">            score += 10 * STUDY_SCORE_VALUE;</span>
+<span class="fc" id="L204">            score -= (times_studied-10) * STUDY_SCORE_VALUE/2;</span>
+        }
+
+        // BONUS FOR STUDYING EVERYDAY
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">        if (days_studied == 7){</span>
+<span class="fc" id="L209">            score += 250;</span>
+        }
+
+        // BONUS FOR STUDYING IN DIFFERENT PLACES
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        if (locations_studied &gt; 1){</span>
+<span class="fc" id="L214">            score += 250;</span>
+        }
+
+
+
+        /*
+         * RECREATIONAL POINTS.
+         *
+         * Points rewarded everytime up to 14 times
+         * Bonus for doing recreation every day
+         * Bonus for doing recreation across different locations
+         *
+         * Maximum points:
+         * 700 pts : Studying (up to 14 times)
+         * 150 pts : Bonus for doing recreation every day
+         * 150 pts : Bonus for doing recreation in different locations
+         */
+
+
+<span class="fc" id="L233">        int times_rec = Arrays.stream(this.relax_count).sum();</span>
+<span class="fc" id="L234">        int days_rec = getNumDaysActivity(this.relax_count);</span>
+<span class="fc" id="L235">        int locations_rec = getNumLocationsActivity(activityLocations, ActivityType.Recreation);</span>
+
+        // Points for studying
+<span class="fc" id="L238">        score += Math.min(times_rec, 14) * RELAX_SCORE_VALUE;</span>
+
+        // Bonus for everyday
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        if (days_rec == 7){</span>
+<span class="fc" id="L242">            score += RELAX_SCORE_VALUE * 3;</span>
+        }
+
+        // No bonus if recreation at 1 place
+        // Bonus of 100 if done at 2 places
+        // Bonus of 150 if done at 3 places
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        if (locations_rec == 2){</span>
+<span class="fc" id="L249">            score += (RELAX_SCORE_VALUE * 2);</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">        } else if (locations_rec == 3) {</span>
+<span class="fc" id="L251">            score += (RELAX_SCORE_VALUE * 3);</span>
+        }
+
+
+        /*
+         * EATING POINTS.
+         *
+         * Points awarded for eating food
+         * Bonus for eating 3 times a day
+         *
+         * Maximum points:
+         * 840 pts : Eating 3 times a day = 3*30 + bonus 30
+         * 90 pts : Bonus for eating in different locations
+         * 70 pts : Bonus for eating everyday
+         */
+
+
+<span class="fc" id="L268">        int times_eaten = Arrays.stream(this.meal_count).sum();</span>
+<span class="fc" id="L269">        int locations_eaten = getNumLocationsActivity(activityLocations, ActivityType.Food);</span>
+<span class="fc" id="L270">        int days_eaten = getNumDaysActivity(this.meal_count);</span>
+
+<span class="fc bfc" id="L272" title="All 2 branches covered.">        for (int num : this.meal_count){</span>
+<span class="fc bfc" id="L273" title="All 4 branches covered.">            switch (num) {</span>
+                case 1:
+<span class="fc" id="L275">                    score += MEAL_SCORE_VALUE;</span>
+<span class="fc" id="L276">                    break;</span>
+
+                case 2:
+<span class="fc" id="L279">                    score += MEAL_SCORE_VALUE * 2;</span>
+<span class="fc" id="L280">                    break;</span>
+
+                case 3:
+<span class="fc" id="L283">                    score += MEAL_SCORE_VALUE * 4;</span>
+                    break;
+
+            }
+        }
+
+        // No bonus if recreation at 1 place
+        // Bonus of 30 if done at 2 places
+        // Bonus of 90 if done at 3 places
+<span class="fc bfc" id="L292" title="All 2 branches covered.">        if (locations_eaten == 2){</span>
+<span class="fc" id="L293">            score += (MEAL_SCORE_VALUE);</span>
+<span class="fc bfc" id="L294" title="All 2 branches covered.">        } else if (locations_eaten == 3) {</span>
+<span class="fc" id="L295">            score += (MEAL_SCORE_VALUE * 3);</span>
+        }
+
+<span class="fc bfc" id="L298" title="All 2 branches covered.">        if (days_eaten == 7){</span>
+<span class="fc" id="L299">            score += 70;</span>
+        }
+
+
+//        for (int i = 0; i &lt; 7; ++i) {
+//
+//            if(this.meal_count[i] == 0)
+//                score += MEAL_SCORE_PENALTY;
+//            else
+//                score += this.meal_count[i]  * MEAL_SCORE_VALUE;
+//
+//            if(this.relax_count[i] == 0)
+//                score += RELAX_SCORE_PENALTY;
+//            else
+//                score += this.relax_count[i]  * RELAX_SCORE_VALUE;
+//
+//            if(this.study_count[i] &gt;= TOO_MUCH_STUDY_THRESHOLD)
+//                score += STUDY_TOO_MUCH_PENALTY;
+//            else
+//                score += this.study_count[i]  * STUDY_SCORE_VALUE;
+//
+//        }
+
+        // CHANGELOG : PREVENT NEGATIVE SCORE
+<span class="pc bpc" id="L323" title="1 of 2 branches missed.">        if (score &lt; 0){</span>
+<span class="nc" id="L324">            score = 0;</span>
+        }
+
+        // CHANGELOG : MAP SCORE TO A PERCENT OUT OF 100
+<span class="fc" id="L328">        int percent_score = (int)(((double)score / max_possible_score) * 100);</span>
+
+        // CHANGELOG : ADD STREAK BONUSES AS EXTRA 10%
+<span class="fc bfc" id="L331" title="All 2 branches covered.">        for (boolean streak : streaks){</span>
+<span class="fc bfc" id="L332" title="All 2 branches covered.">            if (streak){</span>
+<span class="fc" id="L333">                percent_score += 10;</span>
+            }
+        }
+
+        // CHANGELOG : CAP PERCENTAGE SCORE AT 100
+<span class="pc bpc" id="L338" title="1 of 2 branches missed.">        if (percent_score &gt; 100){</span>
+<span class="nc" id="L339">            percent_score = 100;</span>
+        }
+
+<span class="fc" id="L342">        return percent_score;</span>
+    }
+
+    /**
+     * CHANGELOG : NEW METHOD
+     *
+     * Takes in an array of activities and an Acitivty type and returns then number of different
+     * locations that type of activity was done in
+     *
+     * @param activities Array of ActivityLocations
+     * @param type Type of activity to check
+     * @return Number of different locations the player did that type of activity
+     */
+    public int getNumLocationsActivity(ActivityLocation[] activities, ActivityType type){
+<span class="fc" id="L356">        int locations = 0;</span>
+
+<span class="fc bfc" id="L358" title="All 2 branches covered.">        for (ActivityLocation activity : activities) {</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">            if (activity.getType() == type){</span>
+<span class="fc bfc" id="L360" title="All 2 branches covered.">                if (Arrays.stream(activity.getInteractions()).sum() &gt; 0){</span>
+<span class="fc" id="L361">                    locations ++;}</span>
+            }
+        }
+
+<span class="fc" id="L365">        return locations;</span>
+    }
+
+
+    /**
+     * CHANGELOG : NEW METHOD
+     *
+     * Takes in the activity counter arrays and returns the number of days it was done on
+     *
+     * @param list Array of ActivityLocations
+     * @return Number of different days the player did that type of activity
+     */
+    public int getNumDaysActivity(int[] list){
+<span class="fc" id="L378">        int days_done = 0;</span>
+
+<span class="fc bfc" id="L380" title="All 2 branches covered.">        for (int num : list){</span>
+<span class="fc bfc" id="L381" title="All 2 branches covered.">            if (num &gt; 0){</span>
+<span class="fc" id="L382">                days_done ++;}</span>
+        }
+
+<span class="fc" id="L385">        return days_done;</span>
+    }
+
+
+    /**
+     * CHANGELOG: NEW METHOD
+     * This method checks if the user has completed the streak achievements:
+     * Athlete for playing football, Bookworm for library, and Clubber for clubbing
+     *
+     * @param activityLocations List of activity location objects
+     * @return Boolean array, True/False for each streak completed
+     */
+    public boolean[] checkStreaks(ActivityLocation[] activityLocations){
+<span class="fc" id="L398">        boolean[] streakArray = new boolean[3];</span>
+
+<span class="fc bfc" id="L400" title="All 2 branches covered.">        for (ActivityLocation activity : activityLocations) {</span>
+            // For each activity, check if the streak condition has been met.
+            // If so, set the relevant array index to true
+<span class="fc bfc" id="L403" title="All 4 branches covered.">            switch (activity.getName()){</span>
+                case &quot;play football&quot;:
+<span class="fc bfc" id="L405" title="All 2 branches covered.">                    if (Arrays.stream(activity.getInteractions()).sum() &gt;= 4){</span>
+<span class="fc" id="L406">                        streakArray[0] = true;}</span>
+                    break;
+
+                case &quot;study at library&quot;:
+<span class="fc bfc" id="L410" title="All 2 branches covered.">                    if (Arrays.stream(activity.getInteractions()).sum() &gt;= 4){</span>
+<span class="fc" id="L411">                        streakArray[1] = true;}</span>
+                    break;
+
+                case &quot;go clubbing&quot;:
+<span class="fc bfc" id="L415" title="All 2 branches covered.">                    if (Arrays.stream(activity.getInteractions()).sum() &gt;= 4){</span>
+<span class="fc" id="L416">                        streakArray[2] = true;}</span>
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+<span class="fc" id="L424">        return streakArray;</span>
+    }
+
+
+
+
+    /**
+     * Returns the day. NOT zero indexed
+     *
+     * @return current day
+     */
+    public int getCurrentDay() {
+<span class="fc" id="L436">        return this.day + 1;</span>
+    }
+
+    /**
+     * Returns the energy limit.
+     *
+     * @return The energy limit.
+     */
+    public int getEnergyLimit() {
+<span class="fc" id="L445">        return this.energy.getLimit();</span>
+    }
+
+    /**
+     * Returns the current energy.
+     *
+     * @return The current energy.
+     */
+    public int getCurrentEnergy() {
+<span class="fc" id="L454">        return this.energy.getCurrentEnergy();</span>
+    }
+
+    /**
+     * Returns the time limit.
+     *
+     * @return The time limit.
+     */
+    public int getTimeLimit() {
+<span class="fc" id="L463">        return Time.MINUTES_PER_DAY;</span>
+    }
+
+    /**
+     * Returns the remaining time.
+     *
+     * @return The remaining time.
+     */
+    public int getTimeRemaining() {
+<span class="fc" id="L472">        return this.time.getMinutesRemaining();</span>
+    }
+
+    /**
+     * Returns the number of times studied today.
+     *
+     * @return The number of times studied today.
+     */
+    public int getTimesStudiedToday() {
+<span class="fc" id="L481">        return study_count[this.day];</span>
+    }
+
+    /**
+     * Returns the number of times eaten today.
+     *
+     * @return The number of times eaten today.
+     */
+    public int getTimesEatenToday() {
+<span class="fc" id="L490">        return meal_count[this.day];</span>
+    }
+
+    /**
+     * Returns the number of recreational activities done today.
+     *
+     * @return The number of recreational activities done today.
+     */
+    public int getTimesRelaxedToday() {
+<span class="fc" id="L499">        return relax_count[this.day];</span>
+    }
+  
+
+    /**
+     * sets meal count. This is only used for testing
+     *
+     * @Param meals
+     *
+     */
+    public void setMeal_count(int[] meals){
+<span class="fc bfc" id="L510" title="All 2 branches covered.">        if(meals.length == 7) {</span>
+
+<span class="fc" id="L512">            this.meal_count = meals;</span>
+        }
+        else{
+
+<span class="fc" id="L516">            throw new RuntimeException(&quot;meal count must have a length of seven denoting seven days&quot;);</span>
+        }
+
+<span class="fc" id="L519">    }</span>
+
+    /**
+     * gets meal count
+     *
+     * @return meal count array
+     */
+<span class="fc" id="L526">    public int[] getMealCount(){return meal_count;}</span>
+
+    /**
+     * sets study count. This is only used for testing
+     *
+     * @param studied
+     */
+    public void setStudy_count(int[] studied){
+<span class="fc bfc" id="L534" title="All 2 branches covered.">        if(studied.length == 7) {</span>
+
+<span class="fc" id="L536">            this.study_count = studied;</span>
+        }
+        else{
+
+<span class="fc" id="L540">            throw new RuntimeException(&quot;study count must have a length of seven denoting seven days&quot;);</span>
+        }
+
+<span class="fc" id="L543">    }</span>
+<span class="fc" id="L544">    public int[] getStudyCount(){return study_count;}</span>
+
+    /**
+     * sets relax count. This is only used for testing
+     *
+     * @param relax
+     */
+    public void setRelax_count(int[] relax){
+<span class="fc bfc" id="L552" title="All 2 branches covered.">        if(relax.length == 7) {</span>
+
+<span class="fc" id="L554">            this.relax_count = relax;</span>
+        }
+        else{
+
+<span class="fc" id="L558">            throw new RuntimeException(&quot;relax count must have a length of seven denoting seven days&quot;);</span>
+        }
+<span class="fc" id="L560">    }</span>
+<span class="fc" id="L561">    public int[] getRelaxCount(){return relax_count;}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

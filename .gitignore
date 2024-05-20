@@ -115,3 +115,7 @@ Thumbs.db
 
 ## vsc
 .vscode
+/tests/build/
+/tests/build/resources/
+
+

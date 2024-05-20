@@ -1,4 +1,13 @@
+/*
+ * CHANGELOG:
+ * MINIMAL CHANGES REQUIRED:
+ *      - Improved functionality to store interactions within activity object
+ *      - Added ActivityType attribute into class
+ */
+
 package com.waddle_ware.heslington_hustle;
+
+import com.waddle_ware.heslington_hustle.core.ActivityType;
 
 /**
  * The ActivityLocation class represents a location within the game where activities are.
@@ -10,19 +19,30 @@ public class ActivityLocation {
     private final float radius; // The radius of the activity location
     private final String name; // The name of the activity location
 
+    // CHANGELOG: ADDED AN ACTIVITY TYPE VARIABLE FOR USE IN OTHER AREAS TO EASILY ADD MORE ACTIVITIES
+    private final ActivityType type; // The type of activity (Eat/Sleep/Study/Recreation)
+
+    // CHANGELOG: ADDED THIS VARIABLE TO TRACK ACTIVITIES ON A PER ACTIVITY BASIS
+    private int[] interactions = new int[7]; // Number of times this activity was interacted with on each day
+
     /**
+     * CHANGELOG: UPDATED METHOD
+     *            ADDED ACTIVITY TYPE INITIALISATION
+     *
      * Constructs an ActivityLocation object with the specified coordinates, radius, and name.
      *
-     * @param x      The x-coordinate of the activities location.
-     * @param y      The y-coordinate of the activities location.
+     * @param x      The x-coordinate of the activities' location.
+     * @param y      The y-coordinate of the activities' location.
      * @param radius The interaction radius of the activity.
      * @param name   The name of the activity.
+     * @param type   The type of the activity
      */
-    public ActivityLocation(float x, float y, float radius, String name) {
+    public ActivityLocation(float x, float y, float radius, String name, ActivityType type) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.name = name;
+        this.type = type;
     }
 
     /**
@@ -59,5 +79,37 @@ public class ActivityLocation {
      */
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * CHANGELOG : ADDED METHOD
+     *             ADDED GETTER FOR NEW CLASS ATTRIBUTE
+     *
+     * Retrieves the type of the activity locations
+     * @return The type of the activity location.
+     */
+    public ActivityType getType() {
+            return type;
+    }
+
+
+    /**
+     * CHANGELOG : ADDED METHOD
+     *             ADDED GETTER FOR NEW CLASS ATTRIBUTE
+     *
+     * Retrieves the array of activity interactions
+     * @return Array of activity interactions
+     */
+    public int[] getInteractions(){
+        return this.interactions;
+    }
+
+    /**
+     * CHANGELOG : ADDED METHOD
+     * Increments the counter array for a specific day
+     * @param day Integer from 0-6 (representing days 1-7)
+     */
+    public void incrementCounter(int day){
+        this.interactions[day]++;
     }
 }
