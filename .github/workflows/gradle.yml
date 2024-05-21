@@ -40,3 +40,8 @@ jobs:
       with:
         name: jacoco-report
         path: HeslingtonHustleAss2/tests/build/reports/jacoco/test/html/
+    - name: Upload Jar
+      uses: actions/upload-artifact@v4.3.3
+      with:
+        name: desktop-1.0.jar
+        path: HeslingtonHustleAss2/desktop/build/libs/desktop-1.0.jar     
