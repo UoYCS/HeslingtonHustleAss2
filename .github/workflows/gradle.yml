@@ -80,4 +80,6 @@ jobs:
      # - name: Rename macos Build artifact
       #  run: mv desktop/build/libs/desktop-1.0.jar HesHustle22-macos.jar
       - name: Release
-        uses: ncipollo/release-action@v1.14.0
+        uses: softprops/action-gh-release@v2.0.5
+        with:
+          files: desktop-1.0.jar
