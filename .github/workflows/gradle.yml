@@ -16,8 +16,11 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest,windows-latest,macos-latest]
 
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}}
     permissions:
       contents: read
 
@@ -41,12 +44,12 @@ jobs:
     - name: Upload JaCoCo coverage report
       uses: actions/upload-artifact@v4.3.3
       with:
-        name: jacoco-report
+        name: jacoco-report-${{matrix.os}}
         path: tests/build/reports/jacoco/test/html/
     - name: Upload Jar
       uses: actions/upload-artifact@v4.3.3
       with:
-        name: desktop-1.0.jar
+        name: HesHustle22-${{matrix-os}}.jar
         path: desktop/build/libs/desktop-1.0.jar
   release:
     runs-on: windows-latest
@@ -55,12 +58,28 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Download a Build Artifact
+      - name: Download windows Build Artifact
         uses: actions/download-artifact@v4.1.7
         with:
         # Name of the artifact to download. If unspecified, all artifacts for the run are downloaded.
-          name: desktop-1.0.jar
+          name: HesHustle22-windows-latest
+      - name: Rename windows Build artifact
+        run: mv HesHustle22-windows-latest.jar HesHustle22-windows.jar
+      - name: Download ubuntu Build Artifact
+        uses: actions/download-artifact@v4.1.7
+        with:
+        # Name of the artifact to download. If unspecified, all artifacts for the run are downloaded.
+          name: HesHustle22-ubuntu-latest
+      - name: Rename ubuntu Build artifact
+        run: mv HesHustle22-ubuntu-latest.jar HesHustle22-ubuntu.jar
+      - name: Download macos Build Artifact
+        uses: actions/download-artifact@v4.1.7
+        with:
+        # Name of the artifact to download. If unspecified, all artifacts for the run are downloaded.
+          name: HesHustle22-macos-latest
+      - name: Rename macos Build artifact
+        run: mv HesHustle22-macos-latest.jar HesHustle22-macos.jar
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: desktop-1.0.jar
+          files: HesHustle22*.jar
