@@ -1,1 +1,0 @@
-memberSearchIndex = [{"p":"com.waddle_ware.heslington_hustle","c":"DesktopLauncher","l":"DesktopLauncher()","url":"%3Cinit%3E()"},{"p":"com.waddle_ware.heslington_hustle","c":"DesktopLauncher","l":"main(String[])","url":"main(java.lang.String[])"}]
