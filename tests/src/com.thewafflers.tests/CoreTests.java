@@ -239,6 +239,10 @@ public class CoreTests {
 
     }
 
+    /**
+     * Check the get energy limit method returns the correct output
+     *
+     */
     @Test
     public void testGetEnergyLimit(){
         Core core = new Core();
