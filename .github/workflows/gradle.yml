@@ -82,5 +82,5 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: HeslingtonHustleAss2\HeslingtonHustleAss2\HesHustle22-windows-latest.jar
+          files: H*.jar
 
