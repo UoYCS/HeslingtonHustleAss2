@@ -85,4 +85,4 @@ jobs:
           files: |
             HesHustle22-windows-latest.jar
             HesHustle22-macos-latest.jar
-            HesHustle22-linux-latest.jar
+            HesHustle22-ubuntu-latest.jar
