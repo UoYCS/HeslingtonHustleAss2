@@ -222,7 +222,7 @@ public class CoreTests {
         /**
          * Checks here whether it returns that not enough time or energy to do recreation activity
          *
-         * And checks that if there isnt enough time / energy that it doesnt change the counters
+         * And checks that if there isn't enough time / energy that it doesnt change the counters
          */
         doReturn(time_output).when(mock_time).tryActivityType(test_type);
 
