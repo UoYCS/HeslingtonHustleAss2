@@ -64,21 +64,21 @@ jobs:
         # Name of the artifact to download. If unspecified, all artifacts for the run are downloaded.
           name: HesHustle22-windows-latest.jar
       - name: Rename windows Build artifact
-        run: mv HesHustle22-windows-latest.jar HesHustle22-windows.jar
+        run: mv desktop/build/libs/desktop-1.0.jar HesHustle22-windows.jar
       - name: Download ubuntu Build Artifact
         uses: actions/download-artifact@v4.1.7
         with:
         # Name of the artifact to download. If unspecified, all artifacts for the run are downloaded.
           name: HesHustle22-ubuntu-latest.jar
       - name: Rename ubuntu Build artifact
-        run: mv HesHustle22-ubuntu-latest.jar HesHustle22-ubuntu.jar
+        run: mv desktop/build/libs/desktop-1.0.jar HesHustle22-ubuntu.jar
       - name: Download macos Build Artifact
         uses: actions/download-artifact@v4.1.7
         with:
         # Name of the artifact to download. If unspecified, all artifacts for the run are downloaded.
           name: HesHustle22-macos-latest.jar
       - name: Rename macos Build artifact
-        run: mv HesHustle22-macos-latest.jar HesHustle22-macos.jar
+        run: mv desktop/build/libs/desktop-1.0.jar HesHustle22-macos.jar
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
